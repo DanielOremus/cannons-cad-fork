@@ -8,6 +8,10 @@ const configSchema = z.object({
   REFRESH_TOKEN_SECRET: z.string(),
   REFRESH_TOKEN_TTL: z.coerce.number().int().positive().default(604800), //7 days
   DATABASE_URL: z.string(),
+  REDIS_HOST: z.string(),
+  REDIS_PORT: z.coerce.number().int().positive(),
+  REDIS_USER: z.string(),
+  REDIS_PASSWORD: z.string(),
 });
 
 export function validate(config: Record<string, unknown>) {

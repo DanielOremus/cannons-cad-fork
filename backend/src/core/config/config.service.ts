@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { EnvConfig } from './config.validation';
+import { TokenType } from '../../shared/types/token';
 
 @Injectable()
 export class AppConfigService {
@@ -30,5 +30,22 @@ export class AppConfigService {
 
   get databaseUrl() {
     return this.configService.get<string>('app.database.url')!;
+  }
+  get redisHost() {
+    return this.configService.get<string>('app.redis.host')!;
+  }
+  get redisPort() {
+    return this.configService.get<number>('app.redis.port')!;
+  }
+  get redisUser() {
+    return this.configService.get<string>('app.redis.user')!;
+  }
+  get redisPassword() {
+    return this.configService.get<string>('app.redis.password')!;
+  }
+  jwt(type: TokenType) {
+    return this.configService.get<{ secret: string; ttl: number }>(
+      `app.jwt.${type}`,
+    )!;
   }
 }

@@ -9,5 +9,6 @@ import { PrismaModule } from '../../core/database/prisma.module';
   imports: [PrismaModule],
   controllers: [UserController],
   providers: [UserService, UserRepository, UserMapper],
+  exports: [UserService, UserMapper],
 })
 export class UserModule {}

@@ -14,9 +14,13 @@ export type UpdateSelfUserDto = z.infer<typeof updateEmailSchema>
 export type UpdateUserEmailDto = z.infer<typeof updateProfileSchema>
 export type ConfirmUserEmailDto = z.infer<typeof confirmEmailSchema>
 
-export type MyProfileDto = UserProfileDto & { email: string }
+export type UserOwnProfileDto = UserPublicProfileDto & {
+  id: string
+  email: string
+  emailConfirmed: boolean
+}
 
-export type UserProfileDto = {
+export type UserPublicProfileDto = {
   name: string
   status: UserStatus
   createdAt: string
