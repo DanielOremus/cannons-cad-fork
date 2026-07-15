@@ -1,0 +1,61 @@
+node_modules/
+dist/
+.env
+.DS_Store
+build/
+
+# ========================
+# Prisma generated client
+# ========================
+backend/src/generated/prisma
+
+# ========================
+# Environment variables
+# ========================
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+
+# ========================
+# Logs
+# ========================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ========================
+# OS files
+# ========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ========================
+# IDE / Editor
+# ========================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ========================
+# Testing
+# ========================
+coverage/
+.nyc_output/
+
+# ========================
+# Misc
+# ========================
+*.tsbuildinfo
+.cache/
+tmp/
+temp/

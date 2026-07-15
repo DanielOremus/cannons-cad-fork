@@ -1,0 +1,17 @@
+model Vehicle{
+    id            Int               @id @default(autoincrement())
+    make          String
+    model         String
+    year          Int
+    color         String?
+    licensePlate  String            @unique
+    flags         VehicleFlag[]     @default([])
+    ownerId       Int
+    owner         Character         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+}
+
+enum VehicleFlag {
+    STOLEN @map("Stolen")
+    IMPOUNDED @map("Impounded")
+    BOLO
+}

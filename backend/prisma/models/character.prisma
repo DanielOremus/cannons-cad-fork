@@ -1,0 +1,28 @@
+model Character {
+    id            Int             @id @default(autoincrement())
+    firstName     String
+    lastName      String
+    dob           DateTime        @default(now()) @db.Date
+    gender        Gender
+    idNumber      String          @unique @db.Char(6)
+    driverLicense DriverLicense?
+    //age
+    phoneNumber   String?
+    address       String?
+    hasGunPermit  Boolean         @default(false)
+    flags         CharacterFlag[] @default([])
+    userId        String          @db.Uuid
+    user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+    vehicles      Vehicle[]
+}
+
+enum Gender {
+    MALE
+    FEMALE
+}
+
+enum CharacterFlag {
+    MENTAL_HEALTH
+    BOLO
+    WARRANT
+}

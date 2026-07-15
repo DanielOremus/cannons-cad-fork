@@ -1,0 +1,39 @@
+import * as z from "zod/v4"
+
+const nameValidator = z
+  .string()
+  .min(3)
+  .regex(/^[a-zA-Z]$/, { error: "Can only contain letters and numbers" })
+
+export const loginSchema = z.object({
+  email: z.email(),
+  password: z.string().trim().nonempty(),
+})
+
+export const registerSchema = z
+  .object({
+    email: z.email().toLowerCase(),
+    name: nameValidator,
+    password: z.string().regex(/^\S*$/, "Must not contain spaces").min(4),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    error: "The passwords do not match",
+    path: ["confirmPassword"],
+  })
+  .transform((data) => {
+    const { confirmPassword, ...rest } = data
+    return rest
+  })
+
+export const updateProfileSchema = z.object({
+  name: nameValidator,
+})
+
+export const updateEmailSchema = z.object({
+  email: z.email().toLowerCase,
+  password: z.string().trim().nonempty(),
+})
+export const confirmEmailSchema = z.object({
+  code: z.string().regex(/^\d{6}$/, { error: "Invalid code format" }),
+})

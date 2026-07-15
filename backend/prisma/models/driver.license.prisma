@@ -1,0 +1,13 @@
+model DriverLicense {
+    id          Int               @id @default(autoincrement())
+    categories  LicenseCategory[] @default([])
+    characterId Int               @unique
+    character   Character         @relation(fields: [characterId], references: [id], onDelete: Cascade)
+}
+
+enum LicenseCategory {
+    A
+    B
+    C
+    D
+}
