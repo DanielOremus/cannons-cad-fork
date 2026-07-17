@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'jsonwebtoken';
-import { AppConfigService } from '../../../core/config/config.service';
 import { TokenPayloads, TokenType } from '../../types/token';
+import { AppConfigService } from '../../../core/config/config.service';
 
 @Injectable()
 export class TokenService {
@@ -12,7 +12,7 @@ export class TokenService {
   ) {}
   tryParseBearer(bearer: string) {}
   generate<T extends TokenType>(type: T, payload: TokenPayloads[T]) {
-    const { secret, ttl } = this.config.jwt(type);
+    const { secret, ttl } = this.config.jwt[type];
     return this.jwtService.sign(payload, {
       secret,
       expiresIn: ttl,
@@ -22,7 +22,7 @@ export class TokenService {
     type: T,
     token: string,
   ): { success: boolean; data: TokenPayloads[T] | null } {
-    const { secret, ttl } = this.config.jwt(type);
+    const { secret } = this.config.jwt[type];
     try {
       const payload = this.jwtService.verify<TokenPayloads[T]>(token, {
         secret,

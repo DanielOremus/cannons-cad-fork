@@ -4,3 +4,5 @@ export type CreateUserInput = Pick<
   UserEntity,
   'email' | 'name' | 'passwordHash'
 >;
+
+export type UserProfileResponseType = 'public' | 'private';

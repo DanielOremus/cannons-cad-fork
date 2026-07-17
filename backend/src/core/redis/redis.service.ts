@@ -8,11 +8,11 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   private readonly client: RedisClientType;
   constructor(private readonly config: AppConfigService) {
     this.client = createClient({
-      username: config.redisUser,
-      password: config.redisPassword,
+      username: config.redis.user,
+      password: config.redis.password,
       socket: {
-        host: config.redisHost,
-        port: config.redisPort,
+        host: config.redis.host,
+        port: config.redis.port,
       },
     });
   }
@@ -27,21 +27,22 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   }
   async storeRToken(data: TokenPayloads['refresh']) {
     const { jti, familyId, userId } = data;
+    const refreshTtl = this.config.jwt.refresh.ttl;
     //Creating token
     const createToken = this.client.setEx(
       this.refreshKey(data.jti),
-      this.config.refreshTtl,
+      refreshTtl,
       JSON.stringify({ jti, userId, familyId, used: false }),
     );
     //Creating family
     const createFamily = this.client.setEx(
       this.familyKey(familyId),
-      this.config.refreshTtl,
+      refreshTtl,
       jti,
     );
     //Attaching family to user
     const attachFamily = this.client.zAdd(this.userFamiliesKey(userId), {
-      score: Date.now() + this.config.refreshTtl * 1000,
+      score: Date.now() + refreshTtl * 1000,
       value: familyId,
     });
     await Promise.all([createToken, createFamily, attachFamily]);

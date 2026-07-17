@@ -1,17 +1,27 @@
 import * as z from 'zod/v4';
 
 const configSchema = z.object({
-  PORT: z.coerce.number().int().positive().default(3000),
-  ENV: z.enum(['production', 'development', 'test']).default('development'),
-  ACCESS_TOKEN_SECRET: z.string(),
-  ACCESS_TOKEN_TTL: z.coerce.number().int().positive().default(900), //15 minutes
-  REFRESH_TOKEN_SECRET: z.string(),
-  REFRESH_TOKEN_TTL: z.coerce.number().int().positive().default(604800), //7 days
-  DATABASE_URL: z.string(),
-  REDIS_HOST: z.string(),
-  REDIS_PORT: z.coerce.number().int().positive(),
-  REDIS_USER: z.string(),
-  REDIS_PASSWORD: z.string(),
+  port: z.coerce.number().int().positive().default(3000),
+  env: z.enum(['production', 'development', 'test']).default('development'),
+  jwt: z.object({
+    access: z.object({
+      secret: z.string(),
+      ttl: z.coerce.number().int().positive().default(900), //15 minutes
+    }),
+    refresh: z.object({
+      secret: z.string(),
+      ttl: z.coerce.number().int().positive().default(604800), //7 days
+    }),
+  }),
+  redis: z.object({
+    host: z.string(),
+    port: z.coerce.number().int().positive(),
+    user: z.string(),
+    password: z.string(),
+  }),
+  database: z.object({
+    url: z.string(),
+  }),
 });
 
 export function validate(config: Record<string, unknown>) {

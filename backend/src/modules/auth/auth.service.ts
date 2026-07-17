@@ -1,14 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { TokenService } from '../../shared/modules/token/token.service';
-import {
-  LoginUserDto,
-  RegisterUserDto,
-  UserOwnProfileDto,
-} from '@project/shared';
-import { UserService } from '../../modules/user/user.service';
+import { LoginUserDto } from '../user/dto/login-user.dto';
+import { RegisterUserDto } from '../user/dto/register-user.dto';
+import { UserService } from '../user/user.service';
 import { randomUUID } from 'crypto';
-import { RedisService } from '../redis/redis.service';
+import { RedisService } from '../../core/redis/redis.service';
 import bcrypt from 'bcrypt';
+import { UserMapper } from '../user/user.mapper';
+import { UnauthorizedError } from '../../shared/errors/app.error';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +15,7 @@ export class AuthService {
     private readonly tokenService: TokenService,
     private readonly userService: UserService,
     private readonly redisService: RedisService,
+    private readonly userMapper: UserMapper,
   ) {}
   async register(dto: RegisterUserDto) {
     const user = await this.userService.create(dto);
@@ -40,16 +40,16 @@ export class AuthService {
 
     //send confirmation email
 
-    return { refresh, access, user };
+    return { refresh, access, user: this.userMapper.toPrivateProfileDto(user) };
   }
   async login(dto: LoginUserDto) {
     const exists = await this.userService.getByEmail(dto.email);
-    if (!exists) throw new UnauthorizedException();
+    if (!exists) throw new UnauthorizedError();
     const passwordCorrect = await bcrypt.compare(
       dto.password,
       exists.passwordHash,
     );
-    if (!passwordCorrect) throw new UnauthorizedException();
+    if (!passwordCorrect) throw new UnauthorizedError();
 
     const familyId = randomUUID();
     const refreshJti = randomUUID();
@@ -69,6 +69,13 @@ export class AuthService {
       userId: exists.id,
     });
 
-    return { refresh, access, user: exists };
+    return {
+      refresh,
+      access,
+      user: this.userMapper.toPublicProfileDto(exists),
+    };
+  }
+  async logout(userId: string, tokenFamilyId: string) {
+    await this.redisService.revokeFamily(userId, tokenFamilyId);
   }
 }

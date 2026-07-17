@@ -5,7 +5,7 @@ model User {
   passwordHash      String
   status            UserStatus         @default(PENDING)
   emailConfirmed    Boolean            @default(false)
-  role              UserRole           @default(registered)
+  role              UserRole           @default(REGISTERED)
   createdAt         DateTime           @default(now())
   characters        Character[]
   emailConfirmation EmailConfirmation?
@@ -19,9 +19,9 @@ enum UserStatus {
 }
 
 enum UserRole {
-  registered
-  police
-  dispatch
-  civilian
-  admin
+  REGISTERED
+  POLICE
+  DISPATCH
+  CIVILIAN
+  ADMIN
 }

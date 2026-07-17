@@ -22,6 +22,7 @@ export class UserRepository {
     return this.returnOne(user);
   }
   async create(input: CreateUserInput): Promise<UserEntity> {
-    return await this.prismaService.user.create({ data: input });
+    const user = await this.prismaService.user.create({ data: input });
+    return this.userMapper.toDomain(user);
   }
 }
