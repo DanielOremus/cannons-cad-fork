@@ -78,4 +78,42 @@ export class AuthService {
   async logout(userId: string, tokenFamilyId: string) {
     await this.redisService.revokeFamily(userId, tokenFamilyId);
   }
+  async refresh(token: string) {
+    const { success, data } = this.tokenService.tryVerify('refresh', token);
+    if (!success) throw new UnauthorizedError();
+    const tokenExists = await this.redisService.getRToken(data.jti);
+    if (!tokenExists) throw new UnauthorizedError();
+
+    const familyExists = await this.redisService.familyExists(
+      tokenExists.familyId,
+    );
+    if (!familyExists) throw new UnauthorizedError();
+
+    if (tokenExists.used) {
+      await this.redisService.revokeUserFamilies(tokenExists.userId);
+      throw new UnauthorizedError();
+    }
+
+    const user = await this.userService.getById(tokenExists.userId);
+    if (!user) throw new UnauthorizedError();
+
+    await this.redisService.revokeRToken(tokenExists.jti);
+
+    const refreshPayload = {
+      familyId: tokenExists.familyId,
+      jti: randomUUID(),
+      userId: tokenExists.userId,
+    };
+
+    await this.redisService.storeRToken(refreshPayload);
+
+    const refresh = this.tokenService.generate('refresh', refreshPayload);
+    const access = this.tokenService.generate('access', {
+      familyId: tokenExists.familyId,
+      userId: tokenExists.userId,
+      userRole: user.role,
+    });
+
+    return { refresh, access };
+  }
 }

@@ -1,7 +1,7 @@
 import { ErrorCode } from '@project/shared';
 
-abstract class AppError extends Error {
-  protected readonly code: ErrorCode;
+export abstract class AppError extends Error {
+  public readonly code: ErrorCode;
   constructor(message: string, code: ErrorCode) {
     super(message);
     this.name = this.constructor.name;

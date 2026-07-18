@@ -19,7 +19,7 @@ export class UserService {
     private readonly userRepository: UserRepository,
     private readonly userMapper: UserMapper,
   ) {}
-  async getById(
+  async getProfile(
     id: string,
     profile: 'public' | 'private' = 'public',
   ): Promise<PublicUserResponseDto | PrivateUserResponseDto> {
@@ -30,6 +30,9 @@ export class UserService {
       toReturn = this.userMapper.toPublicProfileDto(user);
     else toReturn = this.userMapper.toPrivateProfileDto(user);
     return toReturn;
+  }
+  async getById(id: string): Promise<UserEntity | null> {
+    return await this.userRepository.findById(id);
   }
   async getByEmail(email: string): Promise<UserEntity | null> {
     return await this.userRepository.findByEmail(email);

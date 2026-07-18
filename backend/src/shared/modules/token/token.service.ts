@@ -1,11 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from 'jsonwebtoken';
 import { TokenPayloads, TokenType } from '../../types/token';
 import { AppConfigService } from '../../../core/config/config.service';
 
+type VerifySuccessReturn<T> = {
+  success: true;
+  data: T;
+};
+type VerifyFailureReturn = {
+  success: false;
+  data: null;
+};
+
 @Injectable()
 export class TokenService {
+  private readonly logger = new Logger(TokenService.name, {
+    timestamp: true,
+  });
   constructor(
     private readonly config: AppConfigService,
     private readonly jwtService: JwtService,
@@ -21,7 +32,7 @@ export class TokenService {
   tryVerify<T extends TokenType>(
     type: T,
     token: string,
-  ): { success: boolean; data: TokenPayloads[T] | null } {
+  ): VerifySuccessReturn<TokenPayloads[T]> | VerifyFailureReturn {
     const { secret } = this.config.jwt[type];
     try {
       const payload = this.jwtService.verify<TokenPayloads[T]>(token, {
@@ -29,6 +40,7 @@ export class TokenService {
       });
       return { success: true, data: payload };
     } catch (error) {
+      this.logger.debug(error);
       return { success: false, data: null };
     }
   }

@@ -13,6 +13,6 @@ export function prepareTokenCookie(
   return {
     key: COOKEY_KEY,
     value: token,
-    options: { httpOnly: true, maxAge: ttl },
+    options: { httpOnly: true, maxAge: ttl, signed: true },
   };
 }

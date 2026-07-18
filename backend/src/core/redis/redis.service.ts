@@ -51,6 +51,9 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     const value = await this.client.get(this.refreshKey(jti));
     return !value ? null : (JSON.parse(value) as RedisRTokenData);
   }
+  async familyExists(familyId: string) {
+    return await this.client.exists(this.familyKey(familyId));
+  }
   async revokeRToken(jti: string) {
     const tokenData = await this.getRToken(jti);
     if (tokenData) {

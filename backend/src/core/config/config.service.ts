@@ -23,4 +23,7 @@ export class AppConfigService {
   get env() {
     return this.config.env;
   }
+  get cookieSecret() {
+    return this.config.cookieSecret;
+  }
 }

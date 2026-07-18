@@ -1,8 +1,8 @@
-import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from '../user/dto/login-user.dto';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
-import { type Response } from 'express';
+import type { Request, Response } from 'express';
 import { AppConfigService } from '../../core/config/config.service';
 import { COOKEY_KEY, prepareTokenCookie } from './cookie.helper';
 
@@ -30,6 +30,7 @@ export class AuthController {
     return { access, user };
   }
   @Post('/login')
+  @HttpCode(200)
   async login(
     @Body() loginDto: LoginUserDto,
     @Res({ passthrough: true }) res: Response,
@@ -46,9 +47,25 @@ export class AuthController {
   }
   @Post('/logout')
   @HttpCode(204)
-  async logout(@Res() res: Response) {
+  async logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie(COOKEY_KEY);
   }
   @Post('/refresh')
-  async refresh() {}
+  @HttpCode(200)
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    try {
+      const { refresh, access } = await this.authService.refresh(
+        req.signedCookies[COOKEY_KEY],
+      );
+      const cookie = prepareTokenCookie(refresh, this.config.jwt.refresh.ttl);
+      res.cookie(COOKEY_KEY, cookie);
+      return { access };
+    } catch (error) {
+      res.clearCookie(COOKEY_KEY);
+      throw error;
+    }
+  }
 }

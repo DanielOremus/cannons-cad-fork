@@ -3,6 +3,7 @@ import * as z from 'zod/v4';
 const configSchema = z.object({
   port: z.coerce.number().int().positive().default(3000),
   env: z.enum(['production', 'development', 'test']).default('development'),
+  cookieSecret: z.string(),
   jwt: z.object({
     access: z.object({
       secret: z.string(),

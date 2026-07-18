@@ -5,6 +5,7 @@ export const registerConfig = registerAs('app', () => {
   const config = {
     port: process.env.PORT,
     env: process.env.ENV,
+    cookieSecret: process.env.COOKIE_SECRET,
     jwt: {
       access: {
         secret: process.env.ACCESS_TOKEN_SECRET,
