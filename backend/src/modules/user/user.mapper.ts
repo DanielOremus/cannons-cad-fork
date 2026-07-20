@@ -14,21 +14,22 @@ export class UserMapper {
     return { ...prismaUser };
   }
   toPrivateProfileDto(prismaUser: User): PrivateUserResponseDto {
-    const { name, role, email, status, emailConfirmed, createdAt } = prismaUser;
+    const { name, roles, email, status, emailConfirmed, createdAt } =
+      prismaUser;
 
     return {
       name,
       email,
       emailConfirmed,
-      role,
+      roles,
       status,
       createdAt: createdAt.toISOString(),
     };
   }
   toPublicProfileDto(prismaUser: User): PublicUserResponseDto {
-    const { name, role, status, createdAt } = prismaUser;
+    const { name, roles, status, createdAt } = prismaUser;
 
-    return { name, role, status, createdAt: createdAt.toISOString() };
+    return { name, roles, status, createdAt: createdAt.toISOString() };
   }
   toCreateInput(
     data: RegisterUserDto & { passwordHash: string },

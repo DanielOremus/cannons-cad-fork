@@ -2,6 +2,7 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { createClient, type RedisClientType } from 'redis';
 import { RedisRTokenData, TokenPayloads } from '../../shared/types/token';
 import { AppConfigService } from '../config/config.service';
+import { Permission } from '@project/shared';
 
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
@@ -25,6 +26,28 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   private userFamiliesKey(userId: string) {
     return `user:${userId}:families`;
   }
+  private userPermissionsKey(userId: string) {
+    return `user:${userId}:permissions`;
+  }
+
+  //Permissions caching
+
+  async cacheUserPermissions(userId: string, permissions: Permission[]) {
+    await this.client.setEx(
+      this.userPermissionsKey(userId),
+      this.config.jwt.access.ttl,
+      JSON.stringify(permissions),
+    );
+  }
+
+  async getUserPermissions(userId: string) {
+    const value = await this.client.get(this.userPermissionsKey(userId));
+    if (!value) return [];
+    return JSON.parse(value) as Permission[];
+  }
+
+  //Token operations
+
   async storeRToken(data: TokenPayloads['refresh']) {
     const { jti, familyId, userId } = data;
     const refreshTtl = this.config.jwt.refresh.ttl;

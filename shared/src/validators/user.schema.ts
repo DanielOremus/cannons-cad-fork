@@ -42,7 +42,7 @@ export const confirmEmailSchema = z.object({
 
 export const publicUserResponseSchema = z.object({
   name: z.string(),
-  role: z.enum(UserRole),
+  roles: z.array(z.enum(UserRole)),
   status: z.enum(UserStatus),
   createdAt: z.string(),
 });

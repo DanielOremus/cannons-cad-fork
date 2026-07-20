@@ -1,10 +1,23 @@
-import { Body, Controller, HttpCode, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from '../user/dto/login-user.dto';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
 import type { Request, Response } from 'express';
 import { AppConfigService } from '../../core/config/config.service';
 import { COOKEY_KEY, prepareTokenCookie } from './cookie.helper';
+import { AuthGuard } from '../../common/guards/auth.guard';
+import {
+  RequireConfirmedEmailOnly,
+  SkipActiveCheck,
+} from '../../common/decorators/account.decorator';
 
 @Controller('/auth')
 export class AuthController {
@@ -46,8 +59,11 @@ export class AuthController {
     return { access, user };
   }
   @Post('/logout')
+  @UseGuards(AuthGuard)
+  @RequireConfirmedEmailOnly()
   @HttpCode(204)
-  async logout(@Res({ passthrough: true }) res: Response) {
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    await this.authService.logout(req.user!.id, req.user!.familyId);
     res.clearCookie(COOKEY_KEY);
   }
   @Post('/refresh')

@@ -8,6 +8,7 @@ import { RedisService } from '../../core/redis/redis.service';
 import bcrypt from 'bcrypt';
 import { UserMapper } from '../user/user.mapper';
 import { UnauthorizedError } from '../../shared/errors/app.error';
+import { getPermissionsFromRoles } from '@project/shared';
 
 @Injectable()
 export class AuthService {
@@ -31,10 +32,16 @@ export class AuthService {
 
     await this.redisService.storeRToken(refreshPayload);
 
+    const userPerms = [...getPermissionsFromRoles(...user.roles)];
+
+    await this.redisService.cacheUserPermissions(user.id, userPerms);
+
     const refresh = this.tokenService.generate('refresh', refreshPayload);
     const access = this.tokenService.generate('access', {
+      userStatus: user.status,
+      emailConfirmed: false,
       familyId,
-      userRole: user.role,
+      userRoles: user.roles,
       userId: user.id,
     });
 
@@ -43,11 +50,11 @@ export class AuthService {
     return { refresh, access, user: this.userMapper.toPrivateProfileDto(user) };
   }
   async login(dto: LoginUserDto) {
-    const exists = await this.userService.getByEmail(dto.email);
-    if (!exists) throw new UnauthorizedError();
+    const user = await this.userService.getByEmail(dto.email);
+    if (!user) throw new UnauthorizedError();
     const passwordCorrect = await bcrypt.compare(
       dto.password,
-      exists.passwordHash,
+      user.passwordHash,
     );
     if (!passwordCorrect) throw new UnauthorizedError();
 
@@ -57,22 +64,28 @@ export class AuthService {
     const refreshPayload = {
       jti: refreshJti,
       familyId,
-      userId: exists.id,
+      userId: user.id,
     };
 
     await this.redisService.storeRToken(refreshPayload);
 
+    const userPerms = [...getPermissionsFromRoles(...user.roles)];
+
+    await this.redisService.cacheUserPermissions(user.id, userPerms);
+
     const refresh = this.tokenService.generate('refresh', refreshPayload);
     const access = this.tokenService.generate('access', {
+      userStatus: user.status,
+      emailConfirmed: user.emailConfirmed,
       familyId,
-      userRole: exists.role,
-      userId: exists.id,
+      userRoles: user.roles,
+      userId: user.id,
     });
 
     return {
       refresh,
       access,
-      user: this.userMapper.toPublicProfileDto(exists),
+      user: this.userMapper.toPublicProfileDto(user),
     };
   }
   async logout(userId: string, tokenFamilyId: string) {
@@ -107,11 +120,17 @@ export class AuthService {
 
     await this.redisService.storeRToken(refreshPayload);
 
+    const userPerms = [...getPermissionsFromRoles(...user.roles)];
+
+    await this.redisService.cacheUserPermissions(user.id, userPerms);
+
     const refresh = this.tokenService.generate('refresh', refreshPayload);
     const access = this.tokenService.generate('access', {
+      userStatus: user.status,
+      emailConfirmed: user.emailConfirmed,
       familyId: tokenExists.familyId,
       userId: tokenExists.userId,
-      userRole: user.role,
+      userRoles: user.roles,
     });
 
     return { refresh, access };
