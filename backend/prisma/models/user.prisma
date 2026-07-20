@@ -5,7 +5,7 @@ model User {
   passwordHash      String
   status            UserStatus         @default(PENDING)
   emailConfirmed    Boolean            @default(false)
-  role              UserRole           @default(REGISTERED)
+  roles             UserRole[]         @default([REGISTERED])
   createdAt         DateTime           @default(now())
   characters        Character[]
   emailConfirmation EmailConfirmation?
