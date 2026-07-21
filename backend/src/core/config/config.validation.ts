@@ -23,6 +23,13 @@ const configSchema = z.object({
   database: z.object({
     url: z.string(),
   }),
+  mailer: z.object({
+    host: z.string(),
+    port: z.coerce.number().int().positive(),
+    user: z.string(),
+    password: z.string(),
+    secure: z.coerce.boolean(),
+  }),
 });
 
 export function validate(config: Record<string, unknown>) {

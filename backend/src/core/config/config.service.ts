@@ -14,6 +14,9 @@ export class AppConfigService {
   get redis() {
     return this.config.redis;
   }
+  get mailer() {
+    return this.config.mailer;
+  }
   get jwt() {
     return this.config.jwt;
   }
