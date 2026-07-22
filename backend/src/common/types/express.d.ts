@@ -7,6 +7,9 @@ declare global {
       user?: AuthUser;
       permissionScope?: PermissionScope;
     }
+    interface Locals {
+      refreshToken?: string;
+    }
   }
 }
 

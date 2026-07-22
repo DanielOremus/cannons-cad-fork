@@ -13,9 +13,8 @@ export class UserMapper {
   toDomain(prismaUser: User): UserEntity {
     return { ...prismaUser };
   }
-  toPrivateProfileDto(prismaUser: User): PrivateUserResponseDto {
-    const { name, roles, email, status, emailConfirmed, createdAt } =
-      prismaUser;
+  toPrivateProfileDto(user: UserEntity): PrivateUserResponseDto {
+    const { name, roles, email, status, emailConfirmed, createdAt } = user;
 
     return {
       name,
@@ -26,15 +25,9 @@ export class UserMapper {
       createdAt: createdAt.toISOString(),
     };
   }
-  toPublicProfileDto(prismaUser: User): PublicUserResponseDto {
-    const { name, roles, status, createdAt } = prismaUser;
+  toPublicProfileDto(user: UserEntity): PublicUserResponseDto {
+    const { name, roles, status, createdAt } = user;
 
     return { name, roles, status, createdAt: createdAt.toISOString() };
-  }
-  toCreateInput(
-    data: RegisterUserDto & { passwordHash: string },
-  ): CreateUserInput {
-    const { name, email, passwordHash } = data;
-    return { email, name, passwordHash };
   }
 }
