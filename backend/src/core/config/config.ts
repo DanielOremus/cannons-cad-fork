@@ -25,6 +25,17 @@ export const registerConfig = registerAs('app', () => {
     database: {
       url: process.env.DATABASE_URL,
     },
+    mailer: {
+      host: process.env.MAILER_HOST,
+      port: process.env.MAILER_PORT,
+      user: process.env.MAILER_USER,
+      secure: process.env.MAILER_SECURE,
+      password: process.env.MAILER_PASSWORD,
+    },
+    email: {
+      username: process.env.EMAIL_USERNAME,
+      confirmationTtl: process.env.EMAIL_CONFIRMATION_TTL,
+    },
   };
   return validate(config);
 });

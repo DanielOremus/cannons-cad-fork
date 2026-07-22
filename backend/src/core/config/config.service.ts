@@ -14,11 +14,17 @@ export class AppConfigService {
   get redis() {
     return this.config.redis;
   }
+  get mailer() {
+    return this.config.mailer;
+  }
   get jwt() {
     return this.config.jwt;
   }
   get port() {
     return this.config.port;
+  }
+  get email() {
+    return this.config.email;
   }
   get env() {
     return this.config.env;

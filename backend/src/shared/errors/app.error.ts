@@ -1,6 +1,6 @@
 import { ErrorCode } from '@project/shared';
 
-export abstract class AppError extends Error {
+export class AppError extends Error {
   public readonly code: ErrorCode;
   constructor(message: string, code: ErrorCode) {
     super(message);

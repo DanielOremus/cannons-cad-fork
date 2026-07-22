@@ -5,8 +5,8 @@ import {
   PrivateUserResponseDto,
   PublicUserResponseDto,
 } from './dto/user-response.dto';
-import { RegisterUserDto } from './dto/register-user.dto';
-import { CreateUserInput } from '../../shared/types/user';
+import { RegisterUserDto } from '../auth/dto/register-user.dto';
+import { CreateUserInput } from './inputs/create-user.input';
 
 @Injectable()
 export class UserMapper {
