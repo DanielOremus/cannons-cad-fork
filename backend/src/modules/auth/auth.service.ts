@@ -27,7 +27,6 @@ export class AuthService {
     private readonly tokenService: TokenService,
     private readonly redisService: RedisService,
     private readonly userRepository: UserRepository,
-    private readonly userMapper: UserMapper,
     private readonly emailProducer: EmailProducer,
     private readonly emailRepository: EmailRepository,
     private readonly transaction: TransactionService,
@@ -42,16 +41,15 @@ export class AuthService {
       throw new AlreadyExistsError('User with this email already exists');
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
-    const createUserInput = this.userMapper.toCreateInput({
-      ...dto,
-      passwordHash,
-    });
 
     const { user, emailConfirmation } = await this.transaction.execute(
       async (tx) => {
         const confirmationCode = randomInt(100000, 999999).toString();
 
-        const user = await this.userRepository.create(createUserInput, tx);
+        const user = await this.userRepository.create(
+          { email: dto.email, name: dto.name, passwordHash },
+          tx,
+        );
         const emailConfirmation = await this.emailRepository.createConfirmation(
           {
             code: confirmationCode,
@@ -97,7 +95,7 @@ export class AuthService {
 
     //send confirmation email
 
-    return { refresh, access, user: this.userMapper.toPrivateProfileDto(user) };
+    return { refresh, access, user };
   }
   async login(dto: LoginUserDto) {
     const user = await this.userRepository.findByEmail(dto.email);
@@ -134,7 +132,7 @@ export class AuthService {
     return {
       refresh,
       access,
-      user: this.userMapper.toPublicProfileDto(user),
+      user,
     };
   }
   async logout(userId: string, tokenFamilyId: string) {

@@ -5,36 +5,37 @@ import {
   PrivateUserResponseDto,
   PublicUserResponseDto,
 } from './dto/user-response.dto';
-import { RegisterUserDto } from '../auth/dto/register-user.dto';
-import { CreateUserInput } from './inputs/create-user.input';
 
 @Injectable()
 export class UserMapper {
+  private maskEmail(email: string, starsNumber: number = 5) {
+    const [address, domain] = email.split('@');
+    if (address.length <= 2) return `${address[0]}*@${domain}`;
+
+    const firstChar = address[0];
+    const lastChar = address[address.length - 1];
+    const stars = '*'.repeat(starsNumber);
+
+    return `${firstChar}${stars}${lastChar}@${domain}`;
+  }
   toDomain(prismaUser: User): UserEntity {
     return { ...prismaUser };
   }
-  toPrivateProfileDto(prismaUser: User): PrivateUserResponseDto {
-    const { name, roles, email, status, emailConfirmed, createdAt } =
-      prismaUser;
+  toPrivateProfileDto(user: UserEntity): PrivateUserResponseDto {
+    const { name, roles, email, status, emailConfirmed, createdAt } = user;
 
     return {
       name,
-      email,
+      email: this.maskEmail(email),
       emailConfirmed,
       roles,
       status,
       createdAt: createdAt.toISOString(),
     };
   }
-  toPublicProfileDto(prismaUser: User): PublicUserResponseDto {
-    const { name, roles, status, createdAt } = prismaUser;
+  toPublicProfileDto(user: UserEntity): PublicUserResponseDto {
+    const { name, roles, status, createdAt } = user;
 
     return { name, roles, status, createdAt: createdAt.toISOString() };
-  }
-  toCreateInput(
-    data: RegisterUserDto & { passwordHash: string },
-  ): CreateUserInput {
-    const { name, email, passwordHash } = data;
-    return { email, name, passwordHash };
   }
 }

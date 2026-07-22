@@ -6,6 +6,7 @@ import {
   Req,
   Res,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -19,14 +20,22 @@ import {
   SkipActiveCheck,
 } from '../../common/decorators/account.decorator';
 import { ConfirmEmailDto } from './dto/confirm-email.dto';
+import { UserMapper } from '../user/user.mapper';
+import { AuthInterceptor } from '../../common/interceptors/auth.interceptor';
+import {
+  ClearRefreshCookie,
+  SetRefreshCookie,
+} from '../../common/decorators/refresh-cookie.decorator';
 
 @Controller('/auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly config: AppConfigService,
+    private readonly userMapper: UserMapper,
   ) {}
   @Post('/register')
+  @SetRefreshCookie()
+  @UseInterceptors(AuthInterceptor)
   @HttpCode(201)
   async register(
     @Body() registerDto: RegisterUserDto,
@@ -34,34 +43,27 @@ export class AuthController {
   ) {
     const { refresh, access, user } =
       await this.authService.register(registerDto);
+    res.locals.refreshToken = refresh;
 
-    const cookie = prepareTokenCookie(
-      refresh,
-      this.config.jwt.refresh.ttl * 1000,
-    );
-    res.cookie(cookie.key, cookie.value, cookie.options);
-
-    return { access, user };
+    return { access, user: this.userMapper.toPrivateProfileDto(user) };
   }
   @Post('/login')
+  @SetRefreshCookie()
+  @UseInterceptors(AuthInterceptor)
   @HttpCode(200)
   async login(
     @Body() loginDto: LoginUserDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     const { refresh, access, user } = await this.authService.login(loginDto);
+    res.locals.refreshToken = refresh;
 
-    const cookie = prepareTokenCookie(
-      refresh,
-      this.config.jwt.refresh.ttl * 1000,
-    );
-    res.cookie(cookie.key, cookie.value, cookie.options);
-
-    return { access, user };
+    return { access, user: this.userMapper.toPrivateProfileDto(user) };
   }
   @Post('/logout')
   @UseGuards(AuthGuard)
   @RequireConfirmedEmailOnly()
+  @ClearRefreshCookie()
   @HttpCode(204)
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     await this.authService.logout(req.user!.id, req.user!.familyId);
@@ -69,6 +71,7 @@ export class AuthController {
   }
   @Post('/refresh')
   @HttpCode(200)
+  @SetRefreshCookie()
   async refresh(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
@@ -77,8 +80,8 @@ export class AuthController {
       const { refresh, access } = await this.authService.refresh(
         req.signedCookies[COOKEY_KEY],
       );
-      const cookie = prepareTokenCookie(refresh, this.config.jwt.refresh.ttl);
-      res.cookie(COOKEY_KEY, cookie);
+      res.locals.refreshToken = refresh;
+
       return { access };
     } catch (error) {
       res.clearCookie(COOKEY_KEY);
