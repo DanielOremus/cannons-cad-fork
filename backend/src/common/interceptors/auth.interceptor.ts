@@ -7,12 +7,23 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Observable, tap } from 'rxjs';
-import { prepareTokenCookie } from '../../modules/auth/cookie.helper';
+import {
+  COOKEY_KEY,
+  prepareTokenCookie,
+} from '../../modules/auth/cookie.helper';
 import { AppConfigService } from '../../core/config/config.service';
+import { Reflector } from '@nestjs/core';
+import {
+  CLEAR_REFRESH_COOKIE_KEY,
+  ClearRefreshCookie,
+  SET_REFRESH_COOKIE_KEY,
+  SetRefreshCookie,
+} from '../decorators/refresh-cookie.decorator';
 
 @Injectable()
 export class AuthInterceptor implements NestInterceptor {
   constructor(
+    private readonly reflector: Reflector,
     @Inject(AppConfigService) private readonly config: AppConfigService,
   ) {}
   intercept(
@@ -20,15 +31,28 @@ export class AuthInterceptor implements NestInterceptor {
     next: CallHandler<any>,
   ): Observable<any> | Promise<Observable<any>> {
     const response = context.switchToHttp().getResponse<Response>();
+
+    const setRefreshCookie = this.reflector.get<boolean>(
+      SET_REFRESH_COOKIE_KEY,
+      context.getHandler(),
+    );
+    const clearRefreshCookie = this.reflector.get<boolean>(
+      CLEAR_REFRESH_COOKIE_KEY,
+      context.getHandler(),
+    );
+
     return next.handle().pipe(
       tap({
         next: () => {
-          if (response.locals.refreshToken) {
+          if (setRefreshCookie && response.locals.refreshToken) {
             const cookie = prepareTokenCookie(
               response.locals.refreshToken,
               this.config.jwt.refresh.ttl * 1000,
             );
-            response.cookie(cookie.key, cookie.value, cookie.options);
+            response.cookie(COOKEY_KEY, cookie.value, cookie.options);
+          }
+          if (clearRefreshCookie) {
+            response.clearCookie(COOKEY_KEY);
           }
         },
       }),

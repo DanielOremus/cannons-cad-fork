@@ -22,6 +22,10 @@ import {
 import { ConfirmEmailDto } from './dto/confirm-email.dto';
 import { UserMapper } from '../user/user.mapper';
 import { AuthInterceptor } from '../../common/interceptors/auth.interceptor';
+import {
+  ClearRefreshCookie,
+  SetRefreshCookie,
+} from '../../common/decorators/refresh-cookie.decorator';
 
 @Controller('/auth')
 export class AuthController {
@@ -30,6 +34,7 @@ export class AuthController {
     private readonly userMapper: UserMapper,
   ) {}
   @Post('/register')
+  @SetRefreshCookie()
   @UseInterceptors(AuthInterceptor)
   @HttpCode(201)
   async register(
@@ -43,6 +48,7 @@ export class AuthController {
     return { access, user: this.userMapper.toPrivateProfileDto(user) };
   }
   @Post('/login')
+  @SetRefreshCookie()
   @UseInterceptors(AuthInterceptor)
   @HttpCode(200)
   async login(
@@ -57,6 +63,7 @@ export class AuthController {
   @Post('/logout')
   @UseGuards(AuthGuard)
   @RequireConfirmedEmailOnly()
+  @ClearRefreshCookie()
   @HttpCode(204)
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     await this.authService.logout(req.user!.id, req.user!.familyId);
@@ -64,6 +71,7 @@ export class AuthController {
   }
   @Post('/refresh')
   @HttpCode(200)
+  @SetRefreshCookie()
   async refresh(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
