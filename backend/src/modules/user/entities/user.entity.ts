@@ -5,7 +5,7 @@ export class UserEntity implements BaseEntityUuid {
   id: string;
   name: string;
   email: string;
-  role: UserRole;
+  roles: UserRole[];
   status: UserStatus;
   emailConfirmed: boolean;
   passwordHash: string;

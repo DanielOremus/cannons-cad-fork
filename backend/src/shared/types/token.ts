@@ -1,4 +1,4 @@
-import { UserRole } from '@project/shared';
+import { UserRole, UserStatus } from '@project/shared';
 
 export const TokenType = {
   access: 'access',
@@ -8,8 +8,10 @@ export type TokenType = (typeof TokenType)[keyof typeof TokenType];
 
 export type TokenPayloads = {
   [TokenType.access]: {
+    userStatus: UserStatus;
+    emailConfirmed: boolean;
     userId: string;
-    userRole: UserRole;
+    userRoles: UserRole[];
     familyId: string;
   };
   [TokenType.refresh]: {

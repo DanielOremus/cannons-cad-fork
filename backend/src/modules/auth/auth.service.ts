@@ -1,27 +1,78 @@
 import { Injectable } from '@nestjs/common';
 import { TokenService } from '../../shared/modules/token/token.service';
-import { LoginUserDto } from '../user/dto/login-user.dto';
-import { RegisterUserDto } from '../user/dto/register-user.dto';
-import { UserService } from '../user/user.service';
-import { randomUUID } from 'crypto';
+import { LoginUserDto } from './dto/login-user.dto';
+import { RegisterUserDto } from './dto/register-user.dto';
+import { randomInt, randomUUID } from 'crypto';
 import { RedisService } from '../../core/redis/redis.service';
 import bcrypt from 'bcrypt';
 import { UserMapper } from '../user/user.mapper';
-import { UnauthorizedError } from '../../shared/errors/app.error';
+import {
+  AlreadyExistsError,
+  AppError,
+  NotFoundError,
+  UnauthorizedError,
+} from '../../shared/errors/app.error';
+import { ErrorCode, getPermissionsFromRoles } from '@project/shared';
+import { EmailProducer } from '../email/email.producer';
+import { UserRepository } from '../user/user.repository';
+import { TransactionService } from '../../core/database/transaction.service';
+import { EmailRepository } from '../email/email.repository';
+import { AppConfigService } from '../../core/config/config.service';
+import { ConfirmEmailDto } from './dto/confirm-email.dto';
+import { AuthUser } from '../../shared/types/user';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly tokenService: TokenService,
-    private readonly userService: UserService,
     private readonly redisService: RedisService,
+    private readonly userRepository: UserRepository,
     private readonly userMapper: UserMapper,
+    private readonly emailProducer: EmailProducer,
+    private readonly emailRepository: EmailRepository,
+    private readonly transaction: TransactionService,
+    private readonly config: AppConfigService,
   ) {}
   async register(dto: RegisterUserDto) {
-    const user = await this.userService.create(dto);
-
     const familyId = randomUUID();
     const refreshJti = randomUUID();
+
+    const exists = await this.userRepository.findByEmail(dto.email);
+    if (exists)
+      throw new AlreadyExistsError('User with this email already exists');
+
+    const passwordHash = await bcrypt.hash(dto.password, 10);
+    const createUserInput = this.userMapper.toCreateInput({
+      ...dto,
+      passwordHash,
+    });
+
+    const { user, emailConfirmation } = await this.transaction.execute(
+      async (tx) => {
+        const confirmationCode = randomInt(100000, 999999).toString();
+
+        const user = await this.userRepository.create(createUserInput, tx);
+        const emailConfirmation = await this.emailRepository.createConfirmation(
+          {
+            code: confirmationCode,
+            email: user.email,
+            expiresAt: new Date(
+              Date.now() + this.config.email.confirmationTtl * 1000,
+            ),
+          },
+          tx,
+        );
+
+        return { user, emailConfirmation };
+      },
+    );
+
+    await this.emailProducer.add('confirmEmail', {
+      code: emailConfirmation.code,
+      target: user.email,
+      userName: user.name,
+      ttl: this.config.email.confirmationTtl,
+    });
 
     const refreshPayload = {
       jti: refreshJti,
@@ -31,10 +82,16 @@ export class AuthService {
 
     await this.redisService.storeRToken(refreshPayload);
 
+    const userPerms = [...getPermissionsFromRoles(...user.roles)];
+
+    await this.redisService.cacheUserPermissions(user.id, userPerms);
+
     const refresh = this.tokenService.generate('refresh', refreshPayload);
     const access = this.tokenService.generate('access', {
+      userStatus: user.status,
+      emailConfirmed: false,
       familyId,
-      userRole: user.role,
+      userRoles: user.roles,
       userId: user.id,
     });
 
@@ -43,11 +100,11 @@ export class AuthService {
     return { refresh, access, user: this.userMapper.toPrivateProfileDto(user) };
   }
   async login(dto: LoginUserDto) {
-    const exists = await this.userService.getByEmail(dto.email);
-    if (!exists) throw new UnauthorizedError();
+    const user = await this.userRepository.findByEmail(dto.email);
+    if (!user) throw new UnauthorizedError();
     const passwordCorrect = await bcrypt.compare(
       dto.password,
-      exists.passwordHash,
+      user.passwordHash,
     );
     if (!passwordCorrect) throw new UnauthorizedError();
 
@@ -57,22 +114,27 @@ export class AuthService {
     const refreshPayload = {
       jti: refreshJti,
       familyId,
-      userId: exists.id,
+      userId: user.id,
     };
+
+    const userPerms = [...getPermissionsFromRoles(...user.roles)];
+    await this.redisService.cacheUserPermissions(user.id, userPerms);
 
     await this.redisService.storeRToken(refreshPayload);
 
     const refresh = this.tokenService.generate('refresh', refreshPayload);
     const access = this.tokenService.generate('access', {
+      userStatus: user.status,
+      emailConfirmed: user.emailConfirmed,
       familyId,
-      userRole: exists.role,
-      userId: exists.id,
+      userRoles: user.roles,
+      userId: user.id,
     });
 
     return {
       refresh,
       access,
-      user: this.userMapper.toPublicProfileDto(exists),
+      user: this.userMapper.toPublicProfileDto(user),
     };
   }
   async logout(userId: string, tokenFamilyId: string) {
@@ -94,7 +156,7 @@ export class AuthService {
       throw new UnauthorizedError();
     }
 
-    const user = await this.userService.getById(tokenExists.userId);
+    const user = await this.userRepository.findById(tokenExists.userId);
     if (!user) throw new UnauthorizedError();
 
     await this.redisService.revokeRToken(tokenExists.jti);
@@ -107,13 +169,45 @@ export class AuthService {
 
     await this.redisService.storeRToken(refreshPayload);
 
+    const userPerms = [...getPermissionsFromRoles(...user.roles)];
+
+    await this.redisService.cacheUserPermissions(user.id, userPerms);
+
     const refresh = this.tokenService.generate('refresh', refreshPayload);
     const access = this.tokenService.generate('access', {
+      userStatus: user.status,
+      emailConfirmed: user.emailConfirmed,
       familyId: tokenExists.familyId,
       userId: tokenExists.userId,
-      userRole: user.role,
+      userRoles: user.roles,
     });
 
     return { refresh, access };
+  }
+
+  async confirmEmail(authUser: AuthUser, dto: ConfirmEmailDto) {
+    const user = await this.userRepository.findById(authUser.id);
+    if (!user) throw new NotFoundError('User');
+
+    const confirmation = await this.emailRepository.findByEmail(user.email);
+    if (!confirmation) throw new NotFoundError('Confirmation');
+
+    if (confirmation.expiresAt.getTime() <= new Date().getTime()) {
+      await this.emailRepository.deleteByEmail(confirmation.email);
+      throw new AppError('Code expired', ErrorCode.CODE_EXPIRED);
+    }
+    if (confirmation.code !== dto.code) {
+      if (confirmation.attempts >= 2) {
+        await this.emailRepository.deleteByEmail(confirmation.email);
+        throw new AppError('Out of attempts', ErrorCode.TOO_MANY_ATTEMPTS);
+      }
+      await this.emailRepository.incrementAttempt(confirmation.email);
+      // throw new ValidationError([], "Code does not match")
+      throw new AppError('Code does not match', ErrorCode.VALIDATION_FAILED);
+    }
+    await this.transaction.execute(async (tx) => {
+      await this.emailRepository.deleteByEmail(confirmation.email, tx);
+      await this.userRepository.update(user.id, { emailConfirmed: true }, tx);
+    });
   }
 }

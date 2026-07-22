@@ -21,7 +21,17 @@ export class TokenService {
     private readonly config: AppConfigService,
     private readonly jwtService: JwtService,
   ) {}
-  tryParseBearer(bearer: string) {}
+  tryParseBearer(bearer?: string): TokenPayloads['access'] | null {
+    if (!bearer || !bearer.startsWith('Bearer ')) return null;
+    const token = bearer.slice(7);
+    try {
+      return this.jwtService.verify<TokenPayloads['access']>(token, {
+        secret: this.config.jwt.access.secret,
+      });
+    } catch (error) {
+      return null;
+    }
+  }
   generate<T extends TokenType>(type: T, payload: TokenPayloads[T]) {
     const { secret, ttl } = this.config.jwt[type];
     return this.jwtService.sign(payload, {
@@ -33,10 +43,9 @@ export class TokenService {
     type: T,
     token: string,
   ): VerifySuccessReturn<TokenPayloads[T]> | VerifyFailureReturn {
-    const { secret } = this.config.jwt[type];
     try {
       const payload = this.jwtService.verify<TokenPayloads[T]>(token, {
-        secret,
+        secret: this.config.jwt[type].secret,
       });
       return { success: true, data: payload };
     } catch (error) {

@@ -1,19 +1,29 @@
-import { Controller, Get, Res } from '@nestjs/common';
-import { type Response, type Request } from 'express';
+import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
+import { type Request } from 'express';
 import { UserService } from './user.service';
 import { type PaginationDto } from '@project/shared';
-import { randomUUID } from 'crypto';
+import { RequirePermission } from '../../common/decorators/require-permission.decorator';
+import { AuthGuard } from '../../common/guards/auth.guard';
 
 @Controller('/users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get('/me')
-  async me(@Res() res: Response<{}, {}>) {
-    const user = await this.userService.getById(randomUUID());
-    return user;
+  @UseGuards(AuthGuard)
+  @RequirePermission('user', 'read')
+  async me(@Req() req: Request) {
+    const id = req.user!.id;
+    return await this.userService.getProfile(id, id, req.permissionScope!);
   }
-  // @Get()
-  // async findAll(@Query() query: PaginationDto) {
-  //   const users = await this.userService.getPaginatedList(query);
-  // }
+  @Get('/:id')
+  @UseGuards(AuthGuard)
+  @RequirePermission('user', 'read')
+  async getById(@Req() req: Request, @Param('id') id: string) {
+    const currentUserId = req.user!.id;
+    return await this.userService.getProfile(
+      id,
+      currentUserId,
+      req.permissionScope!,
+    );
+  }
 }

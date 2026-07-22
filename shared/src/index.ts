@@ -5,6 +5,15 @@ export { ErrorCode } from './types/error.code.js';
 export { CharacterGender } from './types/character/character.gender.js';
 export { CharacterFlag } from './types/character/character.flag.js';
 export { DriverCategory } from './types/driver.category.js';
+export { PermissionAction } from './types/permission/permission.action.js';
+export { PermissionResource } from './types/permission/permission.resource.js';
+export { PermissionScope } from './types/permission/permission.scope.js';
+export {
+  type Permission,
+  ResourceActions,
+  type ResourceAction,
+  type RequiredPermission,
+} from './types/permission/index.js';
 
 //Dto
 export type { PaginationDto, PaginationRequest } from './dto/pagination.js';
@@ -33,3 +42,13 @@ export {
   privateUserResponseSchema,
   publicUserResponseSchema,
 } from './validators/user.schema.js';
+
+//Utils
+
+export {
+  hasPermission,
+  hasPermissionFromSet,
+  hasPermissionFromRoles,
+  getPermissionsFromRoles,
+  accountActive,
+} from './utils/auth.helpers.js';
