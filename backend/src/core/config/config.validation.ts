@@ -30,6 +30,10 @@ const configSchema = z.object({
     password: z.string(),
     secure: z.coerce.boolean(),
   }),
+  email: z.object({
+    username: z.string(),
+    confirmationTtl: z.coerce.number().int().positive(),
+  }),
 });
 
 export function validate(config: Record<string, unknown>) {

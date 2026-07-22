@@ -2,7 +2,7 @@ export type EmailJobPayloads = {
   confirmEmail: {
     target: string;
     userName: string;
-    expireText: string;
+    ttl: number;
     code: string;
   };
   changeEmail: {};

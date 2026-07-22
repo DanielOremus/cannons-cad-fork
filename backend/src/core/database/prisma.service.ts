@@ -17,6 +17,7 @@ export class PrismaService
   constructor(private readonly config: AppConfigService) {
     const adapter = new PrismaPg({ connectionString: config.database.url });
     super({ adapter });
+    // super.$extends()
   }
   async onModuleInit() {
     try {

@@ -23,6 +23,9 @@ export class AppConfigService {
   get port() {
     return this.config.port;
   }
+  get email() {
+    return this.config.email;
+  }
   get env() {
     return this.config.env;
   }

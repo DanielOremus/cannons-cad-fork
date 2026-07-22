@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { createTransport, type Transporter } from 'nodemailer';
 import { AppConfigService } from '../config/config.service';
+import SMTPPool from 'nodemailer/lib/smtp-pool';
 
 @Injectable()
 export class MailerService implements OnModuleInit, OnModuleDestroy {
@@ -13,16 +14,22 @@ export class MailerService implements OnModuleInit, OnModuleDestroy {
   private readonly mailer: Transporter;
   constructor(private readonly config: AppConfigService) {
     const mailerConfig = this.config.mailer;
-    this.mailer = createTransport({
-      host: mailerConfig.host,
-      port: mailerConfig.port,
-      pool: true,
-      secure: mailerConfig.secure,
-      auth: {
-        user: mailerConfig.user,
-        pass: mailerConfig.password,
-      },
-    });
+    const senderName = this.config.email.username;
+    this.mailer = createTransport<SMTPPool.SentMessageInfo>(
+      {
+        host: mailerConfig.host,
+        pool: true,
+        port: mailerConfig.port,
+        secure: mailerConfig.secure,
+        auth: {
+          user: mailerConfig.user,
+          pass: mailerConfig.password,
+        },
+      } as SMTPPool.Options,
+      {
+        from: `${senderName} <${mailerConfig.user}>`,
+      } as SMTPPool.Options,
+    );
   }
 
   async sendMail(to: string, subject: string, html: string) {

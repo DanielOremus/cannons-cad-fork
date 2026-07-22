@@ -32,6 +32,10 @@ export const registerConfig = registerAs('app', () => {
       secure: process.env.MAILER_SECURE,
       password: process.env.MAILER_PASSWORD,
     },
+    email: {
+      username: process.env.EMAIL_USERNAME,
+      confirmationTtl: process.env.EMAIL_CONFIRMATION_TTL,
+    },
   };
   return validate(config);
 });
