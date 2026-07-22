@@ -5,11 +5,19 @@ import {
   PrivateUserResponseDto,
   PublicUserResponseDto,
 } from './dto/user-response.dto';
-import { RegisterUserDto } from '../auth/dto/register-user.dto';
-import { CreateUserInput } from './inputs/create-user.input';
 
 @Injectable()
 export class UserMapper {
+  private maskEmail(email: string, starsNumber: number = 5) {
+    const [address, domain] = email.split('@');
+    if (address.length <= 2) return `${address[0]}*@${domain}`;
+
+    const firstChar = address[0];
+    const lastChar = address[address.length - 1];
+    const stars = '*'.repeat(starsNumber);
+
+    return `${firstChar}${stars}${lastChar}@${domain}`;
+  }
   toDomain(prismaUser: User): UserEntity {
     return { ...prismaUser };
   }
@@ -18,7 +26,7 @@ export class UserMapper {
 
     return {
       name,
-      email,
+      email: this.maskEmail(email),
       emailConfirmed,
       roles,
       status,
