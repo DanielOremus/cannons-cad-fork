@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '../../core/mailer/mailer.service';
-import { EmailJobName, EmailJobPayloads } from './email.jobs';
+import { EmailJobName, EmailJobPayloads } from './queue/email.jobs';
 import path from 'path';
 import ejs from 'ejs';
 

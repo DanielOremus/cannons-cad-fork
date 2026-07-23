@@ -1,39 +1,25 @@
 import { UserRole, UserStatus } from '@project/shared';
-import { Entity, PrimaryKey, Property } from '@mikro-orm/decorators/legacy';
-import { EntityName } from '@mikro-orm/core';
-import { BaseEntity } from '../../../shared/entities/base.entity';
-// export class UserEntity implements BaseEntityUuid {
-//   id: string;
-//   name: string;
-//   email: string;
-//   roles: UserRole[];
-//   status: UserStatus;
-//   emailConfirmed: boolean;
-//   passwordHash: string;
-//   createdAt: Date;
-// }
-@Entity()
-export class UserEntity extends BaseEntity<string> {
-  [EntityName]?: 'User';
+import { p, defineEntity } from '@mikro-orm/core';
+import { BaseSensitiveSchema } from '../../../shared/entities/base.entity';
+import { CharacterEntity } from '../../character/entities/character.entity';
 
-  @Property()
-  name!: string;
+const UserSchema = defineEntity({
+  name: 'User',
+  extends: BaseSensitiveSchema,
+  properties: {
+    name: p.string(),
+    email: p.string().unique(),
+    roles: p
+      .enum(() => UserRole)
+      .array()
+      .default([UserRole.REGISTERED]),
+    status: p.enum(() => UserStatus).default(UserStatus.PENDING),
+    emailConfirmed: p.boolean().default(false),
+    passwordHash: p.string(),
+    createdAt: p.datetime().default(new Date()),
+    characters: () => p.oneToMany(CharacterEntity).mappedBy('user'),
+  },
+});
 
-  @Property()
-  email!: string;
-
-  @Property()
-  roles!: UserRole[];
-
-  @Property()
-  status: UserStatus = UserStatus.PENDING;
-
-  @Property()
-  emailConfirmed: boolean = false;
-
-  @Property()
-  passwordHash!: string;
-
-  @Property()
-  createdAt: Date = new Date();
-}
+export class UserEntity extends UserSchema.class {}
+UserSchema.setClass(UserEntity);

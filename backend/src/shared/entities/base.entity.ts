@@ -1,6 +1,20 @@
-import { PrimaryKey } from '@mikro-orm/decorators/legacy';
+import { defineEntity, p } from '@mikro-orm/core';
+import { randomUUID } from 'crypto';
 
-export abstract class BaseEntity<T extends number | string> {
-  @PrimaryKey()
-  id!: T;
-}
+export const BaseSchema = defineEntity({
+  name: 'BaseEntity',
+  abstract: true,
+  properties: {
+    id: p.integer().primary(),
+  },
+});
+
+export const BaseSensitiveSchema = defineEntity({
+  name: 'BaseSensitiveEntity',
+  properties: {
+    id: p
+      .uuid()
+      .primary()
+      .onCreate(() => randomUUID()),
+  },
+});

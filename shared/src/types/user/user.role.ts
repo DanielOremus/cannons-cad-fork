@@ -1,14 +1,14 @@
 import { type Permission } from '../permission/index.js';
 
-export const UserRole = [
-  'POLICE',
-  'CIVILIAN',
-  'DISPATCH',
-  'ADMIN',
-  'REGISTERED',
-] as const;
+export const UserRole = {
+  POLICE: 'POLICE',
+  CIVILIAN: 'CIVILIAN',
+  DISPATCH: 'DISPATCH',
+  ADMIN: 'ADMIN',
+  REGISTERED: 'REGISTERED',
+} as const;
 
-export type UserRole = (typeof UserRole)[number];
+export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
 export const RolePermissions = {
   ADMIN: [],

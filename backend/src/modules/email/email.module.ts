@@ -2,11 +2,11 @@ import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { MailerModule } from '../../core/mailer/mailer.module';
 import { EmailService } from './email.service';
-import { EmailConsumer } from './email.consumer';
-import { EmailProducer } from './email.producer';
+import { EmailConsumer } from './queue/email.consumer';
+import { EmailProducer } from './queue/email.producer';
 import { EmailRepository } from './email.repository';
-import { EmailMapper } from './email.mapper';
-import { PrismaModule } from '../../core/database/database.module';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { EmailConfirmationEntity } from './entities/email-confirmation.entity';
 
 @Module({
   imports: [
@@ -21,15 +21,9 @@ import { PrismaModule } from '../../core/database/database.module';
       },
     }),
     MailerModule,
-    PrismaModule,
+    MikroOrmModule.forFeature([EmailConfirmationEntity]),
   ],
-  providers: [
-    EmailMapper,
-    EmailService,
-    EmailRepository,
-    EmailConsumer,
-    EmailProducer,
-  ],
+  providers: [EmailService, EmailRepository, EmailConsumer, EmailProducer],
   exports: [EmailProducer, EmailRepository],
 })
 export class EmailModule {}

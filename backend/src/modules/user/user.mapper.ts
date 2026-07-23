@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '../../generated/prisma/client';
 import { UserEntity } from './entities/user.entity';
 import {
   PrivateUserResponseDto,
@@ -17,9 +16,6 @@ export class UserMapper {
     const stars = '*'.repeat(starsNumber);
 
     return `${firstChar}${stars}${lastChar}@${domain}`;
-  }
-  toDomain(prismaUser: User): UserEntity {
-    return { ...prismaUser };
   }
   toPrivateProfileDto(user: UserEntity): PrivateUserResponseDto {
     const { name, roles, email, status, emailConfirmed, createdAt } = user;

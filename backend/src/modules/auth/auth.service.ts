@@ -12,7 +12,7 @@ import {
   UnauthorizedError,
 } from '../../shared/errors/app.error';
 import { ErrorCode, getPermissionsFromRoles } from '@project/shared';
-import { EmailProducer } from '../email/email.producer';
+import { EmailProducer } from '../email/queue/email.producer';
 import { UserRepository } from '../user/user.repository';
 import { EmailRepository } from '../email/email.repository';
 import { AppConfigService } from '../../core/config/config.service';
@@ -49,25 +49,25 @@ export class AuthService {
           name: dto.name,
           passwordHash,
         });
-        const emailConfirmation = await this.emailRepository.createConfirmation(
-          {
-            code: confirmationCode,
-            email: user.email,
-            expiresAt: new Date(
-              Date.now() + this.config.email.confirmationTtl * 1000,
-            ),
-          },
-        );
+        // const emailConfirmation = await this.emailRepository.createConfirmation(
+        //   {
+        //     code: confirmationCode,
+        //     email: user.email,
+        //     expiresAt: new Date(
+        //       Date.now() + this.config.email.confirmationTtl * 1000,
+        //     ),
+        //   },
+        // );
         return { user, emailConfirmation };
       },
     );
 
-    await this.emailProducer.add('confirmEmail', {
-      code: emailConfirmation.code,
-      target: user.email,
-      userName: user.name,
-      ttl: this.config.email.confirmationTtl,
-    });
+    // await this.emailProducer.add('confirmEmail', {
+    //   code: emailConfirmation.code,
+    //   target: user.email,
+    //   userName: user.name,
+    //   ttl: this.config.email.confirmationTtl,
+    // });
 
     const refreshPayload = {
       jti: refreshJti,
