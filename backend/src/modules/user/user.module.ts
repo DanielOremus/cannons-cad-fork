@@ -3,12 +3,22 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { UserRepository } from './user.repository';
 import { UserMapper } from './user.mapper';
-import { PrismaModule } from '../../core/database/prisma.module';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { UserEntity } from './entities/user.entity';
+import { DatabaseModule } from '../../core/database/database.module';
+import { OrmUserRepository } from './infrastructure/orm-user.repository';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [MikroOrmModule.forFeature([UserEntity]), DatabaseModule],
   controllers: [UserController],
-  providers: [UserService, UserRepository, UserMapper],
+  providers: [
+    UserService,
+    {
+      provide: UserRepository,
+      useClass: OrmUserRepository,
+    },
+    UserMapper,
+  ],
   exports: [UserRepository, UserMapper],
 })
 export class UserModule {}

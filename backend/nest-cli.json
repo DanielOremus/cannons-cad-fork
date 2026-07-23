@@ -4,9 +4,11 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true,
+    "builder": "swc",
+    "typeCheck": false,
     "assets": [
       {
-        "include": "modules/email/templates/**/*.ejs",
+        "include": "src/**/*.ejs",
         "outDir": "dist/src"
       }
     ],

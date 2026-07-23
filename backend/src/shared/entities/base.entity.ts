@@ -1,6 +1,6 @@
-export interface BaseEntityUuid {
-  id: string;
-}
-export interface BaseEntity {
-  id: number;
+import { PrimaryKey } from '@mikro-orm/decorators/legacy';
+
+export abstract class BaseEntity<T extends number | string> {
+  @PrimaryKey()
+  id!: T;
 }

@@ -1,8 +1,8 @@
 import { registerAs } from '@nestjs/config';
 import { validate } from './config.validation';
 
-export const registerConfig = registerAs('app', () => {
-  const config = {
+export const buildConfig = () => {
+  return {
     port: process.env.PORT,
     env: process.env.ENV,
     cookieSecret: process.env.COOKIE_SECRET,
@@ -23,6 +23,11 @@ export const registerConfig = registerAs('app', () => {
       password: process.env.REDIS_PASSWORD,
     },
     database: {
+      host: process.env.DATABASE_HOST,
+      port: process.env.DATABASE_PORT,
+      user: process.env.DATABASE_USER,
+      password: process.env.DATABASE_PASSWORD,
+      name: process.env.DATABASE_NAME,
       url: process.env.DATABASE_URL,
     },
     mailer: {
@@ -37,5 +42,9 @@ export const registerConfig = registerAs('app', () => {
       confirmationTtl: process.env.EMAIL_CONFIRMATION_TTL,
     },
   };
+};
+
+export const registerConfig = registerAs('app', () => {
+  const config = buildConfig();
   return validate(config);
 });

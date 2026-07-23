@@ -5,13 +5,8 @@ import {
   PublicUserResponseDto,
   PrivateUserResponseDto,
 } from './dto/user-response.dto';
-import { RegisterUserDto } from '../auth/dto/register-user.dto';
-import * as bcrypt from 'bcrypt';
 import { UserEntity } from './entities/user.entity';
-import {
-  AlreadyExistsError,
-  NotFoundError,
-} from '../../shared/errors/app.error';
+import { NotFoundError } from '../../shared/errors/app.error';
 import { PermissionScope } from '@project/shared';
 
 @Injectable()

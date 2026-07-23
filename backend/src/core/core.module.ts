@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppConfigModule } from './config/config.module';
-import { PrismaModule } from './database/prisma.module';
+import { DatabaseModule } from './database/database.module';
 import { RedisModule } from './redis/redis.module';
 import { BullModule } from '@nestjs/bullmq';
 import { AppConfigService } from './config/config.service';
@@ -9,7 +9,7 @@ import { MailerModule } from './mailer/mailer.module';
 @Module({
   imports: [
     AppConfigModule,
-    PrismaModule,
+    DatabaseModule,
     RedisModule,
     MailerModule,
     BullModule.forRootAsync({

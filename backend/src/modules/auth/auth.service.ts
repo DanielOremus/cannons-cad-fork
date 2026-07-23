@@ -5,7 +5,6 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { randomInt, randomUUID } from 'crypto';
 import { RedisService } from '../../core/redis/redis.service';
 import bcrypt from 'bcrypt';
-import { UserMapper } from '../user/user.mapper';
 import {
   AlreadyExistsError,
   AppError,
@@ -15,11 +14,11 @@ import {
 import { ErrorCode, getPermissionsFromRoles } from '@project/shared';
 import { EmailProducer } from '../email/email.producer';
 import { UserRepository } from '../user/user.repository';
-import { TransactionService } from '../../core/database/transaction.service';
 import { EmailRepository } from '../email/email.repository';
 import { AppConfigService } from '../../core/config/config.service';
 import { ConfirmEmailDto } from './dto/confirm-email.dto';
 import { AuthUser } from '../../shared/types/user';
+import { UnitOfWork } from '../../core/database/unit-of-work';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +28,7 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private readonly emailProducer: EmailProducer,
     private readonly emailRepository: EmailRepository,
-    private readonly transaction: TransactionService,
+    private readonly uow: UnitOfWork,
     private readonly config: AppConfigService,
   ) {}
   async register(dto: RegisterUserDto) {
@@ -42,14 +41,14 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
 
-    const { user, emailConfirmation } = await this.transaction.execute(
-      async (tx) => {
+    const { user, emailConfirmation } = await this.uow.withTransaction(
+      async () => {
         const confirmationCode = randomInt(100000, 999999).toString();
-
-        const user = await this.userRepository.create(
-          { email: dto.email, name: dto.name, passwordHash },
-          tx,
-        );
+        const user = await this.userRepository.create({
+          email: dto.email,
+          name: dto.name,
+          passwordHash,
+        });
         const emailConfirmation = await this.emailRepository.createConfirmation(
           {
             code: confirmationCode,
@@ -58,9 +57,7 @@ export class AuthService {
               Date.now() + this.config.email.confirmationTtl * 1000,
             ),
           },
-          tx,
         );
-
         return { user, emailConfirmation };
       },
     );
@@ -203,9 +200,9 @@ export class AuthService {
       // throw new ValidationError([], "Code does not match")
       throw new AppError('Code does not match', ErrorCode.VALIDATION_FAILED);
     }
-    await this.transaction.execute(async (tx) => {
-      await this.emailRepository.deleteByEmail(confirmation.email, tx);
-      await this.userRepository.update(user.id, { emailConfirmed: true }, tx);
+    await this.uow.withTransaction(async () => {
+      await this.emailRepository.deleteByEmail(confirmation.email);
+      await this.userRepository.update(user.id, { emailConfirmed: true });
     });
   }
 }

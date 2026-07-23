@@ -4,10 +4,10 @@ import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
 import { EmailModule } from '../email/email.module';
 import { TokenModule } from '../../shared/modules/token/token.module';
-import { PrismaModule } from '../../core/database/prisma.module';
+import { DatabaseModule } from '../../core/database/database.module';
 
 @Module({
-  imports: [UserModule, EmailModule, TokenModule, PrismaModule],
+  imports: [UserModule, EmailModule, TokenModule, DatabaseModule],
   controllers: [AuthController],
   providers: [AuthService],
 })

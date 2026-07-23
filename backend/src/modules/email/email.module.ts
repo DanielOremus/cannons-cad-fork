@@ -6,7 +6,7 @@ import { EmailConsumer } from './email.consumer';
 import { EmailProducer } from './email.producer';
 import { EmailRepository } from './email.repository';
 import { EmailMapper } from './email.mapper';
-import { PrismaModule } from '../../core/database/prisma.module';
+import { PrismaModule } from '../../core/database/database.module';
 
 @Module({
   imports: [
