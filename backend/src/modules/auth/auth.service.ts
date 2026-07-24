@@ -49,15 +49,15 @@ export class AuthService {
           name: dto.name,
           passwordHash,
         });
-        // const emailConfirmation = await this.emailRepository.createConfirmation(
-        //   {
-        //     code: confirmationCode,
-        //     email: user.email,
-        //     expiresAt: new Date(
-        //       Date.now() + this.config.email.confirmationTtl * 1000,
-        //     ),
-        //   },
-        // );
+        const emailConfirmation = await this.emailRepository.createConfirmation(
+          {
+            code: confirmationCode,
+            email: user.email,
+            expiresAt: new Date(
+              Date.now() + this.config.email.confirmationTtl * 1000,
+            ),
+          },
+        );
         return { user, emailConfirmation };
       },
     );
@@ -188,21 +188,27 @@ export class AuthService {
     if (!confirmation) throw new NotFoundError('Confirmation');
 
     if (confirmation.expiresAt.getTime() <= new Date().getTime()) {
-      await this.emailRepository.deleteByEmail(confirmation.email);
+      await this.emailRepository.delete(confirmation);
+      //must be outside the transaction, we don't want to revert confirmation removal
+      await this.uow.saveChanges();
       throw new AppError('Code expired', ErrorCode.CODE_EXPIRED);
     }
     if (confirmation.code !== dto.code) {
       if (confirmation.attempts >= 2) {
-        await this.emailRepository.deleteByEmail(confirmation.email);
+        await this.emailRepository.delete(confirmation);
+        //must be outside the transaction, we don't want to revert confirmation removal
+        await this.uow.saveChanges();
         throw new AppError('Out of attempts', ErrorCode.TOO_MANY_ATTEMPTS);
       }
-      await this.emailRepository.incrementAttempt(confirmation.email);
+      confirmation.incrementAttempt();
+      await this.uow.saveChanges();
+      //must be outside the transaction, we don't want to revert confirmation removal
       // throw new ValidationError([], "Code does not match")
       throw new AppError('Code does not match', ErrorCode.VALIDATION_FAILED);
     }
     await this.uow.withTransaction(async () => {
-      await this.emailRepository.deleteByEmail(confirmation.email);
-      await this.userRepository.update(user.id, { emailConfirmed: true });
+      await this.emailRepository.delete(confirmation);
+      user.emailConfirmed = true;
     });
   }
 }

@@ -17,7 +17,8 @@ const UserSchema = defineEntity({
     emailConfirmed: p.boolean().default(false),
     passwordHash: p.string(),
     createdAt: p.datetime().default(new Date()),
-    characters: () => p.oneToMany(CharacterEntity).mappedBy('user'),
+    characters: () =>
+      p.oneToMany(CharacterEntity).mappedBy('user').deleteRule('set null'),
   },
 });
 

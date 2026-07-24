@@ -15,11 +15,11 @@ export class OrmUserRepository extends UserRepository {
   async findByEmail(email: string): Promise<UserEntity | null> {
     return await this.em.findOne(this.entity, { email });
   }
-  create(input: CreateUserInput): Promise<UserEntity> {
-    throw new Error('Method not implemented.');
+  async create(input: CreateUserInput): Promise<UserEntity> {
+    return this.em.create(this.entity, input);
   }
-  update(id: string, input: UpdateUserInput): Promise<UserEntity | null> {
-    throw new Error('Method not implemented.');
+  async update(id: string, input: UpdateUserInput): Promise<UserEntity | null> {
+    return this.em.upsert(this.entity, { id, ...input });
   }
   async delete(id: string): Promise<void> {
     const ref = this.em.getReference(this.entity, id);

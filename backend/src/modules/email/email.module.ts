@@ -7,6 +7,7 @@ import { EmailProducer } from './queue/email.producer';
 import { EmailRepository } from './email.repository';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { EmailConfirmationEntity } from './entities/email-confirmation.entity';
+import { OrmEmailRepository } from './infrastructure/orm.email.repository';
 
 @Module({
   imports: [
@@ -23,7 +24,15 @@ import { EmailConfirmationEntity } from './entities/email-confirmation.entity';
     MailerModule,
     MikroOrmModule.forFeature([EmailConfirmationEntity]),
   ],
-  providers: [EmailService, EmailRepository, EmailConsumer, EmailProducer],
+  providers: [
+    EmailService,
+    {
+      provide: EmailRepository,
+      useClass: OrmEmailRepository,
+    },
+    EmailConsumer,
+    EmailProducer,
+  ],
   exports: [EmailProducer, EmailRepository],
 })
 export class EmailModule {}

@@ -6,7 +6,7 @@ import { UserMapper } from './user.mapper';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { UserEntity } from './entities/user.entity';
 import { DatabaseModule } from '../../core/database/database.module';
-import { OrmUserRepository } from './infrastructure/orm-user.repository';
+import { OrmUserRepository } from './infrastructure/orm.user.repository';
 import { TokenModule } from '../../shared/modules/token/token.module';
 
 @Module({

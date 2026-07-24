@@ -10,7 +10,7 @@ export class UnitOfWork {
     });
     return toReturn;
   }
-  async commit(): Promise<void> {
+  async saveChanges(): Promise<void> {
     await this.em.flush();
   }
 }
