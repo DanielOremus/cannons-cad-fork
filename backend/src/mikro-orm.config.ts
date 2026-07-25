@@ -20,4 +20,11 @@ export default defineConfig({
   entities: ['dist/modules/**/*.entity.js', 'dist/shared/entities/*.entity.js'],
   entitiesTs: ['src/modules/**/*.entity.ts', 'src/shared/entities/*.entity.ts'],
   extensions: [Migrator],
+  migrations: {
+    transactional: true,
+    safe: false,
+    disableForeignKeys: false,
+    allOrNothing: true,
+    dropTables: true,
+  },
 });

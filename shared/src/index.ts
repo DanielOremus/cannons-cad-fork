@@ -25,12 +25,24 @@ export type {
   PrivateUserResponseDto,
 } from './dto/user.js';
 
+export type {
+  CreateCharacterDto,
+  CreateCharacterRequest,
+} from './dto/character/create-character.js';
+export type {
+  SearchCharacterDto,
+  SearchCharacterRequest,
+  SearchCharacterResponseDto,
+} from './dto/character/search-character.js';
+
 //Validation schemas
 
 export {
   characterCreateSchema,
   characterSearchSchema,
+  searchCharacterResponseSchema,
 } from './validators/character.schema.js';
+
 export { paginationSchema } from './validators/pagination.schema.js';
 
 export {

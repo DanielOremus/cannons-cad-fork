@@ -7,10 +7,9 @@ export const EmailConfirmationSchema = defineEntity({
   extends: BaseSchema,
   properties: {
     email: p.string().unique(),
-    user: () => p.oneToOne(UserEntity).mappedBy('email'),
-    code: p.decimal('string').columnType('decimal(6,0)'),
+    code: p.decimal('string').precision(6).scale(0),
     attempts: p.tinyint().default(0),
-    createdAt: p.datetime().default(new Date()),
+    createdAt: p.datetime().onCreate(() => new Date()),
     expiresAt: p.datetime(),
   },
 });

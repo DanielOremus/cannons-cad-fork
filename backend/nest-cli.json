@@ -8,7 +8,7 @@
     "typeCheck": true,
     "assets": [
       {
-        "include": "src/**/*.ejs",
+        "include": "**/*.ejs",
         "outDir": "dist/src"
       }
     ],

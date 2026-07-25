@@ -1,11 +1,405 @@
 {
   "name": "public",
   "namespaces": [
+    "ppg",
     "public"
   ],
   "tables": [
     {
-      "name": "user_entity",
+      "name": "base_sensitive_entity",
+      "schema": "public",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        }
+      },
+      "indexes": [
+        {
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "keyName": "base_sensitive_entity_pkey",
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "triggers": [],
+      "foreignKeys": {},
+      "comment": null
+    },
+    {
+      "name": "character",
+      "schema": "public",
+      "columns": {
+        "address": {
+          "name": "address",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "dob": {
+          "name": "dob",
+          "type": "date",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "date"
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "flags": {
+          "name": "flags",
+          "type": "text[]",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "'{}'",
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "array"
+        },
+        "gender": {
+          "name": "gender",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [
+            "MALE",
+            "FEMALE"
+          ],
+          "mappedType": "enum"
+        },
+        "has_gun_permit": {
+          "name": "has_gun_permit",
+          "type": "boolean",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "false",
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "boolean"
+        },
+        "id": {
+          "name": "id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "phone_number": {
+          "name": "phone_number",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        }
+      },
+      "indexes": [
+        {
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "keyName": "character_pkey",
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [
+        {
+          "name": "character_flags_check",
+          "expression": "flags <@ ARRAY['MENTAL_HEALTH'::text, 'BOLO'::text, 'WARRANT'::text]",
+          "definition": "CHECK ((flags <@ ARRAY['MENTAL_HEALTH'::text, 'BOLO'::text, 'WARRANT'::text]))",
+          "columnName": "flags"
+        },
+        {
+          "name": "character_gender_check",
+          "expression": "\"gender\" in ('MALE', 'FEMALE')",
+          "definition": "check (\"gender\" in ('MALE', 'FEMALE'))",
+          "columnName": "gender"
+        }
+      ],
+      "triggers": [],
+      "foreignKeys": {
+        "character_user_id_foreign": {
+          "columnNames": [
+            "user_id"
+          ],
+          "constraintName": "character_user_id_foreign",
+          "localTableName": "public.character",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.user"
+        }
+      },
+      "comment": null
+    },
+    {
+      "name": "email_confirmation",
+      "schema": "public",
+      "columns": {
+        "attempts": {
+          "name": "attempts",
+          "type": "smallint",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "0",
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "smallint"
+        },
+        "code": {
+          "name": "code",
+          "type": "numeric(6,0)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": 6,
+          "scale": 0,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "decimal"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamptz(6)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 6,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "datetime"
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": true,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamptz(6)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 6,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "datetime"
+        },
+        "id": {
+          "name": "id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        }
+      },
+      "indexes": [
+        {
+          "columnNames": [
+            "email"
+          ],
+          "composite": false,
+          "constraint": true,
+          "keyName": "email_confirmation_email_unique",
+          "primary": false,
+          "unique": true
+        },
+        {
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "keyName": "email_confirmation_pkey",
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "triggers": [],
+      "foreignKeys": {},
+      "comment": null
+    },
+    {
+      "name": "user",
       "schema": "public",
       "columns": {
         "created_at": {
@@ -32,7 +426,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "unique": false,
+          "unique": true,
           "length": 255,
           "precision": null,
           "scale": null,
@@ -121,7 +515,7 @@
           "length": null,
           "precision": null,
           "scale": null,
-          "default": null,
+          "default": "'{REGISTERED}'",
           "comment": null,
           "collation": null,
           "enumItems": [],
@@ -129,40 +523,74 @@
         },
         "status": {
           "name": "status",
-          "type": "varchar(255)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
           "unique": false,
-          "length": 255,
+          "length": null,
           "precision": null,
           "scale": null,
           "default": "'PENDING'",
           "comment": null,
           "collation": null,
-          "enumItems": [],
-          "mappedType": "string"
+          "enumItems": [
+            "APPROVED",
+            "REJECTED",
+            "PENDING",
+            "SUSPENDED"
+          ],
+          "mappedType": "enum"
         }
       },
       "indexes": [
+        {
+          "columnNames": [
+            "email"
+          ],
+          "composite": false,
+          "constraint": true,
+          "keyName": "user_email_unique",
+          "primary": false,
+          "unique": true
+        },
         {
           "columnNames": [
             "id"
           ],
           "composite": false,
           "constraint": true,
-          "keyName": "user_entity_pkey",
+          "keyName": "user_pkey",
           "primary": true,
           "unique": true
         }
       ],
-      "checks": [],
+      "checks": [
+        {
+          "name": "user_roles_check",
+          "expression": "roles <@ ARRAY['POLICE'::text, 'CIVILIAN'::text, 'DISPATCH'::text, 'ADMIN'::text, 'REGISTERED'::text]",
+          "definition": "CHECK ((roles <@ ARRAY['POLICE'::text, 'CIVILIAN'::text, 'DISPATCH'::text, 'ADMIN'::text, 'REGISTERED'::text]))",
+          "columnName": "roles"
+        },
+        {
+          "name": "user_status_check",
+          "expression": "\"status\" in ('APPROVED', 'REJECTED', 'PENDING', 'SUSPENDED')",
+          "definition": "check (\"status\" in ('APPROVED', 'REJECTED', 'PENDING', 'SUSPENDED'))",
+          "columnName": "status"
+        }
+      ],
       "triggers": [],
       "foreignKeys": {},
       "comment": null
     }
   ],
-  "views": [],
+  "views": [
+    {
+      "name": "query_stats",
+      "schema": "ppg",
+      "definition": "SELECT prisma_model,\n    prisma_action,\n    prisma_payload,\n    query_id,\n    query_sample,\n    calls,\n    total_exec_time_ms,\n    min_exec_time_ms,\n    max_exec_time_ms,\n    (total_exec_time_ms / (NULLIF(calls, 0))::double precision) AS mean_exec_time_ms,\n    rows,\n    shared_blks_hit,\n    shared_blks_read,\n    shared_blks_dirtied,\n    shared_blks_written,\n    local_blks_hit,\n    local_blks_read,\n    local_blks_dirtied,\n    local_blks_written,\n    temp_blks_read,\n    temp_blks_written,\n    shared_blk_read_time,\n    shared_blk_write_time,\n    local_blk_read_time,\n    local_blk_write_time,\n    temp_blk_read_time,\n    temp_blk_write_time,\n    wal_records,\n    wal_fpi,\n    wal_bytes,\n    (to_timestamp((((first_seen_us)::numeric / 1000000.0))::double precision) + '30 years'::interval) AS first_seen,\n    (to_timestamp((((last_seen_us)::numeric / 1000000.0))::double precision) + '30 years'::interval) AS last_seen\n   FROM ppg._query_stats_internal() _query_stats_internal(dbid, prisma_model, prisma_action, prisma_payload, query_id, query_sample, calls, total_exec_time_ms, min_exec_time_ms, max_exec_time_ms, rows, shared_blks_hit, shared_blks_read, shared_blks_dirtied, shared_blks_written, local_blks_hit, local_blks_read, local_blks_dirtied, local_blks_written, temp_blks_read, temp_blks_written, shared_blk_read_time, shared_blk_write_time, local_blk_read_time, local_blk_write_time, temp_blk_read_time, temp_blk_write_time, wal_records, wal_fpi, wal_bytes, first_seen_us, last_seen_us)\n  WHERE (dbid = ( SELECT pg_database.oid\n           FROM pg_database\n          WHERE (pg_database.datname = current_database())))"
+    }
+  ],
   "nativeEnums": {}
 }

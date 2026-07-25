@@ -41,7 +41,7 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
 
-    const { user, emailConfirmation } = await this.uow.withTransaction(
+    const { user, confirmationCode } = await this.uow.withTransaction(
       async () => {
         const confirmationCode = randomInt(100000, 999999).toString();
         const user = await this.userRepository.create({
@@ -49,25 +49,23 @@ export class AuthService {
           name: dto.name,
           passwordHash,
         });
-        const emailConfirmation = await this.emailRepository.createConfirmation(
-          {
-            code: confirmationCode,
-            email: user.email,
-            expiresAt: new Date(
-              Date.now() + this.config.email.confirmationTtl * 1000,
-            ),
-          },
-        );
-        return { user, emailConfirmation };
+        await this.emailRepository.createConfirmation({
+          code: confirmationCode,
+          email: user.email,
+          expiresAt: new Date(
+            Date.now() + this.config.email.confirmationTtl * 1000,
+          ),
+        });
+        return { user, confirmationCode };
       },
     );
 
-    // await this.emailProducer.add('confirmEmail', {
-    //   code: emailConfirmation.code,
-    //   target: user.email,
-    //   userName: user.name,
-    //   ttl: this.config.email.confirmationTtl,
-    // });
+    await this.emailProducer.add('confirmEmail', {
+      code: confirmationCode,
+      target: user.email,
+      userName: user.name,
+      ttl: this.config.email.confirmationTtl,
+    });
 
     const refreshPayload = {
       jti: refreshJti,
@@ -89,8 +87,6 @@ export class AuthService {
       userRoles: user.roles,
       userId: user.id,
     });
-
-    //send confirmation email
 
     return { refresh, access, user };
   }
@@ -189,14 +185,14 @@ export class AuthService {
 
     if (confirmation.expiresAt.getTime() <= new Date().getTime()) {
       await this.emailRepository.delete(confirmation);
-      //must be outside the transaction, we don't want to revert confirmation removal
+      //must be outside the transaction, we don't want to revert the confirmation removal
       await this.uow.saveChanges();
       throw new AppError('Code expired', ErrorCode.CODE_EXPIRED);
     }
     if (confirmation.code !== dto.code) {
       if (confirmation.attempts >= 2) {
         await this.emailRepository.delete(confirmation);
-        //must be outside the transaction, we don't want to revert confirmation removal
+        //must be outside the transaction, we don't want to revert the confirmation removal
         await this.uow.saveChanges();
         throw new AppError('Out of attempts', ErrorCode.TOO_MANY_ATTEMPTS);
       }

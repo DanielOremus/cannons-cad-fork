@@ -16,9 +16,8 @@ const UserSchema = defineEntity({
     status: p.enum(() => UserStatus).default(UserStatus.PENDING),
     emailConfirmed: p.boolean().default(false),
     passwordHash: p.string(),
-    createdAt: p.datetime().default(new Date()),
-    characters: () =>
-      p.oneToMany(CharacterEntity).mappedBy('user').deleteRule('set null'),
+    createdAt: p.datetime().onCreate(() => new Date()),
+    characters: () => p.oneToMany(CharacterEntity),
   },
 });
 

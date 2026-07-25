@@ -3,7 +3,9 @@ import { UserEntity } from '../entities/user.entity';
 import { CreateUserInput } from '../inputs/create-user.input';
 import { UpdateUserInput } from '../inputs/update-user.input';
 import { EntityManager } from '@mikro-orm/postgresql';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class OrmUserRepository extends UserRepository {
   private readonly entity = UserEntity;
   constructor(private readonly em: EntityManager) {

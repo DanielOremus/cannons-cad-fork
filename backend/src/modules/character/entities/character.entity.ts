@@ -2,6 +2,7 @@ import { BaseSchema } from '../../../shared/entities/base.entity';
 import { defineEntity, Opt, p } from '@mikro-orm/core';
 import { CharacterFlag, CharacterGender } from '@project/shared';
 import { UserEntity } from '../../user/entities/user.entity';
+import { DriverLicenseEntity } from '../../driver-license/entities/driver-license.entity';
 
 export const CharacterSchema = defineEntity({
   name: 'Character',
@@ -19,7 +20,18 @@ export const CharacterSchema = defineEntity({
       .enum(() => CharacterFlag)
       .array()
       .default([]),
-    user: () => p.manyToOne(UserEntity),
+    user: () =>
+      p
+        .manyToOne(UserEntity)
+        .inversedBy('characters')
+        .nullable()
+        .deleteRule('set null'),
+    driverLicense: () =>
+      p
+        .oneToOne(DriverLicenseEntity)
+        .inversedBy('character')
+        .nullable()
+        .deleteRule('set null'),
   },
 });
 
