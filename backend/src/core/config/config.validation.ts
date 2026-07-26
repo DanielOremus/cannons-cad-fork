@@ -22,6 +22,11 @@ const configSchema = z.object({
   }),
   database: z.object({
     url: z.string(),
+    host: z.string(),
+    port: z.coerce.number().int().positive(),
+    user: z.string(),
+    password: z.string(),
+    name: z.string(),
   }),
   mailer: z.object({
     host: z.string(),

@@ -1,6 +1,6 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { EmailJobName, EmailJobPayloads } from './email.jobs';
-import { EmailService } from './email.service';
+import { EmailService } from '../email.service';
 import { Job } from 'bullmq';
 
 @Processor('email')

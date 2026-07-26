@@ -1,11 +1,22 @@
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
+import { CharacterEntity } from './entities/character.entity';
 import { CharacterService } from './character.service';
 import { CharacterController } from './character.controller';
 import { CharacterRepository } from './character.repository';
+import { OrmCharacterRepository } from './infrastructure/orm.character.repository';
 import { CharacterMapper } from './character.mapper';
 
 @Module({
+  imports: [MikroOrmModule.forFeature([CharacterEntity])],
   controllers: [CharacterController],
-  providers: [CharacterService, CharacterRepository, CharacterMapper],
+  providers: [
+    CharacterService,
+    {
+      provide: CharacterRepository,
+      useClass: OrmCharacterRepository,
+    },
+    CharacterMapper,
+  ],
 })
 export class CharacterModule {}

@@ -12,8 +12,7 @@ import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import type { Request, Response } from 'express';
-import { AppConfigService } from '../../core/config/config.service';
-import { COOKEY_KEY, prepareTokenCookie } from './cookie.helper';
+import { COOKEY_KEY } from './cookie.helper';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import {
   RequireConfirmedEmailOnly,

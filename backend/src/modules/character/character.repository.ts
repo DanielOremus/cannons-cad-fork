@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../core/database/prisma.service';
+import { CharacterEntity } from './entities/character.entity';
+import { SearchCharacterDto } from './dto/search-character.dto';
 
 @Injectable()
-export class CharacterRepository {
-  constructor(
-    private readonly characterMapper: unknown,
-    private readonly prismaService: PrismaService,
-  ) {}
-  async findByNameAndDob(data: unknown): Promise<CharacterEntity | null> {}
+export abstract class CharacterRepository {
+  abstract findByNameAndDob(
+    data: SearchCharacterDto,
+  ): Promise<CharacterEntity | null>;
 }
