@@ -1,14 +1,11 @@
-export type EmailJobs = {
+export type EmailJobPayloads = {
   confirmEmail: {
-    job: { target: string; userName: string; ttl: number; code: string };
-    template: { target: string; userName: string; ttlText: string; code: string };
+    target: string;
+    userName: string;
+    ttl: number;
+    code: string;
   };
-  changeEmail: {
-    job: {};
-    template: {};
-  };
+  changeEmail: {};
 };
 
-export type EmailJobPayloads = { [K in keyof EmailJobs]: EmailJobs[K]['job'] };
-export type EmailTemplatePayloads = { [K in keyof EmailJobs]: EmailJobs[K]['template'] };
-export type EmailJobNames = keyof EmailJobs;
+export type EmailJobName = keyof EmailJobPayloads;

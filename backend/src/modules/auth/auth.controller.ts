@@ -82,11 +82,4 @@ export class AuthController {
   async confirmEmail(@Req() req: Request, @Body() confirmDto: ConfirmEmailDto) {
     await this.authService.confirmEmail(req.user!, confirmDto);
   }
-  @Post('/resend-code')
-  @UseGuards(AuthGuard)
-  @SkipActiveCheck()
-  @HttpCode(204)
-  async resendEmailCode(@Req() req: Request) {
-    await this.authService.resendCode(req.user!);
-  }
 }

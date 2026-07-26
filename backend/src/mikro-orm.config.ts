@@ -12,9 +12,8 @@ export default defineConfig({
   user: config.database.user,
   password: config.database.password,
   dbName: config.database.name,
-  pool: {
-    min: 2,
-    max: 10,
+  driverOptions: {
+    ssl: { rejectUnauthorized: false },
   },
   debug: config.env === 'development',
   entities: ['dist/modules/**/*.entity.js', 'dist/shared/entities/*.entity.js'],
