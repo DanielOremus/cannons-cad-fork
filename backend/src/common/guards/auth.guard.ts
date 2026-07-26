@@ -19,10 +19,14 @@ export class AuthGuard implements CanActivate {
     const payload = this.tokenService.tryParseBearer(request.headers.authorization);
     if (!payload) throw new UnauthorizedError();
 
-    const familyExists = await this.redisService.familyExists(payload.familyId);
+    const [familyExists, userPermsArr] = await Promise.all([
+      this.redisService.familyExists(payload.familyId),
+      this.redisService.getUserPermissions(payload.userId),
+    ]);
+
     if (!familyExists) throw new UnauthorizedError();
 
-    let userPerms = new Set(await this.redisService.getUserPermissions(payload.userId));
+    let userPerms = new Set(userPermsArr);
 
     if (userPerms.size === 0) userPerms = getPermissionsFromRoles(...payload.userRoles);
 

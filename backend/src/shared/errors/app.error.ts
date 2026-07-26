@@ -28,9 +28,9 @@ export class UnauthorizedError extends AppError {
   }
 }
 
-export class AlreadyExistsError extends AppError {
-  constructor(message?: string) {
-    super(message ? message : 'Resource already exists', ErrorCode.ALREADY_EXISTS);
+export class ConflictError extends AppError {
+  constructor(message: string, code: ErrorCode = ErrorCode.CONFLICT) {
+    super(message, code);
   }
 }
 
