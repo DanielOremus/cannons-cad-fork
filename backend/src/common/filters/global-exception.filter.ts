@@ -12,6 +12,8 @@ const ErrorCodeToHttpStatus: Record<ErrorCode, HttpStatus> = {
   CODE_EXPIRED: HttpStatus.BAD_REQUEST,
   TOO_MANY_ATTEMPTS: HttpStatus.TOO_MANY_REQUESTS,
   UNHANDLED_ERROR: HttpStatus.INTERNAL_SERVER_ERROR,
+  ALREADY_CONFIRMED: HttpStatus.CONFLICT,
+  CONFLICT: HttpStatus.CONFLICT,
 };
 
 @Catch()

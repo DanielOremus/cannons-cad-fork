@@ -2,23 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { TokenService } from '../../shared/modules/token/token.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { randomInt, randomUUID } from 'crypto';
+import { randomUUID } from 'crypto';
 import { RedisService } from '../../core/redis/redis.service';
 import bcrypt from 'bcrypt';
-import {
-  AlreadyExistsError,
-  AppError,
-  NotFoundError,
-  UnauthorizedError,
-} from '../../shared/errors/app.error';
+import { ConflictError, NotFoundError, UnauthorizedError } from '../../shared/errors/app.error';
 import { ErrorCode, getPermissionsFromRoles } from '@project/shared';
-import { EmailProducer } from '../email/queue/email.producer';
 import { UserRepository } from '../user/user.repository';
-import { EmailRepository } from '../email/email.repository';
-import { AppConfigService } from '../../core/config/config.service';
 import { ConfirmEmailDto } from './dto/confirm-email.dto';
 import { AuthUser } from '../../shared/types/user';
 import { UnitOfWork } from '../../core/database/unit-of-work';
+import { EmailConfirmationService } from './email-confirmation.service';
 
 @Injectable()
 export class AuthService {
@@ -26,40 +19,28 @@ export class AuthService {
     private readonly tokenService: TokenService,
     private readonly redisService: RedisService,
     private readonly userRepository: UserRepository,
-    private readonly emailProducer: EmailProducer,
-    private readonly emailRepository: EmailRepository,
     private readonly uow: UnitOfWork,
-    private readonly config: AppConfigService,
+    private readonly emailConfirmationService: EmailConfirmationService,
   ) {}
   async register(dto: RegisterUserDto) {
     const familyId = randomUUID();
     const refreshJti = randomUUID();
 
     const exists = await this.userRepository.findByEmail(dto.email);
-    if (exists) throw new AlreadyExistsError('User with this email already exists');
+    if (exists)
+      throw new ConflictError('User with this email already exists', ErrorCode.ALREADY_EXISTS);
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
 
-    const { user, confirmationCode } = await this.uow.withTransaction(async () => {
-      const confirmationCode = randomInt(100000, 999999).toString();
+    const { user } = await this.uow.withTransaction(async () => {
       const user = await this.userRepository.create({
         email: dto.email,
         name: dto.name,
         passwordHash,
       });
-      await this.emailRepository.createConfirmation({
-        code: confirmationCode,
-        email: user.email,
-        expiresAt: new Date(Date.now() + this.config.email.confirmationTtl * 1000),
-      });
-      return { user, confirmationCode };
-    });
+      await this.emailConfirmationService.create(user);
 
-    await this.emailProducer.add('confirmEmail', {
-      code: confirmationCode,
-      target: user.email,
-      userName: user.name,
-      ttl: this.config.email.confirmationTtl,
+      return { user };
     });
 
     const refreshPayload = {
@@ -161,36 +142,18 @@ export class AuthService {
 
     return { refresh, access };
   }
-
   async confirmEmail(authUser: AuthUser, dto: ConfirmEmailDto) {
     const user = await this.userRepository.findById(authUser.id);
-    if (!user) throw new NotFoundError('User');
-
-    const confirmation = await this.emailRepository.findByEmail(user.email);
-    if (!confirmation) throw new NotFoundError('Confirmation');
-
-    if (confirmation.expiresAt.getTime() <= new Date().getTime()) {
-      await this.emailRepository.delete(confirmation);
-      //must be outside the transaction, we don't want to revert the confirmation removal
-      await this.uow.saveChanges();
-      throw new AppError('Code expired', ErrorCode.CODE_EXPIRED);
-    }
-    if (confirmation.code !== dto.code) {
-      if (confirmation.attempts >= 2) {
-        await this.emailRepository.delete(confirmation);
-        //must be outside the transaction, we don't want to revert the confirmation removal
-        await this.uow.saveChanges();
-        throw new AppError('Out of attempts', ErrorCode.TOO_MANY_ATTEMPTS);
-      }
-      confirmation.incrementAttempt();
-      await this.uow.saveChanges();
-      //must be outside the transaction, we don't want to revert confirmation removal
-      // throw new ValidationError([], "Code does not match")
-      throw new AppError('Code does not match', ErrorCode.VALIDATION_FAILED);
-    }
-    await this.uow.withTransaction(async () => {
-      await this.emailRepository.delete(confirmation);
-      user.emailConfirmed = true;
-    });
+    if (!user) throw new UnauthorizedError();
+    if (user.emailConfirmed)
+      throw new ConflictError('Email is already confirmed', ErrorCode.ALREADY_CONFIRMED);
+    await this.emailConfirmationService.confirm(user, dto.code);
+  }
+  async resendCode(authUser: AuthUser) {
+    const user = await this.userRepository.findById(authUser.id);
+    if (!user) throw new UnauthorizedError();
+    if (user.emailConfirmed)
+      throw new ConflictError('Email is already confirmed', ErrorCode.ALREADY_CONFIRMED);
+    await this.emailConfirmationService.resend(user);
   }
 }

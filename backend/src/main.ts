@@ -4,14 +4,22 @@ import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import cookieParser from 'cookie-parser';
 import { AppConfigService } from './core/config/config.service';
+import { NextFunction, Request, Response } from 'express';
+import { RequestContext } from '@mikro-orm/core';
+import { MikroORM } from '@mikro-orm/postgresql';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   const config = app.get(AppConfigService);
+  const orm = app.get(MikroORM);
 
-  app.useGlobalFilters(new GlobalExceptionFilter());
   app.use(cookieParser(config.cookieSecret));
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    console.log('RequestContext creating...');
+    RequestContext.create(orm.em, next);
+  });
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   await app.listen(config.port);
 }
