@@ -1,8 +1,0 @@
-model EmailConfirmation {
-    email     String   @id
-    user      User     @relation(fields: [email], references: [email], onDelete: Cascade)
-    code      String   @db.Char(6)
-    attempts  Int      @default(0)
-    expiresAt DateTime
-    createdAt DateTime @default(now())
-}

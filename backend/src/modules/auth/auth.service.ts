@@ -36,29 +36,24 @@ export class AuthService {
     const refreshJti = randomUUID();
 
     const exists = await this.userRepository.findByEmail(dto.email);
-    if (exists)
-      throw new AlreadyExistsError('User with this email already exists');
+    if (exists) throw new AlreadyExistsError('User with this email already exists');
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
 
-    const { user, confirmationCode } = await this.uow.withTransaction(
-      async () => {
-        const confirmationCode = randomInt(100000, 999999).toString();
-        const user = await this.userRepository.create({
-          email: dto.email,
-          name: dto.name,
-          passwordHash,
-        });
-        await this.emailRepository.createConfirmation({
-          code: confirmationCode,
-          email: user.email,
-          expiresAt: new Date(
-            Date.now() + this.config.email.confirmationTtl * 1000,
-          ),
-        });
-        return { user, confirmationCode };
-      },
-    );
+    const { user, confirmationCode } = await this.uow.withTransaction(async () => {
+      const confirmationCode = randomInt(100000, 999999).toString();
+      const user = await this.userRepository.create({
+        email: dto.email,
+        name: dto.name,
+        passwordHash,
+      });
+      await this.emailRepository.createConfirmation({
+        code: confirmationCode,
+        email: user.email,
+        expiresAt: new Date(Date.now() + this.config.email.confirmationTtl * 1000),
+      });
+      return { user, confirmationCode };
+    });
 
     await this.emailProducer.add('confirmEmail', {
       code: confirmationCode,
@@ -93,10 +88,7 @@ export class AuthService {
   async login(dto: LoginUserDto) {
     const user = await this.userRepository.findByEmail(dto.email);
     if (!user) throw new UnauthorizedError();
-    const passwordCorrect = await bcrypt.compare(
-      dto.password,
-      user.passwordHash,
-    );
+    const passwordCorrect = await bcrypt.compare(dto.password, user.passwordHash);
     if (!passwordCorrect) throw new UnauthorizedError();
 
     const familyId = randomUUID();
@@ -122,11 +114,7 @@ export class AuthService {
       userId: user.id,
     });
 
-    return {
-      refresh,
-      access,
-      user,
-    };
+    return { refresh, access, user };
   }
   async logout(userId: string, tokenFamilyId: string) {
     await this.redisService.revokeFamily(userId, tokenFamilyId);
@@ -137,9 +125,7 @@ export class AuthService {
     const tokenExists = await this.redisService.getRToken(data.jti);
     if (!tokenExists) throw new UnauthorizedError();
 
-    const familyExists = await this.redisService.familyExists(
-      tokenExists.familyId,
-    );
+    const familyExists = await this.redisService.familyExists(tokenExists.familyId);
     if (!familyExists) throw new UnauthorizedError();
 
     if (tokenExists.used) {

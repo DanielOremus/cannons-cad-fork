@@ -17,7 +17,7 @@ const UserSchema = defineEntity({
     emailConfirmed: p.boolean().default(false),
     passwordHash: p.string(),
     createdAt: p.datetime().onCreate(() => new Date()),
-    characters: () => p.oneToMany(CharacterEntity),
+    characters: () => p.oneToMany(CharacterEntity).mappedBy('user'),
   },
 });
 

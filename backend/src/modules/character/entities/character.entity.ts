@@ -27,11 +27,7 @@ export const CharacterSchema = defineEntity({
         .nullable()
         .deleteRule('set null'),
     driverLicense: () =>
-      p
-        .oneToOne(DriverLicenseEntity)
-        .inversedBy('character')
-        .nullable()
-        .deleteRule('set null'),
+      p.oneToOne(DriverLicenseEntity).owner().nullable().deleteRule('set null'),
   },
 });
 

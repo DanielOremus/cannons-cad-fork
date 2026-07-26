@@ -18,7 +18,7 @@ export const DriverLicenseSchema = defineEntity({
       .enum(() => DriverCategory)
       .array()
       .default([]),
-    character: () => p.oneToOne(CharacterEntity),
+    character: () => p.oneToOne(CharacterEntity).mappedBy('driverLicense'),
   },
 });
 

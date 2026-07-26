@@ -7,16 +7,15 @@ import 'dotenv/config';
 
 const config = validate(buildConfig());
 export default defineConfig({
-  // host: config.database.host,
-  // port: config.database.port,
-  // user: config.database.user,
-  // password: config.database.password,
-  // dbName: config.database.name,
+  host: config.database.host,
+  port: config.database.port,
+  user: config.database.user,
+  password: config.database.password,
+  dbName: config.database.name,
   driverOptions: {
     ssl: { rejectUnauthorized: false },
   },
-  debug: true,
-  clientUrl: config.database.url,
+  debug: config.env === 'development',
   entities: ['dist/modules/**/*.entity.js', 'dist/shared/entities/*.entity.js'],
   entitiesTs: ['src/modules/**/*.entity.ts', 'src/shared/entities/*.entity.ts'],
   extensions: [Migrator],

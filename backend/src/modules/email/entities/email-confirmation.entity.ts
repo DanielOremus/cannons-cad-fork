@@ -1,5 +1,4 @@
 import { defineEntity, p } from '@mikro-orm/core';
-import { UserEntity } from '../../user/entities/user.entity';
 import { BaseSchema } from '../../../shared/entities/base.entity';
 
 export const EmailConfirmationSchema = defineEntity({
