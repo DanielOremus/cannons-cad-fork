@@ -3,5 +3,4 @@ export const CharacterGender = {
   FEMALE: 'FEMALE',
 } as const;
 
-export type CharacterGender =
-  (typeof CharacterGender)[keyof typeof CharacterGender];
+export type CharacterGender = (typeof CharacterGender)[keyof typeof CharacterGender];

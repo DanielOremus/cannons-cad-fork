@@ -10,11 +10,7 @@ import { OrmUserRepository } from './infrastructure/orm.user.repository';
 import { TokenModule } from '../../shared/modules/token/token.module';
 
 @Module({
-  imports: [
-    MikroOrmModule.forFeature([UserEntity]),
-    DatabaseModule,
-    TokenModule,
-  ],
+  imports: [MikroOrmModule.forFeature([UserEntity]), DatabaseModule, TokenModule],
   controllers: [UserController],
   providers: [
     UserService,

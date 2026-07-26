@@ -17,10 +17,7 @@ export class PermissionsGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const required = this.reflector.get<RequiredPermission>(
-      PERMISSION_KEY,
-      context.getHandler(),
-    );
+    const required = this.reflector.get<RequiredPermission>(PERMISSION_KEY, context.getHandler());
 
     if (!required) return true;
 

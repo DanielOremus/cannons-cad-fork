@@ -8,9 +8,6 @@ export abstract class UserRepository {
   abstract findById(id: string): Promise<UserEntity | null>;
   abstract findByEmail(email: string): Promise<UserEntity | null>;
   abstract create(input: CreateUserInput): Promise<UserEntity>;
-  abstract update(
-    id: string,
-    input: UpdateUserInput,
-  ): Promise<UserEntity | null>;
+  abstract update(id: string, input: UpdateUserInput): Promise<UserEntity | null>;
   abstract delete(id: string): Promise<void>;
 }

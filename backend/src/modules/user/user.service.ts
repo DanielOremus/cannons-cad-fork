@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { UserMapper } from './user.mapper';
-import {
-  PublicUserResponseDto,
-  PrivateUserResponseDto,
-} from './dto/user-response.dto';
+import { PublicUserResponseDto, PrivateUserResponseDto } from './dto/user-response.dto';
 import { UserEntity } from './entities/user.entity';
 import { NotFoundError } from '../../shared/errors/app.error';
 import { PermissionScope } from '@project/shared';

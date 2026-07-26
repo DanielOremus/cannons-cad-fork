@@ -5,5 +5,4 @@ export const DriverCategory = {
   D: 'D',
 } as const;
 
-export type DriverCategory =
-  (typeof DriverCategory)[keyof typeof DriverCategory];
+export type DriverCategory = (typeof DriverCategory)[keyof typeof DriverCategory];

@@ -14,17 +14,10 @@ export class EmailService {
     changeEmail: async (payload) => {},
   };
   private templates: Record<EmailJobName, string> = {
-    confirmEmail: path.join(
-      __dirname,
-      'templates',
-      'confirm-email.template.ejs',
-    ),
+    confirmEmail: path.join(__dirname, 'templates', 'confirm-email.template.ejs'),
     changeEmail: '',
   };
-  private async renderTemplate<J extends EmailJobName>(
-    task: J,
-    data: EmailJobPayloads[J],
-  ) {
+  private async renderTemplate<J extends EmailJobName>(task: J, data: EmailJobPayloads[J]) {
     return await ejs.renderFile(this.templates[task], data);
   }
   private async emailConfirmation(payload: EmailJobPayloads['confirmEmail']) {

@@ -20,10 +20,6 @@ export class UserController {
   @RequirePermission('user', 'read')
   async getById(@Req() req: Request, @Param('id') id: string) {
     const currentUserId = req.user!.id;
-    return await this.userService.getProfile(
-      id,
-      currentUserId,
-      req.permissionScope!,
-    );
+    return await this.userService.getProfile(id, currentUserId, req.permissionScope!);
   }
 }

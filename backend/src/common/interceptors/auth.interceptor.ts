@@ -1,23 +1,12 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  Inject,
-  Injectable,
-  NestInterceptor,
-} from '@nestjs/common';
+import { CallHandler, ExecutionContext, Inject, Injectable, NestInterceptor } from '@nestjs/common';
 import { Response } from 'express';
 import { Observable, tap } from 'rxjs';
-import {
-  COOKEY_KEY,
-  prepareTokenCookie,
-} from '../../modules/auth/cookie.helper';
+import { COOKEY_KEY, prepareTokenCookie } from '../../modules/auth/cookie.helper';
 import { AppConfigService } from '../../core/config/config.service';
 import { Reflector } from '@nestjs/core';
 import {
   CLEAR_REFRESH_COOKIE_KEY,
-  ClearRefreshCookie,
   SET_REFRESH_COOKIE_KEY,
-  SetRefreshCookie,
 } from '../decorators/refresh-cookie.decorator';
 
 @Injectable()
