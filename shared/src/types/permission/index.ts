@@ -23,16 +23,11 @@ export const ResourceActions = {
     delete: ['any', 'own'],
     search: ['any'],
   },
-} as const satisfies Record<
-  PermissionResource,
-  { [P in PermissionAction]?: PermissionScope[] }
->;
+} as const satisfies Record<PermissionResource, { [P in PermissionAction]?: PermissionScope[] }>;
 
-export type ResourceActions<T extends PermissionResource> =
-  (typeof ResourceActions)[T];
+export type ResourceActions<T extends PermissionResource> = (typeof ResourceActions)[T];
 
-export type ResourceAction<T extends PermissionResource> =
-  keyof ResourceActions<T> & string;
+export type ResourceAction<T extends PermissionResource> = keyof ResourceActions<T> & string;
 
 // type SuffixForAction<
 //   Action extends string,
@@ -52,10 +47,11 @@ type RawScope<
   A extends ResourceAction<R>,
 > = (typeof ResourceActions)[R][A];
 
-type GetScope<
-  R extends PermissionResource,
-  A extends ResourceAction<R>,
-> = Extract<RawScope<R, A>, readonly string[]>[number] & string;
+type GetScope<R extends PermissionResource, A extends ResourceAction<R>> = Extract<
+  RawScope<R, A>,
+  readonly string[]
+>[number] &
+  string;
 
 type PermissionsForResource<R extends PermissionResource> = {
   [A in ResourceAction<R>]: `${A}:${GetScope<R, A>}`;

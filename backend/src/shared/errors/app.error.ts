@@ -11,10 +11,7 @@ export class AppError extends Error {
 
 export class NotFoundError extends AppError {
   constructor(resource?: string) {
-    super(
-      `${resource ? resource : 'Resource'} not found!`,
-      ErrorCode.NOT_FOUND,
-    );
+    super(`${resource ? resource : 'Resource'} not found!`, ErrorCode.NOT_FOUND);
   }
 }
 
@@ -33,10 +30,7 @@ export class UnauthorizedError extends AppError {
 
 export class AlreadyExistsError extends AppError {
   constructor(message?: string) {
-    super(
-      message ? message : 'Resource already exists',
-      ErrorCode.ALREADY_EXISTS,
-    );
+    super(message ? message : 'Resource already exists', ErrorCode.ALREADY_EXISTS);
   }
 }
 

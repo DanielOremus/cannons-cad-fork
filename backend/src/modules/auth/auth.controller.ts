@@ -36,12 +36,8 @@ export class AuthController {
   @SetRefreshCookie()
   @UseInterceptors(AuthInterceptor)
   @HttpCode(201)
-  async register(
-    @Body() registerDto: RegisterUserDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    const { refresh, access, user } =
-      await this.authService.register(registerDto);
+  async register(@Body() registerDto: RegisterUserDto, @Res({ passthrough: true }) res: Response) {
+    const { refresh, access, user } = await this.authService.register(registerDto);
     res.locals.refreshToken = refresh;
 
     return { access, user: this.userMapper.toPrivateProfileDto(user) };
@@ -50,10 +46,7 @@ export class AuthController {
   @SetRefreshCookie()
   @UseInterceptors(AuthInterceptor)
   @HttpCode(200)
-  async login(
-    @Body() loginDto: LoginUserDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async login(@Body() loginDto: LoginUserDto, @Res({ passthrough: true }) res: Response) {
     const { refresh, access, user } = await this.authService.login(loginDto);
     res.locals.refreshToken = refresh;
 
@@ -71,14 +64,9 @@ export class AuthController {
   @Post('/refresh')
   @HttpCode(200)
   @SetRefreshCookie()
-  async refresh(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     try {
-      const { refresh, access } = await this.authService.refresh(
-        req.signedCookies[COOKEY_KEY],
-      );
+      const { refresh, access } = await this.authService.refresh(req.signedCookies[COOKEY_KEY]);
       res.locals.refreshToken = refresh;
 
       return { access };

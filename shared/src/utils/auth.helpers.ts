@@ -1,8 +1,5 @@
 import { RolePermissions, UserRole } from '../types/user/user.role.js';
-import {
-  type Permission,
-  type ResourceAction,
-} from '../types/permission/index.js';
+import { type Permission, type ResourceAction } from '../types/permission/index.js';
 import { PermissionResource } from '../types/permission/permission.resource.js';
 import { UserStatus } from '../types/user/user.status.js';
 import type { PermissionScope } from '../types/permission/permission.scope.js';

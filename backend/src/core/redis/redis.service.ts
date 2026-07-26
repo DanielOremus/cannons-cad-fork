@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  Logger,
-  OnModuleDestroy,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { createClient, type RedisClientType } from 'redis';
 import { RedisRTokenData, TokenPayloads } from '../../shared/types/token';
 import { AppConfigService } from '../config/config.service';
@@ -64,11 +59,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
       JSON.stringify({ jti, userId, familyId, used: false }),
     );
     //Creating family
-    const createFamily = this.client.setEx(
-      this.familyKey(familyId),
-      refreshTtl,
-      jti,
-    );
+    const createFamily = this.client.setEx(this.familyKey(familyId), refreshTtl, jti);
     //Attaching family to user
     const attachFamily = this.client.zAdd(this.userFamiliesKey(userId), {
       score: Date.now() + refreshTtl * 1000,
@@ -96,10 +87,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     //Getting jti and deleting family
     const deleteFamily = this.client.getDel(this.familyKey(familyId));
     //Detaching family from user
-    const detachFamily = this.client.zRem(
-      this.userFamiliesKey(userId),
-      familyId,
-    );
+    const detachFamily = this.client.zRem(this.userFamiliesKey(userId), familyId);
     const [jti] = await Promise.all([
       deleteFamily,
       detachFamily,
@@ -115,10 +103,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
       Date.now(),
       Infinity,
     );
-    const [activeFamilyIds] = await Promise.all([
-      getFamilyIds,
-      this.detachExpiredFamilies(userId),
-    ]);
+    const [activeFamilyIds] = await Promise.all([getFamilyIds, this.detachExpiredFamilies(userId)]);
     //
     //Deleting active families and get their tokens' jti
     const deleteJtis = await Promise.all(
@@ -137,11 +122,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async detachExpiredFamilies(userId: string) {
-    await this.client.zRemRangeByScore(
-      this.userFamiliesKey(userId),
-      -Infinity,
-      Date.now(),
-    );
+    await this.client.zRemRangeByScore(this.userFamiliesKey(userId), -Infinity, Date.now());
   }
   async onModuleInit() {
     try {

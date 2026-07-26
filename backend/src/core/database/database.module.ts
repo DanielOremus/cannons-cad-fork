@@ -5,9 +5,7 @@ import { DatabaseService } from './database.service';
 import { UnitOfWork } from './unit-of-work';
 
 @Module({
-  imports: [
-    MikroOrmModule.forRoot({ ...mikroOrmConfig, autoLoadEntities: true }),
-  ],
+  imports: [MikroOrmModule.forRoot({ ...mikroOrmConfig, autoLoadEntities: true })],
   providers: [DatabaseService, UnitOfWork],
   exports: [DatabaseService, UnitOfWork],
 })

@@ -43,8 +43,7 @@ const configSchema = z.object({
 
 export function validate(config: Record<string, unknown>) {
   const result = configSchema.safeParse(config);
-  if (!result.success)
-    throw new Error('App config validation error: ' + result.error.message);
+  if (!result.success) throw new Error('App config validation error: ' + result.error.message);
   return result.data;
 }
 

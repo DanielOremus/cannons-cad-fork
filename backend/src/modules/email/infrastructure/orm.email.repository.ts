@@ -10,9 +10,7 @@ export class OrmEmailRepository extends EmailRepository {
   constructor(private readonly em: EntityManager) {
     super();
   }
-  async createConfirmation(
-    input: CreateConfirmationInput,
-  ): Promise<EmailConfirmationEntity> {
+  async createConfirmation(input: CreateConfirmationInput): Promise<EmailConfirmationEntity> {
     return this.em.create(this.entity, input);
   }
 

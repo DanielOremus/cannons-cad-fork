@@ -10,9 +10,7 @@ export class OrmCharacterRepository extends CharacterRepository {
   constructor(private readonly em: EntityManager) {
     super();
   }
-  async findByNameAndDob(
-    data: SearchCharacterDto,
-  ): Promise<CharacterEntity | null> {
+  async findByNameAndDob(data: SearchCharacterDto): Promise<CharacterEntity | null> {
     return await this.em.findOne(this.entity, {
       firstName: data.firstName,
       lastName: data.lastName,

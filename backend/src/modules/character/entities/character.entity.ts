@@ -20,14 +20,8 @@ export const CharacterSchema = defineEntity({
       .enum(() => CharacterFlag)
       .array()
       .default([]),
-    user: () =>
-      p
-        .manyToOne(UserEntity)
-        .inversedBy('characters')
-        .nullable()
-        .deleteRule('set null'),
-    driverLicense: () =>
-      p.oneToOne(DriverLicenseEntity).owner().nullable().deleteRule('set null'),
+    user: () => p.manyToOne(UserEntity).inversedBy('characters').nullable().deleteRule('set null'),
+    driverLicense: () => p.oneToOne(DriverLicenseEntity).owner().nullable().deleteRule('set null'),
   },
 });
 
