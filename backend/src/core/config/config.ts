@@ -4,7 +4,7 @@ import { validate } from './config.validation';
 export const buildConfig = () => {
   return {
     port: process.env.PORT,
-    env: process.env.ENV,
+    env: process.env.NODE_ENV,
     cookieSecret: process.env.COOKIE_SECRET,
     jwt: {
       access: {
