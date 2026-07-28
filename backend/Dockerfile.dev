@@ -4,10 +4,12 @@ WORKDIR /app
 
 COPY . .
 
-WORKDIR /app/backend
-
 RUN npm install
 
+WORKDIR /app/shared
+RUN tsc -b
+
+WORKDIR /app/backend
 RUN npm run build
 
 EXPOSE 3000

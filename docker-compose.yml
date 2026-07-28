@@ -1,6 +1,11 @@
 services:
   db:
     image: postgres:17
+    healthcheck:
+    test: ['CMD-SHELL', 'pg_isready -U ${DATABASE_USER}']
+    interval: 5s
+    timeout: 5s
+    retries: 5
     ports:
       - '5433:5432'
     environment:
@@ -33,7 +38,8 @@ services:
     environment:
       - DATABASE_HOST=db
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     command: npx mikro-orm migration:up
     networks:
       - app_network
@@ -49,8 +55,13 @@ services:
       - DATABASE_HOST=db
       - REDIS_HOST=redis
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      db_migrations:
+        condition: service_completed_successfully
+
     ports:
       - '${PORT}:${PORT}'
     networks:
