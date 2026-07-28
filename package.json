@@ -8,7 +8,8 @@
     "shared"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "backend:up": "docker compose --env-file ./backend/.env up",
+    "backend:down": "docker compose --env-file ./backend/.env down"
   },
   "devDependencies": {
     "prettier": "^3.9.5"
