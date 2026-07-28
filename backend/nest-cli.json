@@ -1,15 +1,13 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "./src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "builder": "swc",
-    "typeCheck": true,
     "assets": [
       {
         "include": "**/*.ejs",
-        "outDir": "dist/src"
+        "outDir": "dist"
       }
     ],
     "watchAssets": true

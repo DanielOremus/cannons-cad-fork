@@ -1,0 +1,65 @@
+services:
+  db:
+    image: postgres:17
+    ports:
+      - '5433:5432'
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+
+  redis:
+    image: redis
+    container_name: redis_cache
+    restart: always
+    ports:
+      - '6380:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - app_network
+
+  db_migrations:
+    build:
+      context: ./
+      dockerfile: ./backend/Dockerfile.dev
+    container_name: cannons-cad_migrations
+    env_file:
+      - ./backend/.env
+    environment:
+      - DATABASE_HOST=db
+    depends_on:
+      - db
+    command: npx mikro-orm migration:up
+    networks:
+      - app_network
+
+  backend:
+    build:
+      context: ./
+      dockerfile: ./backend/Dockerfile.dev
+    container_name: cannons-cad_backend
+    env_file:
+      - ./backend/.env
+    environment:
+      - DATABASE_HOST=db
+      - REDIS_HOST=redis
+    depends_on:
+      - db
+      - redis
+    ports:
+      - '${PORT}:${PORT}'
+    networks:
+      - app_network
+
+volumes:
+  db_data:
+  redis_data:
+
+networks:
+  app_network:
+    driver: bridge
