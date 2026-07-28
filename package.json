@@ -7,7 +7,10 @@
     "frontend",
     "shared"
   ],
-  "scripts": {},
+  "scripts": {
+    "backend:up": "docker compose --env-file ./backend/.env up",
+    "backend:down": "docker compose --env-file ./backend/.env down"
+  },
   "devDependencies": {
     "prettier": "^3.9.5"
   }

@@ -7,11 +7,12 @@ COPY . .
 RUN npm install
 
 WORKDIR /app/shared
-RUN tsc -b
+RUN npx tsc
 
 WORKDIR /app/backend
 RUN npm run build
 
 EXPOSE 3000
 
+CMD ["sleep", "infinity"]
 CMD ["npm", "run", "start:prod"]
