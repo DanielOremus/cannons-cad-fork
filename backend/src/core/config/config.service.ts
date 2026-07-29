@@ -32,4 +32,7 @@ export class AppConfigService {
   get cookieSecret() {
     return this.config.cookieSecret;
   }
+  get turnstile() {
+    return this.config.turnstile;
+  }
 }
