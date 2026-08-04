@@ -7,6 +7,7 @@ import {
   Res,
   UseGuards,
   UseInterceptors,
+  UsePipes,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -14,13 +15,14 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import type { Request, Response } from 'express';
 import { COOKEY_KEY } from './cookie.helper';
 import { AuthGuard } from '../../common/guards/auth.guard';
+import { AuthInterceptor } from '../../common/interceptors/auth.interceptor';
+import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
 import {
   RequireConfirmedEmailOnly,
   SkipActiveCheck,
 } from '../../common/decorators/account.decorator';
 import { ConfirmEmailDto } from './dto/confirm-email.dto';
 import { UserMapper } from '../user/user.mapper';
-import { AuthInterceptor } from '../../common/interceptors/auth.interceptor';
 import {
   ClearRefreshCookie,
   SetRefreshCookie,
@@ -35,6 +37,7 @@ export class AuthController {
   @Post('/register')
   @SetRefreshCookie()
   @UseInterceptors(AuthInterceptor)
+  @UsePipes(new ZodValidationPipe(RegisterUserDto.schema))
   @HttpCode(201)
   async register(@Body() registerDto: RegisterUserDto, @Res({ passthrough: true }) res: Response) {
     const { refresh, access, user } = await this.authService.register(registerDto);
@@ -45,6 +48,7 @@ export class AuthController {
   @Post('/login')
   @SetRefreshCookie()
   @UseInterceptors(AuthInterceptor)
+  @UsePipes(new ZodValidationPipe(LoginUserDto.schema))
   @HttpCode(200)
   async login(@Body() loginDto: LoginUserDto, @Res({ passthrough: true }) res: Response) {
     const { refresh, access, user } = await this.authService.login(loginDto);
@@ -78,6 +82,7 @@ export class AuthController {
   @Post('/confirm-email')
   @UseGuards(AuthGuard)
   @SkipActiveCheck()
+  @UsePipes(new ZodValidationPipe(ConfirmEmailDto.schema))
   @HttpCode(204)
   async confirmEmail(@Req() req: Request, @Body() confirmDto: ConfirmEmailDto) {
     await this.authService.confirmEmail(req.user!, confirmDto);

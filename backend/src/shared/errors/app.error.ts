@@ -15,12 +15,12 @@ export class NotFoundError extends AppError {
   }
 }
 
-// export class ValidationError extends AppError {
-//   public readonly;
-//   constructor(resource: string) {
-//     super('Validation failed!', ErrorCode.VALIDATION_FAILED);
-//   }
-// }
+export class ValidationError extends AppError {
+  public readonly issues = [];
+  constructor(resource: string) {
+    super('Validation failed!', ErrorCode.VALIDATION_FAILED);
+  }
+}
 
 export class UnauthorizedError extends AppError {
   constructor(message?: string) {
