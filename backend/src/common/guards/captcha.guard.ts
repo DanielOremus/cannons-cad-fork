@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { CAPTCHA_KEY } from '../decorators/require-captcha';
+import { CAPTCHA_KEY } from '../decorators/require-captcha.decorator';
 import { Request } from 'express';
 import { AppConfigService } from '../../core/config/config.service';
 import { AppError } from '../../shared/errors/app.error';

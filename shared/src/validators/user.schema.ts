@@ -6,10 +6,12 @@ const nameValidator = z
   .string()
   .min(3)
   .regex(/^[a-zA-Z]$/, { error: 'Can only contain letters and numbers' });
+const captchaValidator = z.string().trim().nonempty().max(2048, 'Captcha token is invalid');
 
 export const loginSchema = z.object({
   email: z.email(),
   password: z.string().trim().nonempty(),
+  captchaToken: captchaValidator,
 });
 
 export const registerSchema = z
@@ -18,6 +20,7 @@ export const registerSchema = z
     name: nameValidator,
     password: z.string().regex(/^\S*$/, 'Must not contain spaces').min(4),
     confirmPassword: z.string(),
+    captchaToken: captchaValidator,
   })
   .refine((data) => data.password === data.confirmPassword, {
     error: 'The passwords do not match',

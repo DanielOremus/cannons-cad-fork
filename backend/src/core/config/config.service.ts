@@ -33,6 +33,8 @@ export class AppConfigService {
     return this.config.cookieSecret;
   }
   get turnstile() {
+    if (this.env !== 'production')
+      return { ...this.config.turnstile, secret: '1x0000000000000000000000000000000AA' };
     return this.config.turnstile;
   }
 }
