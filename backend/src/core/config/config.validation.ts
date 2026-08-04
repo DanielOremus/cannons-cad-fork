@@ -37,7 +37,7 @@ const configSchema = z.object({
     port: z.coerce.number().int().positive(),
     user: z.string(),
     password: z.string(),
-    secure: z.coerce.boolean(),
+    secure: z.stringbool(),
   }),
   email: z.object({
     username: z.string(),
