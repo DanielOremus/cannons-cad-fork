@@ -6,6 +6,10 @@ export const buildConfig = () => {
     port: process.env.PORT,
     env: process.env.NODE_ENV,
     cookieSecret: process.env.COOKIE_SECRET,
+    turnstile: {
+      secret: process.env.TURNSTILE_SECRET,
+      apiUrl: process.env.TURNSTILE_API,
+    },
     jwt: {
       access: {
         secret: process.env.ACCESS_TOKEN_SECRET,
