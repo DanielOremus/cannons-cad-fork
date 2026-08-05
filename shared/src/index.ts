@@ -4,6 +4,8 @@ export { UserStatus } from './types/user/user.status.js';
 export { ErrorCode } from './types/error.code.js';
 export { CharacterGender } from './types/character/character.gender.js';
 export { CharacterFlag } from './types/character/character.flag.js';
+export { VehicleFlag } from './types/vehicle/vehicle.flag.js';
+export { VehicleType } from './types/vehicle/vehicle.type.js';
 export { DriverCategory } from './types/driver.category.js';
 export { PermissionAction } from './types/permission/permission.action.js';
 export { PermissionResource } from './types/permission/permission.resource.js';
