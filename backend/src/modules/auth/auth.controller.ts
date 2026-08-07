@@ -68,6 +68,7 @@ export class AuthController {
   @Post('/refresh')
   @HttpCode(200)
   @SetRefreshCookie()
+  //todo: fix new refresh cookie doesnt set properly
   async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     try {
       const { refresh, access } = await this.authService.refresh(req.signedCookies[COOKEY_KEY]);

@@ -22,15 +22,9 @@ export const CharacterSchema = defineEntity({
       .enum(() => CharacterFlag)
       .array()
       .default([]),
-    user: () =>
-      p.manyToOne(UserEntity).inversedBy('characters').nullable().deleteRule('set null').owner(),
+    user: () => p.manyToOne(UserEntity).inversedBy('characters').deleteRule('cascade'),
     driverLicense: () =>
-      p
-        .oneToOne(DriverLicenseEntity)
-        .inversedBy('character')
-        .nullable()
-        .deleteRule('set null')
-        .owner(),
+      p.oneToOne(DriverLicenseEntity).inversedBy('character').nullable().deleteRule('set null'),
     vehicles: () => p.oneToMany(VehicleEntity).mappedBy('owner'),
     citations: () => p.oneToMany(CitationEntity).mappedBy('issuedCharacter'),
   },

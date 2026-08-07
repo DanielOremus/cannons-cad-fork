@@ -37,7 +37,7 @@ export const characterCreateSchema = z.object({
   address: z.nullish(z.string().trim().min(5)),
   hasGunPermit: z.boolean().default(false),
   flags: z.array(z.enum(CharacterFlag)).default([]),
-  user: z.nullish(uuidValidator),
+  // user: z.nullish(uuidValidator),
 });
 
 export const characterSearchSchema = z.object({
@@ -48,6 +48,9 @@ export const characterSearchSchema = z.object({
 
 export const searchCharacterResponseSchema = z.object({
   id: z.number(),
+  user: z.object({
+    name: z.string(),
+  }),
   firstName: z.string(),
   lastName: z.string(),
   dob: z.string(),

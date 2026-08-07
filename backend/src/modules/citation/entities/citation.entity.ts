@@ -9,9 +9,9 @@ export const CitationSchema = defineEntity({
   extends: BaseSchema,
   properties: {
     charges: () => p.oneToMany(ChargeEntity).mappedBy('citation'),
-    issuedVehicle: () => p.manyToOne(VehicleEntity).nullable().deleteRule('set null').owner(),
+    issuedVehicle: () => p.manyToOne(VehicleEntity).nullable().deleteRule('set null'),
     issuedCharacter: () =>
-      p.manyToOne(CharacterEntity).inversedBy('citations').deleteRule('cascade').owner(),
+      p.manyToOne(CharacterEntity).inversedBy('citations').deleteRule('cascade'),
     issuedAt: p.datetime().onCreate(() => new Date()),
   },
 });

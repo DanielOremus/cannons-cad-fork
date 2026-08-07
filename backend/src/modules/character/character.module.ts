@@ -6,9 +6,10 @@ import { CharacterController } from './character.controller';
 import { CharacterRepository } from './character.repository';
 import { OrmCharacterRepository } from './infrastructure/orm.character.repository';
 import { CharacterMapper } from './character.mapper';
+import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [MikroOrmModule.forFeature([CharacterEntity])],
+  imports: [MikroOrmModule.forFeature([CharacterEntity]), UserModule],
   controllers: [CharacterController],
   providers: [
     CharacterService,
