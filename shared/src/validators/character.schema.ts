@@ -1,6 +1,7 @@
 import * as z from 'zod/v4';
 import { CharacterFlag } from '../types/character/character.flag.js';
 import { CharacterGender } from '../types/character/character.gender.js';
+import { uuidValidator } from './common.schema.js';
 
 const nameValidator = z
   .string()
@@ -36,7 +37,7 @@ export const characterCreateSchema = z.object({
   address: z.nullish(z.string().trim().min(5)),
   hasGunPermit: z.boolean().default(false),
   flags: z.array(z.enum(CharacterFlag)).default([]),
-  user: z.nullish(z.string()),
+  user: z.nullish(uuidValidator),
 });
 
 export const characterSearchSchema = z.object({

@@ -5,7 +5,7 @@ import { UserRole } from '../types/user/user.role.js';
 const nameValidator = z
   .string()
   .min(3)
-  .regex(/^[a-zA-Z]$/, { error: 'Can only contain letters and numbers' });
+  .regex(/^[a-zA-Z0-9]+$/, { error: 'Can only contain letters and numbers' });
 const captchaValidator = z.string().trim().nonempty().max(2048, 'Captcha token is invalid');
 
 export const loginSchema = z.object({
@@ -14,22 +14,25 @@ export const loginSchema = z.object({
   captchaToken: captchaValidator,
 });
 
-export const registerSchema = z
-  .object({
-    email: z.email().toLowerCase(),
-    name: nameValidator,
-    password: z.string().regex(/^\S*$/, 'Must not contain spaces').min(4),
-    confirmPassword: z.string(),
-    captchaToken: captchaValidator,
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    error: 'The passwords do not match',
-    path: ['confirmPassword'],
-  })
-  .transform((data) => {
-    const { confirmPassword, ...rest } = data;
-    return rest;
-  });
+export const registerSchema = z.object({
+  email: z.email().toLowerCase(),
+  name: nameValidator,
+  password: z.string().regex(/^\S*$/, 'Must not contain spaces').min(4),
+  confirmPassword: z.string(),
+  captchaToken: captchaValidator,
+});
+// .refine((data) => data.password === data.confirmPassword, {
+//   message: 'The passwords do not match',
+//   params: {
+//     code: 'not_same_as',
+//     field: 'password',
+//   },
+//   path: ['confirmPassword'],
+// })
+// .transform((data) => {
+//   const { confirmPassword, ...rest } = data;
+//   return rest;
+// });
 
 export const updateProfileSchema = z.object({
   name: nameValidator,

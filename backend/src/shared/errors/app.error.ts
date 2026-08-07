@@ -1,4 +1,4 @@
-import { ErrorCode } from '@project/shared';
+import { ErrorCode, ValidationIssue } from '@project/shared';
 
 export class AppError extends Error {
   public readonly code: ErrorCode;
@@ -16,8 +16,7 @@ export class NotFoundError extends AppError {
 }
 
 export class ValidationError extends AppError {
-  public readonly issues = [];
-  constructor(resource: string) {
+  constructor(readonly issues: ValidationIssue[] = []) {
     super('Validation failed!', ErrorCode.VALIDATION_FAILED);
   }
 }

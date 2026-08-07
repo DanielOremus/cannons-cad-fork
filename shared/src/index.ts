@@ -1,7 +1,7 @@
 //Types
 export { UserRole } from './types/user/user.role.js';
 export { UserStatus } from './types/user/user.status.js';
-export { ErrorCode } from './types/error.code.js';
+export { ErrorCode } from './types/error/error.code.js';
 export { CharacterGender } from './types/character/character.gender.js';
 export { CharacterFlag } from './types/character/character.flag.js';
 export { VehicleFlag } from './types/vehicle/vehicle.flag.js';
@@ -10,6 +10,7 @@ export { DriverCategory } from './types/driver.category.js';
 export { PermissionAction } from './types/permission/permission.action.js';
 export { PermissionResource } from './types/permission/permission.resource.js';
 export { PermissionScope } from './types/permission/permission.scope.js';
+export { type ValidationIssue } from './types/error/validation.error.js';
 export {
   type Permission,
   ResourceActions,
@@ -66,3 +67,5 @@ export {
   getPermissionsFromRoles,
   accountActive,
 } from './utils/auth.helpers.js';
+export { mapZodIssue } from './utils/validation.helpers.js';
+export { nameof } from './utils/object.helpers.js';
