@@ -5,7 +5,7 @@ import { mapZodIssue } from '@project/shared';
 
 export class ZodValidationPipe implements PipeTransform {
   constructor(private readonly zodSchema: z.ZodType) {}
-  transform(value: any, metadata: ArgumentMetadata) {
+  transform(value: unknown, metadata: ArgumentMetadata) {
     try {
       const parsedValue = this.zodSchema.parse(value);
       return parsedValue;

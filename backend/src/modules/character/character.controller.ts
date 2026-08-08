@@ -1,4 +1,15 @@
-import { Body, Controller, Get, HttpCode, Post, Req, UseGuards, UsePipes } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+  UsePipes,
+} from '@nestjs/common';
 import { CharacterService } from './character.service';
 import type { Request } from 'express';
 import { SearchCharacterDto } from './dto/search-character.dto';
@@ -8,6 +19,8 @@ import { RequirePermission } from '../../common/decorators/require-permission.de
 import { CharacterMapper } from './character.mapper';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
 import { PermissionsGuard } from '../../common/guards/permissions.guard';
+import { idValidator } from '@project/shared';
+import { paginationSchema } from '@project/shared';
 
 @Controller('/characters')
 @UseGuards(AuthGuard, PermissionsGuard)
@@ -21,8 +34,14 @@ export class CharacterController {
   @RequirePermission('character', 'search')
   @UsePipes(new ZodValidationPipe(SearchCharacterDto.schema))
   async search(@Body() dto: SearchCharacterDto) {
-    const character = await this.characterService.search(dto);
-    return this.characterMapper.toSearchResponseDto(character);
+    const { character, counts } = await this.characterService.search(dto);
+    return this.characterMapper.toSearchResponseDto(character, counts);
+  }
+  @Get('/:id')
+  @RequirePermission('character', 'read')
+  async getById(@Param('id', new ZodValidationPipe(idValidator)) id: number) {
+    const { character, counts } = await this.characterService.getById(id);
+    return this.characterMapper.toReadDto(character, counts);
   }
   @Post('/create')
   @RequirePermission('character', 'create')
@@ -30,6 +49,6 @@ export class CharacterController {
   @HttpCode(201)
   async create(@Body() dto: CreateCharacterDto, @Req() req: Request) {
     const character = await this.characterService.create(req.user!.id, dto);
-    return this.characterMapper.toItemResponseDto(character);
+    return this.characterMapper.toCreateResponseDto(character);
   }
 }

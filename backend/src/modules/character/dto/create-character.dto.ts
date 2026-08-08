@@ -1,4 +1,9 @@
-import { characterCreateSchema } from '@project/shared';
+import { createCharacterSchema } from '@project/shared';
+import { CreateCharacterResponseDto as CreateResponseDto } from '@project/shared';
 import { createZodDto } from 'nestjs-zod';
 
-export class CreateCharacterDto extends createZodDto(characterCreateSchema) {}
+export class CreateCharacterDto extends createZodDto(createCharacterSchema) {}
+export class CreateCharacterResponseDto extends CreateCharacterDto implements CreateResponseDto {
+  id: number;
+  age: number;
+}

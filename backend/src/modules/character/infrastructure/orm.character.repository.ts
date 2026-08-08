@@ -5,6 +5,7 @@ import { EntityManager, Populate } from '@mikro-orm/postgresql';
 import { SearchCharacterDto } from '../dto/search-character.dto';
 import { CreateCharacterInput } from '../inputs/create-character.input';
 import { CharacterPopulate } from '../character.repository';
+import { PaginationDto } from '@project/shared';
 
 @Injectable()
 export class OrmCharacterRepository extends CharacterRepository {
@@ -25,6 +26,9 @@ export class OrmCharacterRepository extends CharacterRepository {
       },
       { populate },
     );
+  }
+  async findById(id: number, populate?: CharacterPopulate[]): Promise<CharacterEntity | null> {
+    return await this.em.findOne(this.entity, { id }, { populate });
   }
   async create(data: CreateCharacterInput): Promise<CharacterEntity> {
     return await this.em.create(this.entity, data);
