@@ -16,7 +16,6 @@ async function bootstrap() {
 
   app.use(cookieParser(config.cookieSecret));
   app.use((req: Request, res: Response, next: NextFunction) => {
-    console.log('RequestContext creating...');
     RequestContext.create(orm.em, next);
   });
   app.useGlobalFilters(new GlobalExceptionFilter());

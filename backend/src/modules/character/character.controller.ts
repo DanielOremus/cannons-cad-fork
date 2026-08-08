@@ -7,9 +7,10 @@ import { AuthGuard } from '../../common/guards/auth.guard';
 import { RequirePermission } from '../../common/decorators/require-permission.decorator';
 import { CharacterMapper } from './character.mapper';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
+import { PermissionsGuard } from '../../common/guards/permissions.guard';
 
 @Controller('/characters')
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, PermissionsGuard)
 export class CharacterController {
   constructor(
     private readonly characterService: CharacterService,
@@ -17,15 +18,15 @@ export class CharacterController {
   ) {}
 
   @Get('/search')
-  @UsePipes(new ZodValidationPipe(SearchCharacterDto.schema))
   @RequirePermission('character', 'search')
+  @UsePipes(new ZodValidationPipe(SearchCharacterDto.schema))
   async search(@Body() dto: SearchCharacterDto) {
     const character = await this.characterService.search(dto);
     return this.characterMapper.toSearchResponseDto(character);
   }
   @Post('/create')
-  @UsePipes(new ZodValidationPipe(CreateCharacterDto.schema))
   @RequirePermission('character', 'create')
+  @UsePipes(new ZodValidationPipe(CreateCharacterDto.schema))
   @HttpCode(201)
   async create(@Body() dto: CreateCharacterDto, @Req() req: Request) {
     const character = await this.characterService.create(req.user!.id, dto);
