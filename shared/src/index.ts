@@ -56,6 +56,8 @@ export {
   confirmEmailSchema,
 } from './validators/user.schema.js';
 
+export { idValidator, uuidValidator } from './validators/common.schema.js';
+
 //Utils
 
 export {
