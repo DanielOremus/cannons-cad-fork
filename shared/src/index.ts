@@ -19,17 +19,28 @@ export {
 } from './types/permission/index.js';
 
 //Dto
-export type { PaginationDto, PaginationRequest } from './dto/pagination.js';
+export type { PaginationDto, PaginationRequest, PaginatedList } from './dto/pagination.js';
 
-export { PublicUserResponseDto, PrivateUserResponseDto } from './dto/user/get-user.js';
-export type { LoginUserDto, RegisterUserDto, ConfirmUserEmailDto } from './dto/user/auth-user.js';
-export type { UpdateUserDto, UpdateUserEmailDto } from './dto/user/update-user.js';
+export type { PublicUserResponseDto, PrivateUserResponseDto } from './dto/user/get-user.dto.js';
+export type {
+  LoginUserDto,
+  RegisterUserDto,
+  ConfirmUserEmailDto,
+} from './dto/user/auth-user.dto.js';
+export type { UpdateUserDto, UpdateUserEmailDto } from './dto/user/update-user.dto.js';
 
-export type { CreateCharacterDto } from './dto/character/create-character.js';
+export type {
+  CreateCharacterDto,
+  CreateCharacterResponseDto,
+} from './dto/character/create-character.dto.js';
 export type {
   SearchCharacterDto,
   SearchCharacterResponseDto,
-} from './dto/character/search-character.js';
+} from './dto/character/search-character.dto.js';
+export { type CharacterDto } from './dto/character/get-character.dto.js';
+export { type VehicleDto } from './dto/vehicle/get-vehicle.dto.js';
+export { type DriverLicenseDto } from './dto/driver-license/get-driver-license.dto.js';
+export type { ChargeDto, CitationDto } from './dto/citation/get-citation.dto.js';
 
 //Validation schemas
 

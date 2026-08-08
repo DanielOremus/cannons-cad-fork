@@ -1,14 +1,9 @@
 import type { CharacterFlag } from '../../types/character/character.flag.js';
-import { searchCharacterSchema } from '../../validators/character.schema.js';
-import * as z from 'zod/v4';
+import type { DriverLicenseDto } from '../driver-license/get-driver-license.dto.js';
 
-export type SearchCharacterDto = z.infer<typeof searchCharacterSchema>;
-
-export class SearchCharacterResponseDto {
+export type CharacterDto = {
   id: number;
-  user: {
-    name: string;
-  };
+  driverLicense: DriverLicenseDto | null;
   firstName: string;
   lastName: string;
   dob: string;
@@ -17,4 +12,6 @@ export class SearchCharacterResponseDto {
   address?: string | null;
   hasGunPermit: boolean;
   flags: CharacterFlag[];
-}
+  vehiclesCount: number;
+  citationsCount: number;
+};
