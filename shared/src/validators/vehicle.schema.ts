@@ -1,27 +1,9 @@
-// export const VehicleSchema = defineEntity({
-//   name: 'Vehicle',
-//   extends: BaseSchema,
-//   properties: {
-//     type: p.enum(() => VehicleType),
-//     licensePlate: p.string().unique(),
-//     male: p.string(),
-//     model: p.string(),
-//     year: p.decimal().precision(4).scale(0),
-//     color: p.string().nullable(),
-//     flags: p
-//       .enum(() => VehicleFlag)
-//       .array()
-//       .default([]),
-//     owner: () => p.manyToOne(CharacterEntity).inversedBy('vehicles').deleteRule('cascade').owner(),
-//   },
-// });
-
 import { z } from 'zod/v4';
 import { idValidator } from './common.schema.js';
 import { VehicleType } from '../types/vehicle/vehicle.type.js';
 import { VehicleFlag } from '../types/vehicle/vehicle.flag.js';
 
-export const vehicleCreateSchema = z.object({
+export const createVehicleSchema = z.object({
   type: z.enum(VehicleType),
   licensePlate: z
     .string()

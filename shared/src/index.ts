@@ -21,41 +21,28 @@ export {
 //Dto
 export type { PaginationDto, PaginationRequest } from './dto/pagination.js';
 
-export type {
-  PublicUserResponseDto,
-  LoginUserDto,
-  RegisterUserDto,
-  PrivateUserResponseDto,
-} from './dto/user.js';
+export { PublicUserResponseDto, PrivateUserResponseDto } from './dto/user/get-user.js';
+export type { LoginUserDto, RegisterUserDto, ConfirmUserEmailDto } from './dto/user/auth-user.js';
+export type { UpdateUserDto, UpdateUserEmailDto } from './dto/user/update-user.js';
 
-export type {
-  CreateCharacterDto,
-  CreateCharacterRequest,
-} from './dto/character/create-character.js';
+export type { CreateCharacterDto } from './dto/character/create-character.js';
 export type {
   SearchCharacterDto,
-  SearchCharacterRequest,
   SearchCharacterResponseDto,
 } from './dto/character/search-character.js';
 
 //Validation schemas
 
-export {
-  characterCreateSchema,
-  characterSearchSchema,
-  searchCharacterResponseSchema,
-} from './validators/character.schema.js';
+export { createCharacterSchema, searchCharacterSchema } from './validators/character.schema.js';
 
 export { paginationSchema } from './validators/pagination.schema.js';
 
 export {
-  registerSchema,
-  loginSchema,
+  registerUserSchema,
+  loginUserSchema,
   updateProfileSchema,
   updateEmailSchema,
   confirmEmailSchema,
-  privateUserResponseSchema,
-  publicUserResponseSchema,
 } from './validators/user.schema.js';
 
 //Utils

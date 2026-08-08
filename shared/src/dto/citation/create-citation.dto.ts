@@ -1,4 +1,4 @@
 import * as z from 'zod/v4';
-import { citationCreateSchema } from '../../validators/citation.schema.js';
+import { createCitationSchema } from '../../validators/citation.schema.js';
 
-export type CreateCitationDto = z.infer<typeof citationCreateSchema>;
+export type CreateCitationDto = z.infer<typeof createCitationSchema>;

@@ -32,7 +32,7 @@ const chargeValidator = z.object({
   count: z.int().positive().default(1),
 });
 
-export const citationCreateSchema = z.object({
+export const createCitationSchema = z.object({
   charges: z.array(chargeValidator),
   issuedCharacterId: idValidator,
   issuedVehicleId: z.nullish(idValidator),
