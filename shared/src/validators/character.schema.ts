@@ -14,12 +14,20 @@ const nameValidator = z
 const dobValidator = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be in YYYY-MM-DD format')
-  .refine((v) => {
-    const dob = new Date(v + 'T00:00:00.000Z');
-    return dob <= new Date();
-  }, 'Cannot be in the future');
+  .refine(
+    (v) => {
+      const dob = new Date(v + 'T00:00:00.000Z');
+      return dob <= new Date();
+    },
+    {
+      error: 'Cannot be in the future',
+      params: {
+        code: 'in_future',
+      },
+    },
+  );
 
-export const characterCreateSchema = z.object({
+export const createCharacterSchema = z.object({
   firstName: nameValidator,
   lastName: nameValidator,
   dob: dobValidator,
@@ -36,23 +44,10 @@ export const characterCreateSchema = z.object({
   address: z.nullish(z.string().trim().min(5)),
   hasGunPermit: z.boolean().default(false),
   flags: z.array(z.enum(CharacterFlag)).default([]),
-  user: z.nullish(z.string()),
 });
 
-export const characterSearchSchema = z.object({
+export const searchCharacterSchema = z.object({
   firstName: nameValidator,
   lastName: nameValidator,
   dob: dobValidator,
-});
-
-export const searchCharacterResponseSchema = z.object({
-  id: z.number(),
-  firstName: z.string(),
-  lastName: z.string(),
-  dob: z.string(),
-  age: z.number(),
-  phoneNumber: z.nullish(z.string()),
-  address: z.nullish(z.string()),
-  hasGunPermit: z.boolean(),
-  flags: z.array(z.enum(CharacterFlag)),
 });

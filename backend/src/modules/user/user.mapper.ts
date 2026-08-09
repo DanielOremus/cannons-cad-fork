@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from './entities/user.entity';
-import { PrivateUserResponseDto, PublicUserResponseDto } from './dto/user-response.dto';
+import { PrivateUserResponseDto, PublicUserResponseDto } from '@project/shared';
 
 @Injectable()
 export class UserMapper {

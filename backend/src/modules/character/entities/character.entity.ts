@@ -3,6 +3,8 @@ import { defineEntity, Opt, p } from '@mikro-orm/core';
 import { CharacterFlag, CharacterGender } from '@project/shared';
 import { UserEntity } from '../../user/entities/user.entity';
 import { DriverLicenseEntity } from '../../driver-license/entities/driver-license.entity';
+import { VehicleEntity } from '../../vehicle/entities/vehicle.entity';
+import { CitationEntity } from '../../citation/entities/citation.entity';
 
 export const CharacterSchema = defineEntity({
   name: 'Character',
@@ -20,8 +22,11 @@ export const CharacterSchema = defineEntity({
       .enum(() => CharacterFlag)
       .array()
       .default([]),
-    user: () => p.manyToOne(UserEntity).inversedBy('characters').nullable().deleteRule('set null'),
-    driverLicense: () => p.oneToOne(DriverLicenseEntity).owner().nullable().deleteRule('set null'),
+    user: () => p.manyToOne(UserEntity).inversedBy('characters').deleteRule('cascade'),
+    driverLicense: () =>
+      p.oneToOne(DriverLicenseEntity).inversedBy('character').nullable().deleteRule('set null'),
+    vehicles: () => p.oneToMany(VehicleEntity).mappedBy('owner'),
+    citations: () => p.oneToMany(CitationEntity).mappedBy('issuedCharacter'),
   },
 });
 

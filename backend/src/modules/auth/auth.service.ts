@@ -5,8 +5,13 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { randomUUID } from 'crypto';
 import { RedisService } from '../../core/redis/redis.service';
 import bcrypt from 'bcrypt';
-import { ConflictError, NotFoundError, UnauthorizedError } from '../../shared/errors/app.error';
-import { ErrorCode, getPermissionsFromRoles } from '@project/shared';
+import {
+  ConflictError,
+  NotFoundError,
+  UnauthorizedError,
+  ValidationError,
+} from '../../shared/errors/app.error';
+import { ErrorCode, getPermissionsFromRoles, nameof, ValidationIssue } from '@project/shared';
 import { UserRepository } from '../user/user.repository';
 import { ConfirmEmailDto } from './dto/confirm-email.dto';
 import { AuthUser } from '../../shared/types/user';
@@ -27,8 +32,14 @@ export class AuthService {
     const refreshJti = randomUUID();
 
     const exists = await this.userRepository.findByEmail(dto.email);
-    if (exists)
-      throw new ConflictError('User with this email already exists', ErrorCode.ALREADY_EXISTS);
+    if (exists) {
+      const issue: ValidationIssue<'not_unique'> = {
+        code: 'not_unique',
+        field: nameof<typeof dto>('email'),
+        params: undefined,
+      };
+      throw new ValidationError([issue]);
+    }
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
 

@@ -59,6 +59,7 @@ export class AuthController {
   @Post('/logout')
   @UseGuards(AuthGuard)
   @RequireConfirmedEmailOnly()
+  @UseInterceptors(AuthInterceptor)
   @ClearRefreshCookie()
   @HttpCode(204)
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
@@ -66,8 +67,9 @@ export class AuthController {
     res.clearCookie(COOKEY_KEY);
   }
   @Post('/refresh')
-  @HttpCode(200)
+  @UseInterceptors(AuthInterceptor)
   @SetRefreshCookie()
+  @HttpCode(200)
   async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     try {
       const { refresh, access } = await this.authService.refresh(req.signedCookies[COOKEY_KEY]);

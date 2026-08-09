@@ -1,7 +1,7 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus, Logger } from '@nestjs/common';
 import { ErrorCode } from '@project/shared';
 import { Request, Response } from 'express';
-import { AppError } from '../../shared/errors/app.error';
+import { AppError, ValidationError } from '../../shared/errors/app.error';
 
 const ErrorCodeToHttpStatus: Record<ErrorCode, HttpStatus> = {
   ALREADY_EXISTS: HttpStatus.CONFLICT,
@@ -26,13 +26,18 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     let errorCode: ErrorCode;
     let status: number;
-    let errorMsg: string;
+    let errorMessage: string;
+    let errorIssues;
+
     if (exception instanceof AppError) {
       errorCode = exception.code;
-      errorMsg = exception.message;
+      errorMessage = exception.message;
+      if (exception instanceof ValidationError) {
+        errorIssues = exception.issues;
+      }
     } else {
       errorCode = ErrorCode.UNHANDLED_ERROR;
-      errorMsg = 'Something went wrong, please try again later';
+      errorMessage = 'Something went wrong, please try again later';
     }
     status = ErrorCodeToHttpStatus[errorCode];
 
@@ -40,7 +45,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     response.status(status).json({
       errorCode,
-      errorMsg,
+      errorMessage,
+      errorIssues,
     });
   }
 }
