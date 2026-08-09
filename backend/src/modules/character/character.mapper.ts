@@ -32,34 +32,15 @@ export class CharacterMapper {
     return {
       ...rest,
       age: character.age,
-      // vehicles: {
-      //   ...vehicles,
-      //   items: vehicles.items.map((v) => ({
-      //     id: v.id,
-      //     color: v.color,
-      //     flags: v.flags,
-      //     licensePlate: v.licensePlate,
-      //     make: v.make,
-      //     model: v.model,
-      //     year: v.year,
-      //   })),
-      // },
-      // citations: {
-      //   ...citations,
-      //   items: citations.items.map((c) => ({
-      //     issuedAt: c.issuedAt,
-      //     charges: this.chargeMapper.toReadDtoList(Array.from(c.charges)),
-      //     issuedVehicle: c.issuedVehicle,
-      //   })),
-      // },
       driverLicense: driverLicense ? this.driverLicenseMapper.toReadDto(driverLicense) : null,
       vehiclesCount: counts.vehicles,
       citationsCount: counts.citations,
     };
   }
   toCreateResponseDto(character: CharacterEntity): CreateCharacterResponseDto {
+    const { user, ...rest } = character;
     return {
-      ...character,
+      ...rest,
       age: character.age,
     };
   }
