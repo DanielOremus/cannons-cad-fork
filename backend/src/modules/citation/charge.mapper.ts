@@ -12,7 +12,7 @@ export class ChargeMapper {
       jailTime: charge.jailTime,
     };
   }
-  toReadDtoList(charges: ChargeEntity[]): ChargeDto[] {
+  toDtoList(charges: ChargeEntity[]): ChargeDto[] {
     return charges.map((charge) => this.toReadDto(charge));
   }
 }
