@@ -6,19 +6,16 @@ import { mapZodIssue } from '@project/shared';
 export class ZodValidationPipe implements PipeTransform {
   constructor(private readonly zodSchema: z.ZodType) {}
   transform(value: unknown, metadata: ArgumentMetadata) {
-    try {
-      const parsedValue = this.zodSchema.parse(value);
-      return parsedValue;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        //mapping issues to my validation error
-        const myIssues = error.issues.map((issue) => {
-          console.log(issue);
-          return mapZodIssue(issue);
-        });
-        throw new ValidationError(myIssues);
-      }
-      throw error;
+    const result = this.zodSchema.safeParse(value);
+    if (!result.success) {
+      //mapping issues to my validation error
+
+      const myIssues = result.error.issues.map((issue) => {
+        console.log(issue);
+        return mapZodIssue(issue);
+      });
+      throw new ValidationError(myIssues);
     }
+    return result.data;
   }
 }

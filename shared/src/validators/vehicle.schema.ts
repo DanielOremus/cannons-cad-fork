@@ -18,7 +18,7 @@ export const createVehicleSchema = z.object({
       const digitsNumber = Math.floor(Math.log10(year));
       const currentYear = new Date().getUTCFullYear();
       return digitsNumber === 4 && currentYear >= year;
-    }, 'Must be in YYYY format').refine,
+    }, 'Must be in YYYY format'),
 
   color: z.string().trim().nullish(),
   flags: z.array(z.enum(VehicleFlag)).default([]),

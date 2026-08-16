@@ -34,7 +34,7 @@ export function mapZodIssue(issue: z.core.$ZodIssue): ValidationIssue {
       });
       break;
     case 'invalid_format':
-      return generateIssueObj(issue, 'invalid_format', { format: issue.format });
+      return generateIssueObj(issue, 'invalid_format', { required: issue.format });
     case 'invalid_type':
       return generateIssueObj(issue, 'invalid_type', { required: issue.expected });
       break;
