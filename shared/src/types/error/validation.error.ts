@@ -19,9 +19,8 @@ export type ValidationIssues = {
     max: z.core.$ZodIssueTooBig['maximum'];
     inclusive: boolean;
   };
-  invalid_enum_value: {
-    allowed: (string | number)[];
-    entered: unknown;
+  invalid_value: {
+    allowed: z.core.util.PrimitiveArray;
   };
   invalid_format: {
     required?: string;
@@ -33,6 +32,7 @@ export type ValidationIssues = {
     message: string;
   };
   not_unique: void;
+  in_future: void;
 };
 
 export type IssueCode = keyof ValidationIssues;

@@ -6,26 +6,40 @@ const nameValidator = z
   .string()
   .trim()
   .min(3)
+  .max(20)
+  .refine((name) => /^[a-zA-Z]+$/.test(name), {
+    params: {
+      code: 'invalid_format',
+      required: 'alphabetic',
+    },
+  })
   .transform((v) => {
     const sliced = v.slice(1);
     return v[0]?.toUpperCase() + sliced.toLowerCase();
   });
 
-const dobValidator = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be in YYYY-MM-DD format')
-  .refine(
-    (v) => {
-      const dob = new Date(v + 'T00:00:00.000Z');
-      return dob <= new Date();
-    },
-    {
-      error: 'Cannot be in the future',
+const dobValidator = z.string().superRefine((dob, ctx) => {
+  const hasValidFormat = /^\d{4}-\d{2}-\d{2}$/.test(dob);
+  if (!hasValidFormat) {
+    ctx.addIssue({
+      code: 'custom',
+      params: {
+        code: 'invalid_format',
+        required: 'YYYY-MM-DD',
+      },
+    });
+    return;
+  }
+  const dobDate = new Date(dob + 'T00:00:00.000Z');
+  if (dobDate > new Date()) {
+    ctx.addIssue({
+      code: 'custom',
       params: {
         code: 'in_future',
       },
-    },
-  );
+    });
+  }
+});
 
 export const createCharacterSchema = z.object({
   firstName: nameValidator,

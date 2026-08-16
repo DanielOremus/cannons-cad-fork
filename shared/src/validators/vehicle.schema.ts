@@ -8,17 +8,42 @@ export const createVehicleSchema = z.object({
   licensePlate: z
     .string()
     .trim()
-    .regex(/^[a-zA-Z0-9]{3,10}$/, 'Invalid license plate format'),
+    .min(3)
+    .max(10)
+    .toUpperCase()
+    .refine((plate) => /^[A-Z0-9]$/.test(plate), {
+      params: {
+        code: 'invalid_format',
+        required: 'alphanumeric',
+      },
+    }),
   make: z.string().trim().nonempty(),
   model: z.string().trim().min(3),
   year: z.coerce
     .number()
     .positive()
-    .refine((year) => {
-      const digitsNumber = Math.floor(Math.log10(year));
+    .superRefine((year, ctx) => {
+      const digits = Math.floor(Math.log10(year));
       const currentYear = new Date().getUTCFullYear();
-      return digitsNumber === 4 && currentYear >= year;
-    }, 'Must be in YYYY format'),
+      if (digits !== 4) {
+        ctx.addIssue({
+          code: 'custom',
+          params: {
+            code: 'invalid_format',
+            required: 'YYYY',
+          },
+        });
+        return;
+      }
+      if (year > currentYear) {
+        ctx.addIssue({
+          code: 'custom',
+          params: {
+            code: 'in_future',
+          },
+        });
+      }
+    }),
 
   color: z.string().trim().nullish(),
   flags: z.array(z.enum(VehicleFlag)).default([]),

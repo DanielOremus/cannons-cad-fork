@@ -3,7 +3,13 @@ import * as z from 'zod/v4';
 const nameValidator = z
   .string()
   .min(3)
-  .regex(/^[a-zA-Z0-9]+$/, { error: 'Can only contain letters and numbers' });
+  .max(20)
+  .refine((name) => /^[a-zA-Z0-9]+$/.test(name), {
+    params: {
+      code: 'invalid_format',
+      required: 'alphanumeric',
+    },
+  });
 const captchaValidator = z.string().trim().nonempty().max(2048, 'Captcha token is invalid');
 
 export const loginUserSchema = z.object({
@@ -19,27 +25,19 @@ export const registerUserSchema = z.object({
   confirmPassword: z.string(),
   captchaToken: captchaValidator,
 });
-// .refine((data) => data.password === data.confirmPassword, {
-//   message: 'The passwords do not match',
-//   params: {
-//     code: 'not_same_as',
-//     field: 'password',
-//   },
-//   path: ['confirmPassword'],
-// })
-// .transform((data) => {
-//   const { confirmPassword, ...rest } = data;
-//   return rest;
-// });
 
 export const updateProfileSchema = z.object({
   name: nameValidator,
 });
 
 export const updateEmailSchema = z.object({
-  email: z.email().toLowerCase,
+  email: z.email().toLowerCase(),
   password: z.string().trim().nonempty(),
 });
 export const confirmEmailSchema = z.object({
-  code: z.string().regex(/^\d{6}$/, { error: 'Invalid code format' }),
+  code: z.string().refine((code) => /^\d{6}$/.test(code), {
+    params: {
+      code: 'invalid_format',
+    },
+  }),
 });
