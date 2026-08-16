@@ -11,7 +11,7 @@ export const createVehicleSchema = z.object({
     .min(3)
     .max(10)
     .toUpperCase()
-    .refine((plate) => /^[A-Z0-9]$/.test(plate), {
+    .refine((plate) => /^[A-Z0-9]+$/.test(plate), {
       params: {
         code: 'invalid_format',
         required: 'alphanumeric',
@@ -21,9 +21,10 @@ export const createVehicleSchema = z.object({
   model: z.string().trim().min(3),
   year: z.coerce
     .number()
+    .int()
     .positive()
     .superRefine((year, ctx) => {
-      const digits = Math.floor(Math.log10(year));
+      const digits = Math.floor(Math.log10(year)) + 1;
       const currentYear = new Date().getUTCFullYear();
       if (digits !== 4) {
         ctx.addIssue({
