@@ -24,7 +24,7 @@ export type ValidationIssues = {
     entered: unknown;
   };
   invalid_format: {
-    format: string;
+    required?: string;
   };
   invalid_type: {
     required: string;
