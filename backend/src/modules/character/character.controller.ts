@@ -18,13 +18,14 @@ import { RequirePermission } from '../../common/decorators/require-permission.de
 import { CharacterMapper } from './character.mapper';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
 import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { idValidator, type PaginationDto } from '@project/shared';
+import { type PaginationDto } from '@project/shared';
 import { paginationSchema } from '@project/shared';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetCharacterQuery } from './queries/get-character/get-character.query';
 import { SearchCharacterQuery } from './queries/search-character/search-character.query';
 import { CreateCharacterCommand } from './commands/create-character/create-character.command';
 import { GetCharacterCitationsQuery } from '../citation/queries/get-character-citations/get-character-citations.query';
+import { IdParamPipe } from '../../common/pipes/id-validation.pipe';
 
 @Controller('/characters')
 @UseGuards(AuthGuard, PermissionsGuard)
@@ -42,7 +43,7 @@ export class CharacterController {
   }
   @Get('/:id')
   @RequirePermission('character', 'read')
-  async getById(@Param('id', new ZodValidationPipe(idValidator)) id: number) {
+  async getById(@Param('id', new IdParamPipe()) id: number) {
     return await this.queryBus.execute(new GetCharacterQuery(id));
   }
   @Post('/create')
@@ -55,7 +56,7 @@ export class CharacterController {
   @Get('/:id/citations')
   @RequirePermission('character', 'read')
   async getCitations(
-    @Param('id', new ZodValidationPipe(idValidator)) id: number,
+    @Param('id', new IdParamPipe()) id: number,
     @Query(new ZodValidationPipe(paginationSchema)) query: PaginationDto,
   ) {
     return this.queryBus.execute(
