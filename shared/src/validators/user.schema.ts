@@ -39,7 +39,7 @@ export const updateProfileSchema = z.object({
 });
 
 export const updateEmailSchema = z.object({
-  email: z.email().toLowerCase,
+  email: z.email().toLowerCase(),
   password: z.string().trim().nonempty(),
 });
 export const confirmEmailSchema = z.object({

@@ -57,6 +57,16 @@ export {
   privateUserResponseSchema,
   publicUserResponseSchema,
 } from './validators/user.schema.js';
+export {
+  backendApiErrorSchema,
+  backendValidationIssueSchema,
+  structuredApiErrorSchema,
+  structuredApiIssueSchema,
+  type BackendApiError,
+  type BackendValidationIssue,
+  type StructuredApiError,
+  type StructuredApiIssue,
+} from './validators/api-error.schema.js';
 
 //Utils
 
