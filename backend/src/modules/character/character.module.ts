@@ -12,9 +12,11 @@ import { DriverLicenseModule } from '../driver-license/driver-license.module';
 import { GetCharacterHandler } from './queries/get-character/get-character.handler';
 import { SearchCharacterHandler } from './queries/search-character/search-character.handler';
 import { CreateCharacterHandler } from './commands/create-character/create-character.handler';
+import { UpdateCharacterHandler } from './commands/update-character/update-character.handler';
+import { DeleteCharacterHandler } from './commands/delete-character/delete-character.handler';
 
 const queryHandlers = [GetCharacterHandler, SearchCharacterHandler];
-const commandHandlers = [CreateCharacterHandler];
+const commandHandlers = [CreateCharacterHandler, UpdateCharacterHandler, DeleteCharacterHandler];
 
 @Module({
   imports: [

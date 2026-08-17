@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CharacterEntity } from '../entities/character.entity';
 import { CharacterRepository } from '../character.repository';
-import { EntityManager, Populate } from '@mikro-orm/postgresql';
+import { EntityManager, Populate, wrap } from '@mikro-orm/postgresql';
 import { SearchCharacterDto } from '../dto/search-character.dto';
 import { CreateCharacterInput } from '../inputs/create-character.input';
 import { CharacterPopulate } from '../character.repository';
 import { PaginationDto } from '@project/shared';
+import { UpdateCharacterDto } from '../dto/update-character.dto';
 
 @Injectable()
 export class OrmCharacterRepository extends CharacterRepository {
@@ -32,6 +33,9 @@ export class OrmCharacterRepository extends CharacterRepository {
   }
   async create(data: CreateCharacterInput): Promise<CharacterEntity> {
     return await this.em.create(this.entity, data);
+  }
+  async update(entity: CharacterEntity, input: UpdateCharacterDto): Promise<void> {
+    await wrap(entity).assign(input);
   }
   async delete(entity: CharacterEntity): Promise<void> {
     await this.em.remove(entity);

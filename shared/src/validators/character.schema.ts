@@ -65,3 +65,5 @@ export const searchCharacterSchema = z.object({
   lastName: nameValidator,
   dob: dobValidator,
 });
+
+export const updateCharacterSchema = createCharacterSchema.partial();

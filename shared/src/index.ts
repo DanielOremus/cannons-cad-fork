@@ -45,7 +45,11 @@ export type { ChargeDto, CitationDto } from './dto/citation/get-citation.dto.js'
 
 //Validation schemas
 
-export { createCharacterSchema, searchCharacterSchema } from './validators/character.schema.js';
+export {
+  createCharacterSchema,
+  searchCharacterSchema,
+  updateCharacterSchema,
+} from './validators/character.schema.js';
 
 export { paginationSchema } from './validators/pagination.schema.js';
 
