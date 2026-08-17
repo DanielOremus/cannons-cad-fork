@@ -8,6 +8,9 @@
     "shared"
   ],
   "scripts": {
+    "lint": "eslint .",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm exec -w @project/frontend -- tsc -b --pretty false && npm exec -w @project/backend -- tsc --noEmit -p tsconfig.json && npm exec -w @project/shared -- tsc --noEmit -p tsconfig.json",
     "backend:up": "docker compose --env-file ./backend/.env up",
     "backend:down": "docker compose --env-file ./backend/.env down"
   },
