@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from './entities/user.entity';
-import { PrivateUserResponseDto, PublicUserResponseDto } from './dto/user-response.dto';
+import { UserDto, ProfileDto } from './dto/get-user.dto';
 
 @Injectable()
 export class UserMapper {
@@ -14,7 +14,7 @@ export class UserMapper {
 
     return `${firstChar}${stars}${lastChar}@${domain}`;
   }
-  toPrivateProfileDto(user: UserEntity): PrivateUserResponseDto {
+  toProfileDto(user: UserEntity): ProfileDto {
     const { name, roles, email, status, emailConfirmed, createdAt } = user;
 
     return {
@@ -26,7 +26,7 @@ export class UserMapper {
       createdAt: createdAt.toISOString(),
     };
   }
-  toPublicProfileDto(user: UserEntity): PublicUserResponseDto {
+  toUserDto(user: UserEntity): UserDto {
     const { name, roles, status, createdAt } = user;
 
     return { name, roles, status, createdAt: createdAt.toISOString() };

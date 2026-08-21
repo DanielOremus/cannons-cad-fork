@@ -11,7 +11,7 @@ export const UserRole = {
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
 export const RolePermissions = {
-  ADMIN: [],
+  ADMIN: ['user:read:any'],
   CIVILIAN: [
     'character:create:own',
     'character:read:own',

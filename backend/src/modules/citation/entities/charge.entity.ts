@@ -3,7 +3,7 @@ import { BaseSchema } from '../../../shared/entities/base.entity';
 import { CitationEntity } from './citation.entity';
 
 export const ChargeSchema = defineEntity({
-  name: 'ChargeEntity',
+  name: 'Charge',
   extends: BaseSchema,
   properties: {
     amount: p.integer(),

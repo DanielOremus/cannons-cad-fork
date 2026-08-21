@@ -1,10 +1,3 @@
-// import { DriverCategory } from '@project/shared';
-// import { BaseEntity } from '../../../shared/entities/base.entity';
-
-// export class DriverLicenseEntity implements BaseEntity {
-//   id: number;
-//   categories: DriverCategory[];
-// }
 import { defineEntity, p } from '@mikro-orm/core';
 import { BaseSchema } from '../../../shared/entities/base.entity';
 import { DriverCategory } from '@project/shared';

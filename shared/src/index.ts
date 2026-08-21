@@ -19,43 +19,41 @@ export {
 } from './types/permission/index.js';
 
 //Dto
-export type { PaginationDto, PaginationRequest } from './dto/pagination.js';
+export type { PaginationDto, PaginationRequest, PaginatedList } from './dto/pagination.js';
 
+export type { PublicUserResponseDto, PrivateUserResponseDto } from './dto/user/get-user.dto.js';
 export type {
-  PublicUserResponseDto,
   LoginUserDto,
   RegisterUserDto,
-  PrivateUserResponseDto,
-} from './dto/user.js';
+  ConfirmUserEmailDto,
+} from './dto/user/auth-user.dto.js';
+export type { UpdateUserDto, UpdateUserEmailDto } from './dto/user/update-user.dto.js';
 
 export type {
   CreateCharacterDto,
-  CreateCharacterRequest,
-} from './dto/character/create-character.js';
+  CreateCharacterResponseDto,
+} from './dto/character/create-character.dto.js';
 export type {
   SearchCharacterDto,
-  SearchCharacterRequest,
   SearchCharacterResponseDto,
-} from './dto/character/search-character.js';
+} from './dto/character/search-character.dto.js';
+export { type CharacterDto } from './dto/character/get-character.dto.js';
+export { type VehicleDto } from './dto/vehicle/get-vehicle.dto.js';
+export { type DriverLicenseDto } from './dto/driver-license/get-driver-license.dto.js';
+export type { ChargeDto, CitationDto } from './dto/citation/get-citation.dto.js';
 
 //Validation schemas
 
-export {
-  characterCreateSchema,
-  characterSearchSchema,
-  searchCharacterResponseSchema,
-} from './validators/character.schema.js';
+export { createCharacterSchema, searchCharacterSchema } from './validators/character.schema.js';
 
 export { paginationSchema } from './validators/pagination.schema.js';
 
 export {
-  registerSchema,
-  loginSchema,
+  registerUserSchema,
+  loginUserSchema,
   updateProfileSchema,
   updateEmailSchema,
   confirmEmailSchema,
-  privateUserResponseSchema,
-  publicUserResponseSchema,
 } from './validators/user.schema.js';
 export {
   backendApiErrorSchema,
@@ -67,6 +65,8 @@ export {
   type StructuredApiError,
   type StructuredApiIssue,
 } from './validators/api-error.schema.js';
+
+export { idValidator, uuidValidator } from './validators/common.schema.js';
 
 //Utils
 

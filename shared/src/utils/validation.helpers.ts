@@ -34,13 +34,21 @@ export function mapZodIssue(issue: z.core.$ZodIssue): ValidationIssue {
       });
       break;
     case 'invalid_format':
-      return generateIssueObj(issue, 'invalid_format', { format: 'alphanumeric' });
+      return generateIssueObj(issue, 'invalid_format', { required: issue.format });
     case 'invalid_type':
       return generateIssueObj(issue, 'invalid_type', { required: issue.expected });
+    // case "not_multiple_of":
+    //   return generateIssueObj(issue, "invalid_enum_value", {entered: issue.input, allowed: issue.})
+    case 'invalid_value':
+      return generateIssueObj(issue, 'invalid_value', {
+        allowed: issue.values,
+      });
       break;
     case 'custom':
-      //   if (issue.params?.code === 'not_same_as')
-      //     return generateIssueObj(issue, 'not_same_as', { field: issue.params.field });
+      const code = issue.params?.code as IssueCode;
+      if (code === 'invalid_format')
+        return generateIssueObj(issue, 'invalid_format', { required: issue.params!.required });
+      if (code === 'in_future') return generateIssueObj(issue, 'in_future', undefined);
       return generateIssueObj(issue, 'custom', { message: issue.message });
       break;
     default:

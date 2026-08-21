@@ -1,11 +1,19 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import mikroOrmConfig from '../../mikro-orm.config';
 import { DatabaseService } from './database.service';
 import { UnitOfWork } from './unit-of-work';
 
+@Global()
 @Module({
-  imports: [MikroOrmModule.forRoot({ ...mikroOrmConfig, autoLoadEntities: true, entities: [], entitiesTs: [] })],
+  imports: [
+    MikroOrmModule.forRoot({
+      ...mikroOrmConfig,
+      autoLoadEntities: true,
+      entities: [],
+      entitiesTs: [],
+    }),
+  ],
   providers: [DatabaseService, UnitOfWork],
   exports: [DatabaseService, UnitOfWork],
 })

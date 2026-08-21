@@ -17,7 +17,7 @@ export const VehicleSchema = defineEntity({
       .enum(() => VehicleFlag)
       .array()
       .default([]),
-    owner: () => p.manyToOne(CharacterEntity).inversedBy('vehicles').deleteRule('cascade').owner(),
+    owner: () => p.manyToOne(CharacterEntity).inversedBy('vehicles').deleteRule('cascade'),
   },
 });
 

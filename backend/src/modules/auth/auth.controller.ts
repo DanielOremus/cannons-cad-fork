@@ -9,7 +9,6 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import type { Request, Response } from 'express';
@@ -27,23 +26,29 @@ import {
   ClearRefreshCookie,
   SetRefreshCookie,
 } from '../../common/decorators/refresh-cookie.decorator';
+import { CommandBus } from '@nestjs/cqrs';
+import { RegisterUserCommand } from './commands/register/register.command';
+import { LoginUserCommand } from './commands/login/login.command';
+import { LogoutUserCommand } from './commands/logout/logout.command';
+import { RefreshSessionCommand } from './commands/refresh-session/refresh-session.command';
+import { ConfirmEmailCommand } from './commands/confirm-email/confirm-email.command';
+import { ResendEmailConfirmationCommand } from './commands/resend-email-confirmation/resend-email-confirmation.command';
 
 @Controller('/auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly userMapper: UserMapper,
-  ) {}
+  constructor(private readonly commandBus: CommandBus) {}
   @Post('/register')
   @SetRefreshCookie()
   @UseInterceptors(AuthInterceptor)
   @UsePipes(new ZodValidationPipe(RegisterUserDto.schema))
   @HttpCode(201)
   async register(@Body() registerDto: RegisterUserDto, @Res({ passthrough: true }) res: Response) {
-    const { refresh, access, user } = await this.authService.register(registerDto);
+    const { refresh, access, user } = await this.commandBus.execute(
+      new RegisterUserCommand(registerDto),
+    );
     res.locals.refreshToken = refresh;
 
-    return { access, user: this.userMapper.toPrivateProfileDto(user) };
+    return { access, user };
   }
   @Post('/login')
   @SetRefreshCookie()
@@ -51,29 +56,33 @@ export class AuthController {
   @UsePipes(new ZodValidationPipe(LoginUserDto.schema))
   @HttpCode(200)
   async login(@Body() loginDto: LoginUserDto, @Res({ passthrough: true }) res: Response) {
-    const { refresh, access, user } = await this.authService.login(loginDto);
+    const { refresh, access, user } = await this.commandBus.execute(new LoginUserCommand(loginDto));
     res.locals.refreshToken = refresh;
 
-    return { access, user: this.userMapper.toPrivateProfileDto(user) };
+    return { access, user };
   }
   @Post('/logout')
   @UseGuards(AuthGuard)
   @RequireConfirmedEmailOnly()
+  @UseInterceptors(AuthInterceptor)
   @ClearRefreshCookie()
   @HttpCode(204)
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    await this.authService.logout(req.user!.id, req.user!.familyId);
+    await this.commandBus.execute(new LogoutUserCommand(req.user!.id, req.user!.familyId));
     res.clearCookie(COOKEY_KEY);
   }
   @Post('/refresh')
-  @HttpCode(200)
+  @UseInterceptors(AuthInterceptor)
   @SetRefreshCookie()
+  @HttpCode(200)
   async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     try {
-      const { refresh, access } = await this.authService.refresh(req.signedCookies[COOKEY_KEY]);
+      const { refresh, access, user } = await this.commandBus.execute(
+        new RefreshSessionCommand(req.signedCookies[COOKEY_KEY]),
+      );
       res.locals.refreshToken = refresh;
 
-      return { access };
+      return { user, access };
     } catch (error) {
       res.clearCookie(COOKEY_KEY);
       throw error;
@@ -85,13 +94,13 @@ export class AuthController {
   @UsePipes(new ZodValidationPipe(ConfirmEmailDto.schema))
   @HttpCode(204)
   async confirmEmail(@Req() req: Request, @Body() confirmDto: ConfirmEmailDto) {
-    await this.authService.confirmEmail(req.user!, confirmDto);
+    await this.commandBus.execute(new ConfirmEmailCommand(req.user!, confirmDto.code));
   }
   @Post('/resend-code')
   @UseGuards(AuthGuard)
   @SkipActiveCheck()
   @HttpCode(204)
-  async resendEmailCode(@Req() req: Request) {
-    await this.authService.resendCode(req.user!);
+  async resendEmailConfirmation(@Req() req: Request) {
+    await this.commandBus.execute(new ResendEmailConfirmationCommand(req.user!));
   }
 }
