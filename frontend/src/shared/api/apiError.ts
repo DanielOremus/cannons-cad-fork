@@ -1,4 +1,4 @@
-import { backendApiErrorSchema, structuredApiErrorSchema } from '@project/shared'
+import { apiErrorResponseSchema } from '@project/shared'
 
 export type ApiIssue = {
   path: Array<string | number>
@@ -72,15 +72,19 @@ function getBackendIssueMessage(issue: { code: string; params?: unknown }) {
   }
 }
 
+function getIssuePathSegment(field: string | number | symbol): string | number {
+  return typeof field === 'symbol' ? field.description ?? String(field) : field
+}
+
 function parseBackendIssues(value: unknown): ApiIssue[] {
-  const parsed = backendApiErrorSchema.safeParse(value)
+  const parsed = apiErrorResponseSchema.safeParse(value)
 
   if (!parsed.success) {
     return []
   }
 
   return (parsed.data.errorIssues ?? []).map((issue) => ({
-    path: [issue.field],
+    path: [getIssuePathSegment(issue.field)],
     code: issue.code,
     message: getBackendIssueMessage(issue),
   }))
@@ -117,18 +121,7 @@ function parseIssues(value: unknown): ApiIssue[] {
 }
 
 export function normalizeApiError(status: number, body: unknown): NormalizedApiError {
-  const structured = structuredApiErrorSchema.safeParse(body)
-
-  if (structured.success) {
-    return {
-      status: structured.data.status ?? status,
-      code: structured.data.code,
-      message: structured.data.detail,
-      issues: structured.data.issues ?? [],
-    }
-  }
-
-  const backend = backendApiErrorSchema.safeParse(body)
+  const backend = apiErrorResponseSchema.safeParse(body)
 
   if (backend.success) {
     return {

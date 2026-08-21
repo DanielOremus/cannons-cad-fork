@@ -56,14 +56,8 @@ export {
   confirmEmailSchema,
 } from './validators/user.schema.js';
 export {
-  backendApiErrorSchema,
-  backendValidationIssueSchema,
-  structuredApiErrorSchema,
-  structuredApiIssueSchema,
-  type BackendApiError,
-  type BackendValidationIssue,
-  type StructuredApiError,
-  type StructuredApiIssue,
+  apiErrorResponseSchema,
+  type ApiErrorResponse,
 } from './validators/api-error.schema.js';
 
 export { idValidator, uuidValidator } from './validators/common.schema.js';
