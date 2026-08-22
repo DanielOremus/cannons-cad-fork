@@ -1,4 +1,4 @@
-import { apiErrorResponseSchema } from '@project/shared'
+import { type ApiErrorResponse } from '@project/shared'
 
 export type ApiIssue = {
   path: Array<string | number>
@@ -29,6 +29,10 @@ export class ApiError extends Error {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
+}
+
+function isApiErrorResponse(value: unknown): value is ApiErrorResponse {
+  return isRecord(value) && typeof value.errorCode === 'string'
 }
 
 function getIssueParam(issue: { params?: unknown }, key: string) {
@@ -76,14 +80,8 @@ function getIssuePathSegment(field: string | number | symbol): string | number {
   return typeof field === 'symbol' ? field.description ?? String(field) : field
 }
 
-function parseBackendIssues(value: unknown): ApiIssue[] {
-  const parsed = apiErrorResponseSchema.safeParse(value)
-
-  if (!parsed.success) {
-    return []
-  }
-
-  return (parsed.data.errorIssues ?? []).map((issue) => ({
+function parseBackendIssues(issues: ApiErrorResponse['errorIssues']): ApiIssue[] {
+  return (issues ?? []).map((issue) => ({
     path: [getIssuePathSegment(issue.field)],
     code: issue.code,
     message: getBackendIssueMessage(issue),
@@ -121,17 +119,15 @@ function parseIssues(value: unknown): ApiIssue[] {
 }
 
 export function normalizeApiError(status: number, body: unknown): NormalizedApiError {
-  const backend = apiErrorResponseSchema.safeParse(body)
-
-  if (backend.success) {
+  if (isApiErrorResponse(body)) {
     return {
       status,
-      code: backend.data.errorCode,
+      code: body.errorCode,
       message:
-        backend.data.errorMessage ??
-        backend.data.errorMsg ??
+        body.errorMessage ??
+        body.errorMsg ??
         'The request could not be completed.',
-      issues: parseBackendIssues(body),
+      issues: parseBackendIssues(body.errorIssues),
     }
   }
 

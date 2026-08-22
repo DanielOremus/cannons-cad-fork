@@ -11,6 +11,7 @@ export { PermissionAction } from './types/permission/permission.action.js';
 export { PermissionResource } from './types/permission/permission.resource.js';
 export { PermissionScope } from './types/permission/permission.scope.js';
 export { type ValidationIssue } from './types/error/validation.error.js';
+export { type ApiErrorResponse } from './types/error/api-error.response.js';
 export {
   type Permission,
   ResourceActions,
@@ -55,10 +56,6 @@ export {
   updateEmailSchema,
   confirmEmailSchema,
 } from './validators/user.schema.js';
-export {
-  apiErrorResponseSchema,
-  type ApiErrorResponse,
-} from './validators/api-error.schema.js';
 
 export { idValidator, uuidValidator } from './validators/common.schema.js';
 
