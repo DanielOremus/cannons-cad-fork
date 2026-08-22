@@ -5,12 +5,10 @@ export type ApiErrorResponse =
   | {
       errorCode: typeof ErrorCode.VALIDATION_FAILED;
       errorMessage?: string;
-      errorMsg?: string;
       errorIssues: ValidationIssue[];
     }
   | {
       errorCode: Exclude<ErrorCodeType, typeof ErrorCode.VALIDATION_FAILED>;
       errorMessage?: string;
-      errorMsg?: string;
       errorIssues?: never;
     };
