@@ -15,6 +15,8 @@ export abstract class CharacterRepository {
   abstract delete(entity: CharacterEntity): Promise<void>;
   abstract update(entity: CharacterEntity, input: UpdateCharacterDto): Promise<void>;
   abstract findById(id: number, populate?: CharacterPopulate[]): Promise<CharacterEntity | null>;
+  abstract countVehicles(entity: CharacterEntity): Promise<number>;
+  abstract countCitations(entity: CharacterEntity): Promise<number>;
 }
 
 export type CharacterPopulate = 'user' | 'citations' | 'vehicles' | 'driverLicense';

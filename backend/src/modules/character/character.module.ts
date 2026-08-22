@@ -6,8 +6,6 @@ import { CharacterRepository } from './character.repository';
 import { OrmCharacterRepository } from './infrastructure/orm.character.repository';
 import { CharacterMapper } from './character.mapper';
 import { UserModule } from '../user/user.module';
-import { VehicleModule } from '../vehicle/vehicle.module';
-import { CitationModule } from '../citation/citation.module';
 import { DriverLicenseModule } from '../driver-license/driver-license.module';
 import { GetCharacterHandler } from './queries/get-character/get-character.handler';
 import { SearchCharacterHandler } from './queries/search-character/search-character.handler';
@@ -19,13 +17,7 @@ const queryHandlers = [GetCharacterHandler, SearchCharacterHandler];
 const commandHandlers = [CreateCharacterHandler, UpdateCharacterHandler, DeleteCharacterHandler];
 
 @Module({
-  imports: [
-    MikroOrmModule.forFeature([CharacterEntity]),
-    UserModule,
-    VehicleModule,
-    CitationModule,
-    DriverLicenseModule,
-  ],
+  imports: [MikroOrmModule.forFeature([CharacterEntity]), UserModule, DriverLicenseModule],
   controllers: [CharacterController],
   providers: [
     ...queryHandlers,
@@ -36,5 +28,6 @@ const commandHandlers = [CreateCharacterHandler, UpdateCharacterHandler, DeleteC
     },
     CharacterMapper,
   ],
+  exports: [CharacterRepository],
 })
 export class CharacterModule {}

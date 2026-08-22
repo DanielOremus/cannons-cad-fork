@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { CharacterEntity } from '../entities/character.entity';
 import { CharacterRepository } from '../character.repository';
-import { EntityManager, Populate, wrap } from '@mikro-orm/postgresql';
+import { EntityManager, wrap } from '@mikro-orm/postgresql';
 import { SearchCharacterDto } from '../dto/search-character.dto';
 import { CreateCharacterInput } from '../inputs/create-character.input';
 import { CharacterPopulate } from '../character.repository';
 import { PaginationDto } from '@project/shared';
 import { UpdateCharacterDto } from '../dto/update-character.dto';
+import { VehicleEntity } from '../../vehicle/entities/vehicle.entity';
+import { CitationEntity } from '../../citation/entities/citation.entity';
 
 @Injectable()
 export class OrmCharacterRepository extends CharacterRepository {
@@ -27,6 +29,12 @@ export class OrmCharacterRepository extends CharacterRepository {
       },
       { populate },
     );
+  }
+  async countVehicles(entity: CharacterEntity): Promise<number> {
+    return await entity.vehicles.loadCount();
+  }
+  async countCitations(entity: CharacterEntity): Promise<number> {
+    return await entity.citations.loadCount();
   }
   async findById(id: number, populate?: CharacterPopulate[]): Promise<CharacterEntity | null> {
     return await this.em.findOne(this.entity, { id }, { populate });

@@ -1,4 +1,5 @@
 import type { VehicleFlag } from '../../types/vehicle/vehicle.flag.js';
+import type { VehicleType } from '../../types/vehicle/vehicle.type.js';
 
 export type VehicleDto = {
   id: number;
@@ -8,4 +9,6 @@ export type VehicleDto = {
   licensePlate: string;
   color?: string | null;
   flags: VehicleFlag[];
+  type: VehicleType;
+  owner: { id: number; firstName: string; lastName: string };
 };

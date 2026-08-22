@@ -3,20 +3,22 @@ import { idValidator } from './common.schema.js';
 import { VehicleType } from '../types/vehicle/vehicle.type.js';
 import { VehicleFlag } from '../types/vehicle/vehicle.flag.js';
 
+export const licensePlateValidator = z
+  .string()
+  .trim()
+  .min(3)
+  .max(10)
+  .toUpperCase()
+  .refine((plate) => /^[A-Z0-9]+$/.test(plate), {
+    params: {
+      code: 'invalid_format',
+      required: 'alphanumeric',
+    },
+  });
+
 export const createVehicleSchema = z.object({
   type: z.enum(VehicleType),
-  licensePlate: z
-    .string()
-    .trim()
-    .min(3)
-    .max(10)
-    .toUpperCase()
-    .refine((plate) => /^[A-Z0-9]+$/.test(plate), {
-      params: {
-        code: 'invalid_format',
-        required: 'alphanumeric',
-      },
-    }),
+  licensePlate: licensePlateValidator,
   make: z.string().trim().nonempty(),
   model: z.string().trim().min(3),
   year: z.coerce
@@ -44,9 +46,12 @@ export const createVehicleSchema = z.object({
           },
         });
       }
-    }),
+    })
+    .transform((year) => year.toString()),
 
   color: z.string().trim().nullish(),
   flags: z.array(z.enum(VehicleFlag)).default([]),
-  ownerId: idValidator,
+  characterId: idValidator,
 });
+
+export const updateVehicleSchema = createVehicleSchema.omit({ characterId: true }).partial();

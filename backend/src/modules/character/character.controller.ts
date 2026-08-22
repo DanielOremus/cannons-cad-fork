@@ -40,7 +40,7 @@ export class CharacterController {
 
   @Get('/search')
   @RequirePermission('character', 'search')
-  async search(@Body(new ZodValidationPipe(SearchCharacterDto.schema)) dto: SearchCharacterDto) {
+  async search(@Query(new ZodValidationPipe(SearchCharacterDto.schema)) dto: SearchCharacterDto) {
     return this.queryBus.execute(new SearchCharacterQuery(dto));
   }
   @Get('/:id')

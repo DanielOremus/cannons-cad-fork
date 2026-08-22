@@ -40,6 +40,7 @@ export type {
 } from './dto/character/search-character.dto.js';
 export { type CharacterDto } from './dto/character/get-character.dto.js';
 export { type VehicleDto } from './dto/vehicle/get-vehicle.dto.js';
+export { type CreateVehicleDto } from './dto/vehicle/create-vehicle.dto.js';
 export { type DriverLicenseDto } from './dto/driver-license/get-driver-license.dto.js';
 export type { ChargeDto, CitationDto } from './dto/citation/get-citation.dto.js';
 
@@ -60,6 +61,12 @@ export {
   updateEmailSchema,
   confirmEmailSchema,
 } from './validators/user.schema.js';
+
+export {
+  createVehicleSchema,
+  licensePlateValidator,
+  updateVehicleSchema,
+} from './validators/vehicle.schema.js';
 
 export { idValidator, uuidValidator } from './validators/common.schema.js';
 

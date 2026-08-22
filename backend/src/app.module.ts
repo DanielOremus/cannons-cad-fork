@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from './modules/auth/auth.module';
 import { CoreModule } from './core/core.module';
-import { CharacterModule } from './modules/character/character.module';
 import { CqrsModule } from '@nestjs/cqrs';
+import { ModulesModule } from './modules/modules.module';
 
 @Module({
-  imports: [CoreModule, CqrsModule.forRoot(), AuthModule, CharacterModule],
+  imports: [CqrsModule.forRoot(), CoreModule, ModulesModule],
 })
 export class AppModule {}
