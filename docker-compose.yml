@@ -18,13 +18,53 @@ services:
       - app_network
 
   redis:
-    image: redis
+    image: redis:7-alpine
     container_name: redis_cache
-    restart: always
+    restart: unless-stopped
+
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+    command:
+      [
+        "sh",
+        "-c",
+        "exec redis-server --appendonly yes --requirepass \"$${REDIS_PASSWORD}\"",
+      ]
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "redis-cli --no-auth-warning -a \"$${REDIS_PASSWORD}\" ping | grep PONG",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
     ports:
-      - '6380:6379'
+      - "127.0.0.1:6380:6379"
+
     volumes:
       - redis_data:/data
+
+    networks:
+      - app_network
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: cannons-cad_mailpit
+    restart: unless-stopped
+
+    environment:
+      MP_MAX_MESSAGES: 500
+      MP_SMTP_AUTH_ACCEPT_ANY: "1"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "1"
+
+    ports:
+      - "127.0.0.1:8025:8025"
+
     networks:
       - app_network
 
@@ -57,10 +97,15 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
       redis:
-        condition: service_started
+        condition: service_healthy
+
       db_migrations:
         condition: service_completed_successfully
+
+      mailpit:
+        condition: service_started
 
     ports:
       - '${PORT}:${PORT}'
