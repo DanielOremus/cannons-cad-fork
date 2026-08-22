@@ -125,7 +125,6 @@ export function normalizeApiError(status: number, body: unknown): NormalizedApiE
       code: body.errorCode,
       message:
         body.errorMessage ??
-        body.errorMsg ??
         'The request could not be completed.',
       issues: parseBackendIssues(body.errorIssues),
     }
