@@ -3,6 +3,8 @@ import { idValidator } from './common.schema.js';
 import { VehicleType } from '../types/vehicle/vehicle.type.js';
 import { VehicleFlag } from '../types/vehicle/vehicle.flag.js';
 
+const flagsValidator = z.array(z.enum(VehicleFlag));
+
 export const licensePlateValidator = z
   .string()
   .trim()
@@ -50,8 +52,12 @@ export const createVehicleSchema = z.object({
     .transform((year) => year.toString()),
 
   color: z.string().trim().nullish(),
-  flags: z.array(z.enum(VehicleFlag)).default([]),
+  flags: flagsValidator.default([]),
   characterId: idValidator,
 });
 
-export const updateVehicleSchema = createVehicleSchema.omit({ characterId: true }).partial();
+export const updateVehicleSchema = createVehicleSchema
+  .omit({ characterId: true })
+  .partial()
+  .extend({ flags: flagsValidator.optional() })
+  .refine((data) => Object.keys(data).length > 0, { error: 'At least one field must be provided' });

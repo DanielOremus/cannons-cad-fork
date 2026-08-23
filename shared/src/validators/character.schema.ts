@@ -2,6 +2,8 @@ import * as z from 'zod/v4';
 import { CharacterFlag } from '../types/character/character.flag.js';
 import { CharacterGender } from '../types/character/character.gender.js';
 
+const flagsValidator = z.array(z.enum(CharacterFlag));
+
 const nameValidator = z
   .string()
   .trim()
@@ -46,18 +48,10 @@ export const createCharacterSchema = z.object({
   lastName: nameValidator,
   dob: dobValidator,
   gender: z.enum(CharacterGender),
-  // idNumber: z
-  //   .string()
-  //   .trim()
-  //   .length(5)
-  //   .regex(/^[a-zA-Z0-9]+$/, {
-  //     error: 'Must contain only numbers and letters',
-  //   })
-  //   .transform((v) => v.toUpperCase()),
   phoneNumber: z.nullish(z.string().trim().min(5)),
   address: z.nullish(z.string().trim().min(5)),
   hasGunPermit: z.boolean().default(false),
-  flags: z.array(z.enum(CharacterFlag)).default([]),
+  flags: flagsValidator.default([]),
 });
 
 export const searchCharacterSchema = z.object({
@@ -66,4 +60,7 @@ export const searchCharacterSchema = z.object({
   dob: dobValidator,
 });
 
-export const updateCharacterSchema = createCharacterSchema.partial();
+export const updateCharacterSchema = createCharacterSchema
+  .partial()
+  .extend({ flags: flagsValidator.optional() })
+  .refine((data) => Object.keys(data).length > 0, { error: 'At least one field must be provided' });

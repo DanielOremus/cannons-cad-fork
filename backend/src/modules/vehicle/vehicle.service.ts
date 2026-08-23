@@ -7,6 +7,8 @@ import { ForbiddenError, NotFoundError } from '../../shared/errors/app.error';
 import { VehicleMapper } from './vehicle.mapper';
 import { VehicleDto } from './dto/get-vehicle.dto';
 import { UnitOfWork } from '../../core/database/unit-of-work';
+import { UpdateVehicleDto } from './dto/update-vehicle.dto';
+import { OwnershipService } from '../../shared/modules/ownership/ownership.service';
 
 @Injectable()
 export class VehicleService {
@@ -14,24 +16,9 @@ export class VehicleService {
     private readonly vehicleRepository: VehicleRepository,
     private readonly characterRepository: CharacterRepository,
     private readonly vehicleMapper: VehicleMapper,
+    private readonly ownershipService: OwnershipService,
     private readonly uow: UnitOfWork,
   ) {}
-  async create(
-    currentUserId: string,
-    scope: PermissionScope,
-    dto: CreateVehicleDto,
-  ): Promise<VehicleDto> {
-    const character = await this.characterRepository.findById(dto.characterId);
-    if (!character) throw new NotFoundError('Character');
-    if (scope === 'own') {
-      if (character.user.id !== currentUserId) throw new ForbiddenError();
-    }
-    const { characterId: owner, ...rest } = dto;
-    const vehicle = await this.vehicleRepository.create({ owner, ...rest });
-    await this.uow.saveChanges();
-
-    return this.vehicleMapper.toReadDto(vehicle);
-  }
   async search(licensePlate: string) {
     const vehicle = await this.vehicleRepository.findByLicensePlate(licensePlate, ['owner']);
     if (!vehicle) throw new NotFoundError('Vehicle');
@@ -51,12 +38,30 @@ export class VehicleService {
       total: result.total,
     };
   }
+  async create(dto: CreateVehicleDto, userId: string, scope: PermissionScope): Promise<VehicleDto> {
+    const character = await this.characterRepository.findById(dto.characterId);
+    if (!character) throw new NotFoundError('Character');
+    this.ownershipService.checkCharacter(character, userId, scope);
+
+    const { characterId: owner, ...rest } = dto;
+    const vehicle = await this.vehicleRepository.create({ owner, ...rest });
+    await this.uow.saveChanges();
+
+    return this.vehicleMapper.toReadDto(vehicle);
+  }
+  async update(vehicleId: number, dto: UpdateVehicleDto, userId: string, scope: PermissionScope) {
+    const vehicle = await this.vehicleRepository.findById(vehicleId, ['owner']);
+    if (!vehicle) throw new NotFoundError('Vehicle');
+
+    this.ownershipService.checkVehicle(vehicle, userId, scope);
+    await this.vehicleRepository.update(vehicle, dto);
+    await this.uow.saveChanges();
+  }
   async delete(vehicleId: number, userId: string, scope: PermissionScope) {
     const vehicle = await this.vehicleRepository.findById(vehicleId, ['owner']);
     if (!vehicle) throw new NotFoundError('Vehicle');
-    if (scope === 'own') {
-      if (userId !== vehicle.owner.user.id) throw new NotFoundError('Vehicle');
-    }
+
+    this.ownershipService.checkVehicle(vehicle, userId, scope);
     await this.vehicleRepository.delete(vehicle);
     await this.uow.saveChanges();
   }

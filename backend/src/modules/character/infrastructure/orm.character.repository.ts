@@ -42,8 +42,8 @@ export class OrmCharacterRepository extends CharacterRepository {
   async create(data: CreateCharacterInput): Promise<CharacterEntity> {
     return await this.em.create(this.entity, data);
   }
-  async update(entity: CharacterEntity, input: UpdateCharacterDto): Promise<void> {
-    await wrap(entity).assign(input);
+  async update(entity: CharacterEntity, input: UpdateCharacterDto): Promise<CharacterEntity> {
+    return await wrap(entity).assign(input);
   }
   async delete(entity: CharacterEntity): Promise<void> {
     await this.em.remove(entity);

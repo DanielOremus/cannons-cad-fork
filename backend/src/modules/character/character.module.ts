@@ -12,12 +12,18 @@ import { SearchCharacterHandler } from './queries/search-character/search-charac
 import { CreateCharacterHandler } from './commands/create-character/create-character.handler';
 import { UpdateCharacterHandler } from './commands/update-character/update-character.handler';
 import { DeleteCharacterHandler } from './commands/delete-character/delete-character.handler';
+import { OwnershipModule } from '../../shared/modules/ownership/ownership.module';
 
 const queryHandlers = [GetCharacterHandler, SearchCharacterHandler];
 const commandHandlers = [CreateCharacterHandler, UpdateCharacterHandler, DeleteCharacterHandler];
 
 @Module({
-  imports: [MikroOrmModule.forFeature([CharacterEntity]), UserModule, DriverLicenseModule],
+  imports: [
+    MikroOrmModule.forFeature([CharacterEntity]),
+    UserModule,
+    DriverLicenseModule,
+    OwnershipModule,
+  ],
   controllers: [CharacterController],
   providers: [
     ...queryHandlers,

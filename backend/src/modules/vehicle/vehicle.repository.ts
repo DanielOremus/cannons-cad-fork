@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PaginationDto } from '@project/shared';
 import { VehicleEntity } from './entities/vehicle.entity';
 import { CreateVehicleInput } from './inputs/create-vehicle.input';
+import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 
 @Injectable()
 export abstract class VehicleRepository {
@@ -9,12 +10,13 @@ export abstract class VehicleRepository {
     characterId: number,
     pagination: PaginationDto,
   ): Promise<{ items: VehicleEntity[]; total: number }>;
-  abstract create(input: CreateVehicleInput): Promise<VehicleEntity>;
   abstract findByLicensePlate(
     plate: string,
     populate?: VehiclePopulate[],
   ): Promise<VehicleEntity | null>;
   abstract findById(id: number, populate?: VehiclePopulate[]): Promise<VehicleEntity | null>;
+  abstract create(input: CreateVehicleInput): Promise<VehicleEntity>;
+  abstract update(vehicle: VehicleEntity, input: UpdateVehicleDto): Promise<VehicleEntity>;
   abstract delete(vehicle: VehicleEntity): Promise<void>;
 }
 

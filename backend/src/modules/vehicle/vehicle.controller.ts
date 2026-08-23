@@ -9,6 +9,7 @@ import {
   UseGuards,
   Query,
   Delete,
+  Patch,
 } from '@nestjs/common';
 import { VehicleService } from './vehicle.service';
 import { AuthGuard } from '../../common/guards/auth.guard';
@@ -19,12 +20,18 @@ import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { type Request } from 'express';
 import { licensePlateValidator } from '@project/shared';
 import { IdParamPipe } from '../../common/pipes/id-validation.pipe';
+import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 
 @Controller('/vehicles')
 @UseGuards(AuthGuard, PermissionsGuard)
 export class VehicleController {
   constructor(private readonly vehicleService: VehicleService) {}
 
+  @Get('/search')
+  @RequirePermission('vehicle', 'search')
+  async search(@Query('plate', new ZodValidationPipe(licensePlateValidator)) plate: string) {
+    return await this.vehicleService.search(plate);
+  }
   @Post('/create')
   @RequirePermission('vehicle', 'create')
   @HttpCode(201)
@@ -32,12 +39,17 @@ export class VehicleController {
     @Req() req: Request,
     @Body(new ZodValidationPipe(CreateVehicleDto.schema)) dto: CreateVehicleDto,
   ) {
-    return await this.vehicleService.create(req.user!.id, req.permissionScope!, dto);
+    return await this.vehicleService.create(dto, req.user!.id, req.permissionScope!);
   }
-  @Get('/search')
-  @RequirePermission('vehicle', 'search')
-  async search(@Query('plate', new ZodValidationPipe(licensePlateValidator)) plate: string) {
-    return await this.vehicleService.search(plate);
+  @Patch('/:id')
+  @RequirePermission('vehicle', 'update')
+  @HttpCode(204)
+  async update(
+    @Req() req: Request,
+    @Param('id', new IdParamPipe()) id: number,
+    @Body(new ZodValidationPipe(UpdateVehicleDto.schema)) dto: UpdateVehicleDto,
+  ) {
+    await this.vehicleService.update(id, dto, req.user!.id, req.permissionScope!);
   }
   @Delete('/:id')
   @RequirePermission('vehicle', 'delete')

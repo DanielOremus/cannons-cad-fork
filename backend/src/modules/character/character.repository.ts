@@ -13,7 +13,7 @@ export abstract class CharacterRepository {
   ): Promise<CharacterEntity | null>;
   abstract create(data: CreateCharacterInput): Promise<CharacterEntity>;
   abstract delete(entity: CharacterEntity): Promise<void>;
-  abstract update(entity: CharacterEntity, input: UpdateCharacterDto): Promise<void>;
+  abstract update(entity: CharacterEntity, input: UpdateCharacterDto): Promise<CharacterEntity>;
   abstract findById(id: number, populate?: CharacterPopulate[]): Promise<CharacterEntity | null>;
   abstract countVehicles(entity: CharacterEntity): Promise<number>;
   abstract countCitations(entity: CharacterEntity): Promise<number>;
