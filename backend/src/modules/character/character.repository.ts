@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CharacterEntity } from './entities/character.entity';
 import { SearchCharacterDto } from './dto/search-character.dto';
 import { CreateCharacterInput } from './inputs/create-character.input';
-import { PaginationDto } from '@project/shared';
 import { UpdateCharacterDto } from './dto/update-character.dto';
 
 @Injectable()

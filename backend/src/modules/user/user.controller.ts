@@ -1,6 +1,5 @@
 import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
 import { type Request } from 'express';
-import { type PaginationDto } from '@project/shared';
 import { RequirePermission } from '../../common/decorators/require-permission.decorator';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { PermissionsGuard } from '../../common/guards/permissions.guard';

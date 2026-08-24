@@ -33,8 +33,8 @@ export class CaptchaGuard implements CanActivate {
       }),
     });
 
-    const result = await cloudflareRes.json();
-    if (!result.success)
+    const result = (await cloudflareRes.json()) as { success: boolean };
+    if (result.success)
       throw new AppError('Captcha validation failed', ErrorCode.VALIDATION_FAILED);
     return true;
   }

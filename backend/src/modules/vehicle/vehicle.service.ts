@@ -3,7 +3,7 @@ import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { VehicleRepository } from './vehicle.repository';
 import { Injectable } from '@nestjs/common';
 import { CharacterRepository } from '../character/character.repository';
-import { ForbiddenError, NotFoundError } from '../../shared/errors/app.error';
+import { NotFoundError } from '../../shared/errors/app.error';
 import { VehicleMapper } from './vehicle.mapper';
 import { VehicleDto } from './dto/get-vehicle.dto';
 import { UnitOfWork } from '../../core/database/unit-of-work';
