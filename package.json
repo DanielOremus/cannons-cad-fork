@@ -15,6 +15,15 @@
     "backend:down": "docker compose --env-file ./backend/.env down"
   },
   "devDependencies": {
-    "prettier": "^3.9.5"
+    "prettier": "^3.9.5",
+    "eslint": "^10.6.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.3",
+    "globals": "^17.7.0",
+    "typescript-eslint": "^8.62.0",
+    "@eslint/js": "^10.0.1",
+    "@eslint/eslintrc": "^3.2.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.2"
   }
 }

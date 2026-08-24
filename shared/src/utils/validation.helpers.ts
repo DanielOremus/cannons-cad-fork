@@ -47,7 +47,7 @@ export function mapZodIssue(issue: z.core.$ZodIssue): ValidationIssue {
     case 'custom':
       const code = issue.params?.code as IssueCode;
       if (code === 'invalid_format')
-        return generateIssueObj(issue, 'invalid_format', { required: issue.params!.required });
+        return generateIssueObj(issue, 'invalid_format', { required: issue.params!.required as string });
       if (code === 'in_future') return generateIssueObj(issue, 'in_future', undefined);
       return generateIssueObj(issue, 'custom', { message: issue.message });
       break;
