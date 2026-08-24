@@ -25,7 +25,4 @@ export class OrmCitationRepository extends CitationRepository {
     const [citations, total] = await Promise.all([itemsPromise, countPromise]);
     return { items: citations, total };
   }
-  async countByCharacter(characterId: number): Promise<number> {
-    return await this.em.count(this.entity, { issuedCharacter: characterId });
-  }
 }

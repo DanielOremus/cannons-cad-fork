@@ -8,5 +8,4 @@ export abstract class CitationRepository {
     characterId: number,
     pagination: PaginationDto,
   ): Promise<{ items: CitationEntity[]; total: number }>;
-  abstract countByCharacter(characterId: number): Promise<number>;
 }

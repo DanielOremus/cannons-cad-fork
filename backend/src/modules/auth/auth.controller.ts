@@ -21,7 +21,6 @@ import {
   SkipActiveCheck,
 } from '../../common/decorators/account.decorator';
 import { ConfirmEmailDto } from './dto/confirm-email.dto';
-import { UserMapper } from '../user/user.mapper';
 import {
   ClearRefreshCookie,
   SetRefreshCookie,

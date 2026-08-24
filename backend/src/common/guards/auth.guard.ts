@@ -36,10 +36,16 @@ export class AuthGuard implements CanActivate {
       familyId: payload.familyId,
     };
 
-    const skipAccountActiveCheck = this.reflector.get(ACTIVE_CHECK_KEY, context.getHandler());
+    const skipAccountActiveCheck = this.reflector.get<boolean>(
+      ACTIVE_CHECK_KEY,
+      context.getHandler(),
+    );
     if (skipAccountActiveCheck) return true;
 
-    const requireConfirmedEmailOnly = this.reflector.get(EMAIL_CONFIRM_KEY, context.getHandler());
+    const requireConfirmedEmailOnly = this.reflector.get<boolean>(
+      EMAIL_CONFIRM_KEY,
+      context.getHandler(),
+    );
     if (requireConfirmedEmailOnly) {
       if (!payload.emailConfirmed) throw new ForbiddenError('Email is not confirmed');
       return true;

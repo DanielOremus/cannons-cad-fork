@@ -18,13 +18,13 @@ export class OrmUserRepository extends UserRepository {
     return await this.em.findOne(this.entity, { email });
   }
   async create(input: CreateUserInput): Promise<UserEntity> {
-    return this.em.create(this.entity, input);
+    return await this.em.create(this.entity, input);
   }
   async update(id: string, input: UpdateUserInput): Promise<UserEntity | null> {
     return this.em.upsert(this.entity, { id, ...input });
   }
   async delete(id: string): Promise<void> {
     const ref = this.em.getReference(this.entity, id);
-    this.em.remove(ref);
+    await this.em.remove(ref);
   }
 }

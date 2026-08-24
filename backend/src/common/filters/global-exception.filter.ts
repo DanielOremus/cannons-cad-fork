@@ -22,10 +22,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
+    // const request = ctx.getRequest<Request>();
 
     let errorCode: ErrorCode;
-    let status: number;
     let errorMessage: string;
     let errorIssues;
 
@@ -39,7 +38,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       errorCode = ErrorCode.UNHANDLED_ERROR;
       errorMessage = 'Something went wrong, please try again later';
     }
-    status = ErrorCodeToHttpStatus[errorCode];
+    const status = ErrorCodeToHttpStatus[errorCode];
 
     this.logger.error(exception);
 
