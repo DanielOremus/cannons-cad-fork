@@ -24,7 +24,7 @@ export function register(request: RegisterRequest) {
 }
 
 export function confirmEmail(request: ConfirmEmailRequest, accessToken: string) {
-  return apiRequest('/auth/confirm-email', {
+  return apiRequest<void>('/auth/confirm-email', {
     method: 'POST',
     body: request,
     token: accessToken,
@@ -33,7 +33,7 @@ export function confirmEmail(request: ConfirmEmailRequest, accessToken: string) 
 }
 
 export function resendConfirmationCode(accessToken: string) {
-  return apiRequest('/auth/resend-code', {
+  return apiRequest<void>('/auth/resend-code', {
     method: 'POST',
     token: accessToken,
     credentials: 'include',
@@ -48,7 +48,7 @@ export function refreshSession() {
 }
 
 export function logout(accessToken: string) {
-  return apiRequest('/auth/logout', {
+  return apiRequest<void>('/auth/logout', {
     method: 'POST',
     token: accessToken,
     credentials: 'include',

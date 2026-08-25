@@ -6,23 +6,23 @@ import { CharacterRepository } from './character.repository';
 import { OrmCharacterRepository } from './infrastructure/orm.character.repository';
 import { CharacterMapper } from './character.mapper';
 import { UserModule } from '../user/user.module';
-import { VehicleModule } from '../vehicle/vehicle.module';
-import { CitationModule } from '../citation/citation.module';
 import { DriverLicenseModule } from '../driver-license/driver-license.module';
 import { GetCharacterHandler } from './queries/get-character/get-character.handler';
 import { SearchCharacterHandler } from './queries/search-character/search-character.handler';
 import { CreateCharacterHandler } from './commands/create-character/create-character.handler';
+import { UpdateCharacterHandler } from './commands/update-character/update-character.handler';
+import { DeleteCharacterHandler } from './commands/delete-character/delete-character.handler';
+import { OwnershipModule } from '../../shared/modules/ownership/ownership.module';
 
 const queryHandlers = [GetCharacterHandler, SearchCharacterHandler];
-const commandHandlers = [CreateCharacterHandler];
+const commandHandlers = [CreateCharacterHandler, UpdateCharacterHandler, DeleteCharacterHandler];
 
 @Module({
   imports: [
     MikroOrmModule.forFeature([CharacterEntity]),
     UserModule,
-    VehicleModule,
-    CitationModule,
     DriverLicenseModule,
+    OwnershipModule,
   ],
   controllers: [CharacterController],
   providers: [
@@ -34,5 +34,6 @@ const commandHandlers = [CreateCharacterHandler];
     },
     CharacterMapper,
   ],
+  exports: [CharacterRepository],
 })
 export class CharacterModule {}

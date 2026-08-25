@@ -99,10 +99,11 @@ export default defineConfig(
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn',
-
-      'prettier/prettier': ['error', {}],
+      '@typescript-eslint/await-thenable': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      'prettier/prettier': ['error', { endOfLine: 'auto' }],
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
-
+      '@typescript-eslint/no-empty-object-type': 'off',
       'no-restricted-imports': [
         'error',
         {

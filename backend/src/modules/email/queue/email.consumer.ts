@@ -12,7 +12,7 @@ export class EmailConsumer extends WorkerHost {
   }
   @OnWorkerEvent('failed')
   onFailed(job: Job, err: Error) {
-    this.logger.debug(`Job ${job.name} failed: ` + err);
+    this.logger.debug(`Job ${job.name} failed: ${err}`);
   }
   async process<T extends EmailJobNames>(job: Job<EmailJobPayloads[T], any, T>): Promise<any> {
     await this.emailService.send(job.name, job.data);
