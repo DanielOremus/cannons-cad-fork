@@ -28,14 +28,19 @@ function loadTurnstileScript() {
 
       const script = document.createElement('script')
       script.src =
-        'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
-      script.async = true
-      script.defer = true
-      script.dataset.turnstileScript = 'true'
-      script.addEventListener('load', () => resolve(), { once: true })
-      script.addEventListener('error', () => reject(), { once: true })
-      document.head.append(script)
-    })
+        (import.meta.env.VITE_TURNSTILE_SCRIPT_SRC) ??
+        TurnstileScriptLoader.fallbackScriptSrc;
+      script.async = true;
+      script.defer = true;
+      script.dataset.turnstileScript = 'true';
+      script.addEventListener('load', () => resolve(), { once: true });
+      script.addEventListener(
+        'error',
+        () => reject(new Error('Cloudflare Turnstile script failed to load.')),
+        { once: true },
+      );
+      document.head.append(script);
+    });
   }
 
   return turnstileScriptPromise
