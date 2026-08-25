@@ -36,7 +36,7 @@ class TurnstileScriptLoader {
     return new Promise<void>((resolve, reject) => {
       const script = document.createElement('script');
       script.src =
-        (import.meta.env.VITE_TURNSTILE_SCRIPT_SRC as string) ??
+        (import.meta.env.VITE_TURNSTILE_SCRIPT_SRC) ??
         TurnstileScriptLoader.fallbackScriptSrc;
       script.async = true;
       script.defer = true;
