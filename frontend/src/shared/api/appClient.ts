@@ -19,15 +19,10 @@ const apiClient = axios.create({
   withCredentials: true,
 })
 
-export function apiRequest(path: string, options?: ApiRequestOptions): Promise<void>
-export function apiRequest<TResponse>(
-  path: string,
-  options?: ApiRequestOptions,
-): Promise<TResponse>
 export async function apiRequest<TResponse>(
   path: string,
   options: ApiRequestOptions = {},
-): Promise<TResponse | void> {
+): Promise<TResponse> {
   const headers: Record<string, string> = {}
 
   if (options.body !== undefined) {
@@ -48,7 +43,7 @@ export async function apiRequest<TResponse>(
     })
 
     if (response.status === 204 || response.data === '') {
-      return
+      return undefined as TResponse
     }
 
     return response.data
