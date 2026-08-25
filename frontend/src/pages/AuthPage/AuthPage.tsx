@@ -325,7 +325,7 @@ function AuthPage() {
                 isSubmitting={isSubmittingLogin}
                 canSubmit={!isSubmittingLogin && Boolean(loginCaptchaToken)}
                 turnstileResetSignal={loginTurnstileReset}
-                onSubmit={(event) => {void handleLoginSubmit(event)}}
+                onSubmit={handleLoginSubmit}
                 onValuesChange={setLoginValues}
                 onCaptchaTokenChange={setLoginCaptchaToken}
                 onCaptchaUnavailable={loginUnavailable}
@@ -337,7 +337,7 @@ function AuthPage() {
                 isSubmitting={isSubmittingRegister}
                 canSubmit={!isSubmittingRegister && Boolean(registerCaptchaToken)}
                 turnstileResetSignal={registerTurnstileReset}
-                onSubmit={(event) => {void handleRegisterSubmit(event)}}
+                onSubmit={handleRegisterSubmit}
                 onValuesChange={setRegisterValues}
                 onCaptchaTokenChange={setRegisterCaptchaToken}
                 onCaptchaUnavailable={registerUnavailable}
@@ -357,7 +357,7 @@ function AuthPage() {
             resendMessage={resendMessage}
             resendError={resendError}
             onCodeChange={setConfirmationCode}
-            onSubmit={(event) => {void handleConfirmationSubmit(event)}}
+            onSubmit={handleConfirmationSubmit}
             onResendCode={() => void handleResendCode()}
             onReturnToLogin={() => returnToLogin()}
           />
