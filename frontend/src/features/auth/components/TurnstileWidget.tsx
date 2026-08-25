@@ -8,13 +8,13 @@ type TurnstileWidgetProps = {
 }
 
 let turnstileScriptPromise: Promise<void> | undefined
-
+// ghchtcgh
 function loadTurnstileScript() {
   if (window.turnstile) {
     return Promise.resolve()
   }
 
-  if (!turnstileScriptPromise) {
+  if (turnstileScriptPromise === undefined) {
     turnstileScriptPromise = new Promise((resolve, reject) => {
       const existingScript = document.querySelector<HTMLScriptElement>(
         'script[data-turnstile-script="true"]',
@@ -22,7 +22,7 @@ function loadTurnstileScript() {
 
       if (existingScript) {
         existingScript.addEventListener('load', () => resolve(), { once: true })
-        existingScript.addEventListener('error', () => reject(), { once: true })
+        existingScript.addEventListener('error', () => reject(new Error('Cloudflare Turnstile script failed to load.')), { once: true })
         return
       }
 
@@ -33,7 +33,7 @@ function loadTurnstileScript() {
       script.defer = true
       script.dataset.turnstileScript = 'true'
       script.addEventListener('load', () => resolve(), { once: true })
-      script.addEventListener('error', () => reject(), { once: true })
+      script.addEventListener('error', () => reject(new Error('Cloudflare Turnstile script failed to load.')), { once: true })
       document.head.append(script)
     })
   }
