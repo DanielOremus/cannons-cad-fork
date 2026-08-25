@@ -10,6 +10,7 @@ export { DriverCategory } from './types/driver.category.js';
 export { PermissionAction } from './types/permission/permission.action.js';
 export { PermissionResource } from './types/permission/permission.resource.js';
 export { PermissionScope } from './types/permission/permission.scope.js';
+export { CitationStatus } from './types/citation/citation.status.js';
 export { type ValidationIssue } from './types/error/validation.error.js';
 export { type ApiErrorResponse } from './types/error/api-error.response.js';
 export {
@@ -51,6 +52,8 @@ export {
   searchCharacterSchema,
   updateCharacterSchema,
 } from './validators/character.schema.js';
+
+export { createCitationSchema } from './validators/citation.schema.js';
 
 export { paginationSchema } from './validators/pagination.schema.js';
 

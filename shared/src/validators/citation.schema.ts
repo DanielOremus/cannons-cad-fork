@@ -33,7 +33,7 @@ const chargeValidator = z.object({
 });
 
 export const createCitationSchema = z.object({
-  charges: z.array(chargeValidator),
+  charges: z.array(chargeValidator).nonempty(),
   issuedCharacterId: idValidator,
   issuedVehicleId: z.nullish(idValidator),
 });

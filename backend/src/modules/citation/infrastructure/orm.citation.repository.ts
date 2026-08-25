@@ -3,6 +3,7 @@ import { CitationRepository } from '../citation.repository';
 import { CitationEntity } from '../entities/citation.entity';
 import { PaginationDto } from '@project/shared';
 import { Injectable } from '@nestjs/common';
+import { CreateCitationInput } from '../inputs/create-citation.input';
 
 @Injectable()
 export class OrmCitationRepository extends CitationRepository {
@@ -18,11 +19,14 @@ export class OrmCitationRepository extends CitationRepository {
     const itemsPromise = this.em.find(
       this.entity,
       { issuedCharacter: characterId },
-      { limit, offset: (page - 1) * limit },
+      { limit, offset: (page - 1) * limit, populate: ['charges'] },
     );
     const countPromise = this.em.count(this.entity, { issuedCharacter: characterId });
 
     const [citations, total] = await Promise.all([itemsPromise, countPromise]);
     return { items: citations, total };
+  }
+  async issue(input: CreateCitationInput): Promise<CitationEntity> {
+    return await this.em.create(this.entity, input);
   }
 }

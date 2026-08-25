@@ -13,6 +13,7 @@ export class CitationMapper {
     return {
       issuedAt: citation.issuedAt,
       issuedVehicle: citation.issuedVehicle,
+      status: citation.status,
       charges: this.chargeMapper.toDtoList(Array.from(citation.charges)),
     };
   }

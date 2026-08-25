@@ -23,6 +23,11 @@ export const RolePermissions = {
     'vehicle:delete:own',
   ],
   DISPATCH: [],
-  POLICE: ['character:search:any', 'vehicle:search:any'],
+  POLICE: [
+    'character:search:any',
+    'vehicle:search:any',
+    'citation:create:any',
+    'citation:read:any',
+  ],
   REGISTERED: ['user:read:own', 'user:update:own', 'user:delete:own'],
 } as const satisfies Record<UserRole, Permission[]>;
