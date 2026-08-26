@@ -5,5 +5,6 @@ export class CitationDto implements ReadDto {
   charges: ChargeDto[];
   issuedVehicle?: VehicleDto | null;
   status: CitationStatus;
+  issuedBy: { name: string } | null;
   issuedAt: Date;
 }

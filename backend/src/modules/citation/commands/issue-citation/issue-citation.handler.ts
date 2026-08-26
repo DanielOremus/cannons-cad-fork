@@ -15,7 +15,7 @@ export class IssueCitationHandler implements ICommandHandler<IssueCitationComman
     private readonly uow: UnitOfWork,
   ) {}
   async execute(command: IssueCitationCommand): Promise<void> {
-    let character = null;
+    let character;
     let vehicle = null;
     if (command.dto.issuedVehicleId) {
       vehicle = await this.vehicleRepository.findById(command.dto.issuedVehicleId, ['owner']);
@@ -30,12 +30,9 @@ export class IssueCitationHandler implements ICommandHandler<IssueCitationComman
     await this.citationRepository.issue({
       issuedCharacter: character,
       issuedVehicle: vehicle,
+      issuedBy: command.userId,
       ...rest,
     });
     await this.uow.saveChanges();
   }
 }
-
-//Опа хуйня парковка
-//Гоп стоп по номерам випишу
-//виписка штрафа: прикріпляю саме авто (прикріпляти власника?)

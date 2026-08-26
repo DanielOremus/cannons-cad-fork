@@ -4,6 +4,7 @@ import { CharacterEntity } from '../../character/entities/character.entity';
 import { VehicleEntity } from '../../vehicle/entities/vehicle.entity';
 import { ChargeEntity } from './charge.entity';
 import { CitationStatus } from '@project/shared';
+import { UserEntity } from '../../user/entities/user.entity';
 
 export const CitationSchema = defineEntity({
   name: 'Citation',
@@ -14,6 +15,7 @@ export const CitationSchema = defineEntity({
     issuedCharacter: () =>
       p.manyToOne(CharacterEntity).inversedBy('citations').deleteRule('cascade'),
     issuedVehicle: () => p.manyToOne(VehicleEntity).nullable().deleteRule('set null'),
+    issuedBy: () => p.manyToOne(UserEntity).nullable().deleteRule('set null'),
     issuedAt: p.datetime().onCreate(() => new Date()),
   },
 });

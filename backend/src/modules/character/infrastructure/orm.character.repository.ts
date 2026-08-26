@@ -5,10 +5,7 @@ import { EntityManager, wrap } from '@mikro-orm/postgresql';
 import { SearchCharacterDto } from '../dto/search-character.dto';
 import { CreateCharacterInput } from '../inputs/create-character.input';
 import { CharacterPopulate } from '../character.repository';
-import { PaginationDto } from '@project/shared';
 import { UpdateCharacterDto } from '../dto/update-character.dto';
-import { VehicleEntity } from '../../vehicle/entities/vehicle.entity';
-import { CitationEntity } from '../../citation/entities/citation.entity';
 
 @Injectable()
 export class OrmCharacterRepository extends CharacterRepository {

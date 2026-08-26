@@ -31,6 +31,7 @@ export type {
 } from './dto/user/auth-user.dto.js';
 export type { UpdateUserDto, UpdateUserEmailDto } from './dto/user/update-user.dto.js';
 
+export { type CharacterDto } from './dto/character/get-character.dto.js';
 export type {
   CreateCharacterDto,
   CreateCharacterResponseDto,
@@ -39,12 +40,18 @@ export type {
   SearchCharacterDto,
   SearchCharacterResponseDto,
 } from './dto/character/search-character.dto.js';
-export { type CharacterDto } from './dto/character/get-character.dto.js';
-export { type VehicleDto } from './dto/vehicle/get-vehicle.dto.js';
-export { type CreateVehicleDto } from './dto/vehicle/create-vehicle.dto.js';
-export { type DriverLicenseDto } from './dto/driver-license/get-driver-license.dto.js';
-export type { ChargeDto, CitationDto } from './dto/citation/get-citation.dto.js';
+export { type UpdateCharacterDto } from './dto/character/update-character.dto.js';
 
+export { type VehicleDto } from './dto/vehicle/get-vehicle.dto.js';
+export { type SearchVehicleDto } from './dto/vehicle/search-vehicle.dto.js';
+export { type UpdateVehicleDto } from './dto/vehicle/update-vehicle.dto.js';
+export { type CreateVehicleDto } from './dto/vehicle/create-vehicle.dto.js';
+
+export { type DriverLicenseDto } from './dto/driver-license/get-driver-license.dto.js';
+
+export type { ChargeDto, CitationDto } from './dto/citation/get-citation.dto.js';
+export { type CreateCitationDto } from './dto/citation/create-citation.dto.js';
+export { type UpdateCitationDto } from './dto/citation/update-citation.js';
 //Validation schemas
 
 export {
@@ -69,6 +76,7 @@ export {
   createVehicleSchema,
   licensePlateValidator,
   updateVehicleSchema,
+  searchVehicleSchema,
 } from './validators/vehicle.schema.js';
 
 export { idValidator, uuidValidator } from './validators/common.schema.js';

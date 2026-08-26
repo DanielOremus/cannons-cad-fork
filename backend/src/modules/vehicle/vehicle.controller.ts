@@ -18,9 +18,9 @@ import { RequirePermission } from '../../common/decorators/require-permission.de
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { type Request } from 'express';
-import { licensePlateValidator } from '@project/shared';
 import { IdParamPipe } from '../../common/pipes/id-validation.pipe';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
+import { SearchVehicleDto } from './dto/search-vehicle.dto';
 
 @Controller('/vehicles')
 @UseGuards(AuthGuard, PermissionsGuard)
@@ -29,8 +29,8 @@ export class VehicleController {
 
   @Get('/search')
   @RequirePermission('vehicle', 'search')
-  async search(@Query('plate', new ZodValidationPipe(licensePlateValidator)) plate: string) {
-    return await this.vehicleService.search(plate);
+  async search(@Query(new ZodValidationPipe(SearchVehicleDto.schema)) query: SearchVehicleDto) {
+    return await this.vehicleService.search(query.plate);
   }
   @Post('/create')
   @RequirePermission('vehicle', 'create')

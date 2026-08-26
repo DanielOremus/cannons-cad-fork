@@ -26,6 +26,8 @@ export const ResourceActions = {
   citation: {
     read: ['own', 'any'],
     create: ['any'],
+    delete: ['own', 'any'],
+    update: ['own', 'any'],
   },
 } as const satisfies Record<PermissionResource, { [P in PermissionAction]?: PermissionScope[] }>;
 

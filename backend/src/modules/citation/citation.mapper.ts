@@ -5,16 +5,14 @@ import { CitationDto } from './dto/get-citation.dto';
 
 @Injectable()
 export class CitationMapper {
-  constructor(
-    private readonly chargeMapper: ChargeMapper,
-    // private readonly vehicleMapper: string,
-  ) {}
+  constructor(private readonly chargeMapper: ChargeMapper) {}
   toReadDto(citation: CitationEntity): CitationDto {
     return {
-      issuedAt: citation.issuedAt,
-      issuedVehicle: citation.issuedVehicle,
-      status: citation.status,
       charges: this.chargeMapper.toDtoList(Array.from(citation.charges)),
+      status: citation.status,
+      issuedVehicle: citation.issuedVehicle,
+      issuedBy: citation.issuedBy ? { name: citation.issuedBy.name } : null,
+      issuedAt: citation.issuedAt,
     };
   }
   toDtoList(citations: CitationEntity[]) {
