@@ -81,6 +81,23 @@
           "enumItems": [],
           "mappedType": "date"
         },
+        "driver_license_id": {
+          "name": "driver_license_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": true,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
         "first_name": {
           "name": "first_name",
           "type": "varchar(255)",
@@ -112,7 +129,11 @@
           "default": "'{}'",
           "comment": null,
           "collation": null,
-          "enumItems": [],
+          "enumItems": [
+            "MENTAL_HEALTH",
+            "BOLO",
+            "WARRANT"
+          ],
           "mappedType": "array"
         },
         "gender": {
@@ -224,6 +245,16 @@
       "indexes": [
         {
           "columnNames": [
+            "driver_license_id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "keyName": "character_driver_license_id_unique",
+          "primary": false,
+          "unique": true
+        },
+        {
+          "columnNames": [
             "id"
           ],
           "composite": false,
@@ -236,8 +267,8 @@
       "checks": [
         {
           "name": "character_flags_check",
-          "expression": "flags <@ ARRAY['MENTAL_HEALTH'::text, 'BOLO'::text, 'WARRANT'::text]",
-          "definition": "CHECK ((flags <@ ARRAY['MENTAL_HEALTH'::text, 'BOLO'::text, 'WARRANT'::text]))",
+          "expression": "\"flags\" <@ array['MENTAL_HEALTH'::text, 'BOLO'::text, 'WARRANT'::text]",
+          "definition": "check (\"flags\" <@ array['MENTAL_HEALTH'::text, 'BOLO'::text, 'WARRANT'::text])",
           "columnName": "flags"
         },
         {
@@ -249,6 +280,18 @@
       ],
       "triggers": [],
       "foreignKeys": {
+        "character_driver_license_id_foreign": {
+          "columnNames": [
+            "driver_license_id"
+          ],
+          "constraintName": "character_driver_license_id_foreign",
+          "localTableName": "public.character",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.driver_license",
+          "deleteRule": "set null"
+        },
         "character_user_id_foreign": {
           "columnNames": [
             "user_id"
@@ -258,9 +301,387 @@
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.user"
+          "referencedTableName": "public.user",
+          "deleteRule": "cascade"
         }
       },
+      "comment": null
+    },
+    {
+      "name": "charge",
+      "schema": "public",
+      "columns": {
+        "amount": {
+          "name": "amount",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
+        "citation_id": {
+          "name": "citation_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
+        "count": {
+          "name": "count",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "1",
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
+        "id": {
+          "name": "id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
+        "jail_time": {
+          "name": "jail_time",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "reason": {
+          "name": "reason",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "string"
+        }
+      },
+      "indexes": [
+        {
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "keyName": "charge_pkey",
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "triggers": [],
+      "foreignKeys": {
+        "charge_citation_id_foreign": {
+          "columnNames": [
+            "citation_id"
+          ],
+          "constraintName": "charge_citation_id_foreign",
+          "localTableName": "public.charge",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.citation",
+          "deleteRule": "cascade"
+        }
+      },
+      "comment": null
+    },
+    {
+      "name": "citation",
+      "schema": "public",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
+        "issued_at": {
+          "name": "issued_at",
+          "type": "timestamptz(6)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 6,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "datetime"
+        },
+        "issued_by_id": {
+          "name": "issued_by_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        },
+        "issued_character_id": {
+          "name": "issued_character_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
+        "issued_vehicle_id": {
+          "name": "issued_vehicle_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "'ACTIVE'",
+          "comment": null,
+          "collation": null,
+          "enumItems": [
+            "ACTIVE",
+            "INACTIVE",
+            "CLOSED"
+          ],
+          "mappedType": "enum"
+        }
+      },
+      "indexes": [
+        {
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "keyName": "citation_pkey",
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [
+        {
+          "name": "citation_status_check",
+          "expression": "\"status\" in ('ACTIVE', 'INACTIVE', 'CLOSED')",
+          "definition": "check (\"status\" in ('ACTIVE', 'INACTIVE', 'CLOSED'))",
+          "columnName": "status"
+        }
+      ],
+      "triggers": [],
+      "foreignKeys": {
+        "citation_issued_by_id_foreign": {
+          "columnNames": [
+            "issued_by_id"
+          ],
+          "constraintName": "citation_issued_by_id_foreign",
+          "localTableName": "public.citation",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.user",
+          "deleteRule": "set null"
+        },
+        "citation_issued_character_id_foreign": {
+          "columnNames": [
+            "issued_character_id"
+          ],
+          "constraintName": "citation_issued_character_id_foreign",
+          "localTableName": "public.citation",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.character",
+          "deleteRule": "cascade"
+        },
+        "citation_issued_vehicle_id_foreign": {
+          "columnNames": [
+            "issued_vehicle_id"
+          ],
+          "constraintName": "citation_issued_vehicle_id_foreign",
+          "localTableName": "public.citation",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.vehicle",
+          "deleteRule": "set null"
+        }
+      },
+      "comment": null
+    },
+    {
+      "name": "driver_license",
+      "schema": "public",
+      "columns": {
+        "categories": {
+          "name": "categories",
+          "type": "text[]",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "'{}'",
+          "comment": null,
+          "collation": null,
+          "enumItems": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ],
+          "mappedType": "array"
+        },
+        "id": {
+          "name": "id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        }
+      },
+      "indexes": [
+        {
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "keyName": "driver_license_pkey",
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [
+        {
+          "name": "driver_license_categories_check",
+          "expression": "\"categories\" <@ array['A'::text, 'B'::text, 'C'::text, 'D'::text]",
+          "definition": "check (\"categories\" <@ array['A'::text, 'B'::text, 'C'::text, 'D'::text])",
+          "columnName": "categories"
+        }
+      ],
+      "triggers": [],
+      "foreignKeys": {},
       "comment": null
     },
     {
@@ -517,7 +938,13 @@
           "default": "'{REGISTERED}'",
           "comment": null,
           "collation": null,
-          "enumItems": [],
+          "enumItems": [
+            "POLICE",
+            "CIVILIAN",
+            "DISPATCH",
+            "ADMIN",
+            "REGISTERED"
+          ],
           "mappedType": "array"
         },
         "status": {
@@ -568,8 +995,8 @@
       "checks": [
         {
           "name": "user_roles_check",
-          "expression": "roles <@ ARRAY['POLICE'::text, 'CIVILIAN'::text, 'DISPATCH'::text, 'ADMIN'::text, 'REGISTERED'::text]",
-          "definition": "CHECK ((roles <@ ARRAY['POLICE'::text, 'CIVILIAN'::text, 'DISPATCH'::text, 'ADMIN'::text, 'REGISTERED'::text]))",
+          "expression": "\"roles\" <@ array['POLICE'::text, 'CIVILIAN'::text, 'DISPATCH'::text, 'ADMIN'::text, 'REGISTERED'::text]",
+          "definition": "check (\"roles\" <@ array['POLICE'::text, 'CIVILIAN'::text, 'DISPATCH'::text, 'ADMIN'::text, 'REGISTERED'::text])",
           "columnName": "roles"
         },
         {
@@ -581,6 +1008,230 @@
       ],
       "triggers": [],
       "foreignKeys": {},
+      "comment": null
+    },
+    {
+      "name": "vehicle",
+      "schema": "public",
+      "columns": {
+        "color": {
+          "name": "color",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "flags": {
+          "name": "flags",
+          "type": "text[]",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "'{}'",
+          "comment": null,
+          "collation": null,
+          "enumItems": [
+            "STOLEN",
+            "IMPOUNDED",
+            "BOLO"
+          ],
+          "mappedType": "array"
+        },
+        "id": {
+          "name": "id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
+        "license_plate": {
+          "name": "license_plate",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": true,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "make": {
+          "name": "make",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "model": {
+          "name": "model",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": 255,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "string"
+        },
+        "owner_id": {
+          "name": "owner_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "integer"
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [
+            "SEDAN",
+            "COUPE",
+            "SUV",
+            "TRUCK",
+            "OFFROAD",
+            "MARINE",
+            "MOTORCYCLE",
+            "AIRCRAFT"
+          ],
+          "mappedType": "enum"
+        },
+        "year": {
+          "name": "year",
+          "type": "numeric(4,0)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": 4,
+          "scale": 0,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "decimal"
+        }
+      },
+      "indexes": [
+        {
+          "columnNames": [
+            "license_plate"
+          ],
+          "composite": false,
+          "constraint": true,
+          "keyName": "vehicle_license_plate_unique",
+          "primary": false,
+          "unique": true
+        },
+        {
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "keyName": "vehicle_pkey",
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [
+        {
+          "name": "vehicle_flags_check",
+          "expression": "\"flags\" <@ array['STOLEN'::text, 'IMPOUNDED'::text, 'BOLO'::text]",
+          "definition": "check (\"flags\" <@ array['STOLEN'::text, 'IMPOUNDED'::text, 'BOLO'::text])",
+          "columnName": "flags"
+        },
+        {
+          "name": "vehicle_type_check",
+          "expression": "\"type\" in ('SEDAN', 'COUPE', 'SUV', 'TRUCK', 'OFFROAD', 'MARINE', 'MOTORCYCLE', 'AIRCRAFT')",
+          "definition": "check (\"type\" in ('SEDAN', 'COUPE', 'SUV', 'TRUCK', 'OFFROAD', 'MARINE', 'MOTORCYCLE', 'AIRCRAFT'))",
+          "columnName": "type"
+        }
+      ],
+      "triggers": [],
+      "foreignKeys": {
+        "vehicle_owner_id_foreign": {
+          "columnNames": [
+            "owner_id"
+          ],
+          "constraintName": "vehicle_owner_id_foreign",
+          "localTableName": "public.vehicle",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.character",
+          "deleteRule": "cascade"
+        }
+      },
       "comment": null
     }
   ],

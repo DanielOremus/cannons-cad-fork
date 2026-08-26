@@ -23,6 +23,12 @@ export const ResourceActions = {
     delete: ['any', 'own'],
     search: ['any'],
   },
+  citation: {
+    read: ['own', 'any'],
+    create: ['any'],
+    delete: ['own', 'any'],
+    update: ['own', 'any'],
+  },
 } as const satisfies Record<PermissionResource, { [P in PermissionAction]?: PermissionScope[] }>;
 
 export type ResourceActions<T extends PermissionResource> = (typeof ResourceActions)[T];

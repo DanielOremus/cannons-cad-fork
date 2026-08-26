@@ -21,6 +21,7 @@ export default defineConfig({
   entitiesTs: ['src/modules/**/*.entity.ts', 'src/shared/entities/*.entity.ts'],
   extensions: [Migrator],
   migrations: {
+    path: 'src/migrations',
     transactional: true,
     safe: false,
     disableForeignKeys: false,

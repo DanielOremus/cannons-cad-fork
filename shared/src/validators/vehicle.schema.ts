@@ -18,6 +18,10 @@ export const licensePlateValidator = z
     },
   });
 
+export const searchVehicleSchema = z.object({
+  plate: licensePlateValidator,
+});
+
 export const createVehicleSchema = z.object({
   type: z.enum(VehicleType),
   licensePlate: licensePlateValidator,
