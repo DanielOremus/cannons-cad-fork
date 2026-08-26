@@ -482,6 +482,23 @@
           "enumItems": [],
           "mappedType": "datetime"
         },
+        "issued_by_id": {
+          "name": "issued_by_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": null,
+          "comment": null,
+          "collation": null,
+          "enumItems": [],
+          "mappedType": "uuid"
+        },
         "issued_character_id": {
           "name": "issued_character_id",
           "type": "int",
@@ -560,6 +577,18 @@
       ],
       "triggers": [],
       "foreignKeys": {
+        "citation_issued_by_id_foreign": {
+          "columnNames": [
+            "issued_by_id"
+          ],
+          "constraintName": "citation_issued_by_id_foreign",
+          "localTableName": "public.citation",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.user",
+          "deleteRule": "set null"
+        },
         "citation_issued_character_id_foreign": {
           "columnNames": [
             "issued_character_id"

@@ -4,7 +4,7 @@ import type { VehicleDto } from '../vehicle/get-vehicle.dto.js';
 export type ChargeDto = {
   amount: number;
   reason: string;
-  jailTime: string | null;
+  jailTime?: string | null;
   count: number;
 };
 
