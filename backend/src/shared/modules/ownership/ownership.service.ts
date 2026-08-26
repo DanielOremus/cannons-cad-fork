@@ -13,15 +13,15 @@ export class OwnershipService {
     scope: PermissionScope,
   ): boolean {
     if (scope === 'any') return true;
-    return resourceUserId === currentUserId;
+    return !!resourceUserId && resourceUserId === currentUserId;
   }
   checkVehicle(vehicle: VehicleEntity, userId: string, scope: PermissionScope) {
-    if (this.isOwner(vehicle.owner.user.id, userId, scope)) throw new NotFoundError('Vehicle');
+    if (!this.isOwner(vehicle.owner.user.id, userId, scope)) throw new NotFoundError('Vehicle');
   }
   checkCharacter(character: CharacterEntity, userId: string, scope: PermissionScope) {
-    if (this.isOwner(character.user.id, userId, scope)) throw new NotFoundError('Character');
+    if (!this.isOwner(character.user.id, userId, scope)) throw new NotFoundError('Character');
   }
   checkCitation(citation: CitationEntity, userId: string, scope: PermissionScope) {
-    if (this.isOwner(citation.issuedBy?.id, userId, scope)) throw new ForbiddenError();
+    if (!this.isOwner(citation.issuedBy?.id, userId, scope)) throw new ForbiddenError();
   }
 }

@@ -11,14 +11,18 @@ import { CitationController } from './citation.controller';
 import { IssueCitationHandler } from './commands/issue-citation/issue-citation.handler';
 import { CharacterModule } from '../character/character.module';
 import { VehicleModule } from '../vehicle/vehicle.module';
+import { DeleteCitationHandler } from './commands/delete-citation/delete-citation.handler';
+import { OwnershipModule } from '../../shared/modules/ownership/ownership.module';
+import { UpdateCitationHandler } from './commands/update-citation/update-citation.handler';
 
 const queryHandlers = [GetCharacterCitationsHandler];
-const commandHandlers = [IssueCitationHandler];
+const commandHandlers = [IssueCitationHandler, DeleteCitationHandler, UpdateCitationHandler];
 
 @Module({
   controllers: [CitationController],
   imports: [
     MikroOrmModule.forFeature([CitationEntity, ChargeEntity]),
+    OwnershipModule,
     CitationModule,
     CharacterModule,
     VehicleModule,

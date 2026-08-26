@@ -2,6 +2,7 @@ import { CitationStatus, CitationDto as ReadDto, VehicleDto } from '@project/sha
 import { ChargeDto } from './get-charge.dto';
 
 export class CitationDto implements ReadDto {
+  id: number;
   charges: ChargeDto[];
   issuedVehicle?: VehicleDto | null;
   status: CitationStatus;

@@ -60,7 +60,7 @@ export {
   updateCharacterSchema,
 } from './validators/character.schema.js';
 
-export { createCitationSchema } from './validators/citation.schema.js';
+export { createCitationSchema, updateCitationSchema } from './validators/citation.schema.js';
 
 export { paginationSchema } from './validators/pagination.schema.js';
 

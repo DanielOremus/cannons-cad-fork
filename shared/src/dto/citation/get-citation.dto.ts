@@ -9,6 +9,7 @@ export type ChargeDto = {
 };
 
 export type CitationDto = {
+  id: number;
   charges: ChargeDto[];
   status: CitationStatus;
   issuedVehicle?: VehicleDto | null;

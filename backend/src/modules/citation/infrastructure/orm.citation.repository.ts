@@ -21,15 +21,15 @@ export class OrmCitationRepository extends CitationRepository {
     const itemsPromise = this.em.find(
       this.entity,
       { issuedCharacter: characterId },
-      { limit, offset: (page - 1) * limit, populate },
+      { limit, offset: (page - 1) * limit, populate, orderBy: { issuedAt: 'DESC' } },
     );
     const countPromise = this.em.count(this.entity, { issuedCharacter: characterId });
 
     const [citations, total] = await Promise.all([itemsPromise, countPromise]);
     return { items: citations, total };
   }
-  async findById(id: number): Promise<CitationEntity | null> {
-    return await this.em.findOne(this.entity, { id });
+  async findById(id: number, populate?: CitationPopulate[]): Promise<CitationEntity | null> {
+    return await this.em.findOne(this.entity, { id }, { populate });
   }
   async issue(input: CreateCitationInput): Promise<CitationEntity> {
     return await this.em.create(this.entity, input);

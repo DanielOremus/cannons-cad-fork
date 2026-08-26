@@ -8,6 +8,7 @@ export class CitationMapper {
   constructor(private readonly chargeMapper: ChargeMapper) {}
   toReadDto(citation: CitationEntity): CitationDto {
     return {
+      id: citation.id,
       charges: this.chargeMapper.toDtoList(Array.from(citation.charges)),
       status: citation.status,
       issuedVehicle: citation.issuedVehicle,
