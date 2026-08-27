@@ -7,6 +7,9 @@ type TurnstileWidgetProps = {
   onUnavailable?: (message: string) => void
 }
 
+const FALLBACK_TURNSTILE_SCRIPT_SRC =
+  'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+
 let turnstileScriptPromise: Promise<void> | undefined
 
 function loadTurnstileScript() {
@@ -14,7 +17,7 @@ function loadTurnstileScript() {
     return Promise.resolve()
   }
 
-  if (!turnstileScriptPromise) {
+  if (turnstileScriptPromise === undefined) {
     turnstileScriptPromise = new Promise((resolve, reject) => {
       const existingScript = document.querySelector<HTMLScriptElement>(
         'script[data-turnstile-script="true"]',
@@ -22,25 +25,28 @@ function loadTurnstileScript() {
 
       if (existingScript) {
         existingScript.addEventListener('load', () => resolve(), { once: true })
-        existingScript.addEventListener('error', () => reject(), { once: true })
+        existingScript.addEventListener(
+          'error',
+          () => reject(new Error('Cloudflare Turnstile script failed to load.')),
+          { once: true },
+        )
         return
       }
 
       const script = document.createElement('script')
       script.src =
-        (import.meta.env.VITE_TURNSTILE_SCRIPT_SRC) ??
-        TurnstileScriptLoader.fallbackScriptSrc;
-      script.async = true;
-      script.defer = true;
-      script.dataset.turnstileScript = 'true';
-      script.addEventListener('load', () => resolve(), { once: true });
+        import.meta.env.VITE_TURNSTILE_SCRIPT_SRC ?? FALLBACK_TURNSTILE_SCRIPT_SRC
+      script.async = true
+      script.defer = true
+      script.dataset.turnstileScript = 'true'
+      script.addEventListener('load', () => resolve(), { once: true })
       script.addEventListener(
         'error',
         () => reject(new Error('Cloudflare Turnstile script failed to load.')),
         { once: true },
-      );
-      document.head.append(script);
-    });
+      )
+      document.head.append(script)
+    })
   }
 
   return turnstileScriptPromise
