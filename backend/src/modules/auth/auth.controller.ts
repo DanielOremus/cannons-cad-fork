@@ -21,7 +21,6 @@ import {
   SkipActiveCheck,
 } from '../../common/decorators/account.decorator';
 import { ConfirmEmailDto } from './dto/confirm-email.dto';
-import { UserMapper } from '../user/user.mapper';
 import {
   ClearRefreshCookie,
   SetRefreshCookie,
@@ -33,6 +32,7 @@ import { LogoutUserCommand } from './commands/logout/logout.command';
 import { RefreshSessionCommand } from './commands/refresh-session/refresh-session.command';
 import { ConfirmEmailCommand } from './commands/confirm-email/confirm-email.command';
 import { ResendEmailConfirmationCommand } from './commands/resend-email-confirmation/resend-email-confirmation.command';
+import { UnauthorizedError } from '../../shared/errors/app.error';
 
 @Controller('/auth')
 export class AuthController {
@@ -77,8 +77,15 @@ export class AuthController {
   @HttpCode(200)
   async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     try {
+      const signedCookies = req.signedCookies as Record<string, unknown>;
+      const refreshToken = signedCookies[COOKEY_KEY];
+
+      if (typeof refreshToken !== 'string') {
+        throw new UnauthorizedError();
+      }
+
       const { refresh, access, user } = await this.commandBus.execute(
-        new RefreshSessionCommand(req.signedCookies[COOKEY_KEY]),
+        new RefreshSessionCommand(refreshToken),
       );
       res.locals.refreshToken = refresh;
 

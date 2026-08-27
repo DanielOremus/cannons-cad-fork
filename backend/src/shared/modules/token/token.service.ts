@@ -28,7 +28,7 @@ export class TokenService {
       return this.jwtService.verify<TokenPayloads['access']>(token, {
         secret: this.config.jwt.access.secret,
       });
-    } catch (error) {
+    } catch {
       return null;
     }
   }

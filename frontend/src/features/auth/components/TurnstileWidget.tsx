@@ -7,10 +7,10 @@ type TurnstileWidgetProps = {
   onUnavailable?: (message: string) => void;
 };
 
-class TurnstileScriptLoader {
-  private static readonly fallbackScriptSrc =
-    'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+const FALLBACK_TURNSTILE_SCRIPT_SRC =
+  'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
 
+class TurnstileScriptLoader {
   private static scriptPromise?: Promise<void>;
 
   static load() {
@@ -36,8 +36,7 @@ class TurnstileScriptLoader {
     return new Promise<void>((resolve, reject) => {
       const script = document.createElement('script');
       script.src =
-        (import.meta.env.VITE_TURNSTILE_SCRIPT_SRC) ??
-        TurnstileScriptLoader.fallbackScriptSrc;
+        import.meta.env.VITE_TURNSTILE_SCRIPT_SRC ?? FALLBACK_TURNSTILE_SCRIPT_SRC;
       script.async = true;
       script.defer = true;
       script.dataset.turnstileScript = 'true';

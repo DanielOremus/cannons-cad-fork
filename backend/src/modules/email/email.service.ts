@@ -17,13 +17,13 @@ export class EmailService {
       userName: input.userName,
       ttlText: formatTtl(input.ttl),
     }),
-    changeEmail: (input) => ({}),
+    changeEmail: () => ({}),
   };
   private handlers: {
     [J in EmailJobNames]: (payload: EmailTemplatePayloads[J]) => Promise<void>;
   } = {
     confirmEmail: this.sendConfirmation.bind(this),
-    changeEmail: async (payload) => {},
+    changeEmail: () => Promise.resolve(),
   };
   private templates: Record<EmailJobNames, string> = {
     confirmEmail: path.join(__dirname, 'templates', 'confirm-email.template.ejs'),

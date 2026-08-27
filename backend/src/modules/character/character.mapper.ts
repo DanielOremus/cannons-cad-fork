@@ -5,16 +5,31 @@ import { CreateCharacterResponseDto } from './dto/create-character.dto';
 import { CharacterDto } from './dto/get-character.dto';
 import { DriverLicenseMapper } from '../driver-license/driver-license.mapper';
 
+function omitProperties<T extends object, K extends keyof T>(
+  value: T,
+  keys: readonly K[],
+): Omit<T, K> {
+  const copy = { ...value };
+
+  for (const key of keys) {
+    delete copy[key];
+  }
+
+  return copy;
+}
+
 @Injectable()
 export class CharacterMapper {
   constructor(private readonly driverLicenseMapper: DriverLicenseMapper) {}
+
   toSearchResponseDto(
     character: CharacterEntity,
     counts: { vehicles: number; citations: number },
   ): SearchCharacterResponseDto {
-    const { vehicles, citations, ...rest } = character;
+    const characterFields = omitProperties(character, ['vehicles', 'citations'] as const);
+
     return {
-      ...rest,
+      ...characterFields,
       age: character.age,
       citationsCount: counts.citations,
       vehiclesCount: counts.vehicles,
@@ -28,19 +43,28 @@ export class CharacterMapper {
     character: CharacterEntity,
     counts: { vehicles: number; citations: number },
   ): CharacterDto {
-    const { user, vehicles, citations, driverLicense, ...rest } = character;
+    const characterFields = omitProperties(character, [
+      'user',
+      'vehicles',
+      'citations',
+      'driverLicense',
+    ] as const);
+
     return {
-      ...rest,
+      ...characterFields,
       age: character.age,
-      driverLicense: driverLicense ? this.driverLicenseMapper.toReadDto(driverLicense) : null,
+      driverLicense: character.driverLicense
+        ? this.driverLicenseMapper.toReadDto(character.driverLicense)
+        : null,
       vehiclesCount: counts.vehicles,
       citationsCount: counts.citations,
     };
   }
   toCreateResponseDto(character: CharacterEntity): CreateCharacterResponseDto {
-    const { user, ...rest } = character;
+    const characterFields = omitProperties(character, ['user'] as const);
+
     return {
-      ...rest,
+      ...characterFields,
       age: character.age,
     };
   }
