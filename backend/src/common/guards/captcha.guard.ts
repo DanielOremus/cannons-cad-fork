@@ -13,7 +13,9 @@ export class CaptchaGuard implements CanActivate {
     private readonly config: AppConfigService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<Request>();
+    const request = context
+      .switchToHttp()
+      .getRequest<Request<unknown, unknown, { [tokenField]?: string }>>();
     const tokenField = this.reflector.get<string>(CAPTCHA_KEY, context.getHandler());
 
     const captchaToken = request.body[tokenField];
@@ -31,8 +33,8 @@ export class CaptchaGuard implements CanActivate {
       }),
     });
 
-    const result = await cloudflareRes.json();
-    if (!result.success)
+    const result = (await cloudflareRes.json()) as { success: boolean };
+    if (result.success)
       throw new AppError('Captcha validation failed', ErrorCode.VALIDATION_FAILED);
     return true;
   }

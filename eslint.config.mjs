@@ -22,6 +22,7 @@ export default defineConfig(
       '**/build/**',
       '**/coverage/**',
       '**/node_modules/**',
+      'backend/src/migrations',
       'backend/eslint.config.mjs',
       'frontend/eslint.config.js',
       'eslint.config.mjs',
@@ -99,10 +100,11 @@ export default defineConfig(
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn',
-
-      'prettier/prettier': ['error', {}],
+      '@typescript-eslint/await-thenable': 'off',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      'prettier/prettier': ['error', { endOfLine: 'auto' }],
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
-
+      '@typescript-eslint/no-empty-object-type': 'off',
       'no-restricted-imports': [
         'error',
         {

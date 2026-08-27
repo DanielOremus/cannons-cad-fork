@@ -11,7 +11,7 @@ export class OrmEmailRepository extends EmailRepository {
     super();
   }
   async createConfirmation(input: CreateConfirmationInput): Promise<EmailConfirmationEntity> {
-    return this.em.create(this.entity, input);
+    return await this.em.create(this.entity, input);
   }
 
   async findByEmail(email: string): Promise<EmailConfirmationEntity | null> {
@@ -19,6 +19,6 @@ export class OrmEmailRepository extends EmailRepository {
   }
 
   async delete(entity: EmailConfirmationEntity): Promise<void> {
-    this.em.remove(entity);
+    await this.em.remove(entity);
   }
 }

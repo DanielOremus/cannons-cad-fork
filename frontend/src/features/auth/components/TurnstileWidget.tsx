@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react'
 
 type TurnstileWidgetProps = {
   action: 'login' | 'register';
@@ -18,23 +18,26 @@ class TurnstileScriptLoader {
       return Promise.resolve();
     }
 
-    if (TurnstileScriptLoader.scriptPromise === undefined) {
-      TurnstileScriptLoader.scriptPromise = TurnstileScriptLoader.createScriptPromise();
-    }
+let turnstileScriptPromise: Promise<void> | undefined
 
-    return TurnstileScriptLoader.scriptPromise;
+function loadTurnstileScript() {
+  if (window.turnstile) {
+    return Promise.resolve()
   }
 
-  private static createScriptPromise() {
-    const existingScript = document.querySelector<HTMLScriptElement>(
-      'script[data-turnstile-script="true"]',
-    );
+  if (!turnstileScriptPromise) {
+    turnstileScriptPromise = new Promise((resolve, reject) => {
+      const existingScript = document.querySelector<HTMLScriptElement>(
+        'script[data-turnstile-script="true"]',
+      )
 
-    if (existingScript) {
-      existingScript.remove();
-    }
-    return new Promise<void>((resolve, reject) => {
-      const script = document.createElement('script');
+      if (existingScript) {
+        existingScript.addEventListener('load', () => resolve(), { once: true })
+        existingScript.addEventListener('error', () => reject(), { once: true })
+        return
+      }
+
+      const script = document.createElement('script')
       script.src =
         import.meta.env.VITE_TURNSTILE_SCRIPT_SRC ?? FALLBACK_TURNSTILE_SCRIPT_SRC;
       script.async = true;
@@ -49,6 +52,8 @@ class TurnstileScriptLoader {
       document.head.append(script);
     });
   }
+
+  return turnstileScriptPromise
 }
 
 function TurnstileWidget({
@@ -57,76 +62,76 @@ function TurnstileWidget({
   onTokenChange,
   onUnavailable,
 }: TurnstileWidgetProps) {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const widgetIdRef = useRef<string | null>(null);
-  const [error, setError] = useState('');
-  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY ?? '';
-  const missingSiteKeyError = siteKey ? '' : 'Turnstile site key is not configured.';
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const widgetIdRef = useRef<string | null>(null)
+  const [error, setError] = useState('')
+  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY ?? ''
+  const missingSiteKeyError = siteKey ? '' : 'Turnstile site key is not configured.'
 
   useEffect(() => {
-    let isMounted = true;
+    let isMounted = true
 
     if (!siteKey) {
-      onTokenChange('');
-      return;
+      onTokenChange('')
+      return
     }
 
-    const currentSiteKey = siteKey;
+    const currentSiteKey = siteKey
 
     async function renderWidget() {
       try {
-        await TurnstileScriptLoader.load();
+        await loadTurnstileScript()
 
         if (!isMounted || !containerRef.current || !window.turnstile) {
-          return;
+          return
         }
 
         if (widgetIdRef.current) {
-          window.turnstile.remove(widgetIdRef.current);
-          widgetIdRef.current = null;
+          window.turnstile.remove(widgetIdRef.current)
+          widgetIdRef.current = null
         }
 
-        setError('');
+        setError('')
         widgetIdRef.current = window.turnstile.render(containerRef.current, {
           sitekey: currentSiteKey,
           action,
           theme: 'auto',
           callback: (token) => {
-            onTokenChange(token);
+            onTokenChange(token)
           },
           'expired-callback': () => {
-            onTokenChange('');
+            onTokenChange('')
           },
           'error-callback': () => {
-            onTokenChange('');
-            setError('Verification failed. Please try again.');
+            onTokenChange('')
+            setError('Verification failed. Please try again.')
           },
-        });
+        })
       } catch {
-        const message = 'Turnstile could not be loaded.';
-        setError(message);
-        onUnavailable?.(message);
-        onTokenChange('');
+        const message = 'Turnstile could not be loaded.'
+        setError(message)
+        onUnavailable?.(message)
+        onTokenChange('')
       }
     }
 
-    void renderWidget();
+    void renderWidget()
 
     return () => {
-      isMounted = false;
+      isMounted = false
       if (widgetIdRef.current && window.turnstile) {
-        window.turnstile.remove(widgetIdRef.current);
-        widgetIdRef.current = null;
+        window.turnstile.remove(widgetIdRef.current)
+        widgetIdRef.current = null
       }
-    };
-  }, [action, onTokenChange, onUnavailable, siteKey]);
+    }
+  }, [action, onTokenChange, onUnavailable, siteKey])
 
   useEffect(() => {
     if (widgetIdRef.current && window.turnstile) {
-      window.turnstile.reset(widgetIdRef.current);
+      window.turnstile.reset(widgetIdRef.current)
     }
-    onTokenChange('');
-  }, [onTokenChange, resetSignal]);
+    onTokenChange('')
+  }, [onTokenChange, resetSignal])
 
   return (
     <div className="turnstile-field">
@@ -137,7 +142,7 @@ function TurnstileWidget({
         </p>
       )}
     </div>
-  );
+  )
 }
 
-export default TurnstileWidget;
+export default TurnstileWidget

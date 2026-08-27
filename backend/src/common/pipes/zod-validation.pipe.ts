@@ -1,11 +1,11 @@
 import * as z from 'zod/v4';
 import { ValidationError } from '../../shared/errors/app.error';
-import { ArgumentMetadata, PipeTransform } from '@nestjs/common';
+import { PipeTransform } from '@nestjs/common';
 import { mapZodIssue } from '@project/shared';
 
 export class ZodValidationPipe implements PipeTransform {
   constructor(private readonly zodSchema: z.ZodType) {}
-  transform(value: unknown, metadata: ArgumentMetadata) {
+  transform(value: unknown) {
     const result = this.zodSchema.safeParse(value);
     if (!result.success) {
       //mapping issues to my validation error

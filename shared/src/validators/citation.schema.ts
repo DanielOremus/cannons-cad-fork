@@ -24,6 +24,7 @@
 
 import { z } from 'zod/v4';
 import { idValidator } from './common.schema.js';
+import { CitationStatus } from '../types/citation/citation.status.js';
 
 const chargeValidator = z.object({
   amount: z.int().positive(),
@@ -33,7 +34,11 @@ const chargeValidator = z.object({
 });
 
 export const createCitationSchema = z.object({
-  charges: z.array(chargeValidator),
+  charges: z.array(chargeValidator).nonempty(),
   issuedCharacterId: idValidator,
   issuedVehicleId: z.nullish(idValidator),
+});
+
+export const updateCitationSchema = z.object({
+  status: z.enum(CitationStatus),
 });

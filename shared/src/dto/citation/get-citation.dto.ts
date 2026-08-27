@@ -1,3 +1,4 @@
+import type { CitationStatus } from '../../types/citation/citation.status.js';
 import type { VehicleDto } from '../vehicle/get-vehicle.dto.js';
 
 export type ChargeDto = {
@@ -8,7 +9,10 @@ export type ChargeDto = {
 };
 
 export type CitationDto = {
+  id: number;
   charges: ChargeDto[];
+  status: CitationStatus;
   issuedVehicle?: VehicleDto | null;
+  issuedBy: { name: string } | null;
   issuedAt: Date;
 };

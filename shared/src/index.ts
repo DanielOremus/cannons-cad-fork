@@ -10,6 +10,7 @@ export { DriverCategory } from './types/driver.category.js';
 export { PermissionAction } from './types/permission/permission.action.js';
 export { PermissionResource } from './types/permission/permission.resource.js';
 export { PermissionScope } from './types/permission/permission.scope.js';
+export { CitationStatus } from './types/citation/citation.status.js';
 export { type ValidationIssue } from './types/error/validation.error.js';
 export { type ApiErrorResponse } from './types/error/api-error.response.js';
 export {
@@ -30,6 +31,7 @@ export type {
 } from './dto/user/auth-user.dto.js';
 export type { UpdateUserDto, UpdateUserEmailDto } from './dto/user/update-user.dto.js';
 
+export { type CharacterDto } from './dto/character/get-character.dto.js';
 export type {
   CreateCharacterDto,
   CreateCharacterResponseDto,
@@ -38,14 +40,27 @@ export type {
   SearchCharacterDto,
   SearchCharacterResponseDto,
 } from './dto/character/search-character.dto.js';
-export { type CharacterDto } from './dto/character/get-character.dto.js';
-export { type VehicleDto } from './dto/vehicle/get-vehicle.dto.js';
-export { type DriverLicenseDto } from './dto/driver-license/get-driver-license.dto.js';
-export type { ChargeDto, CitationDto } from './dto/citation/get-citation.dto.js';
+export { type UpdateCharacterDto } from './dto/character/update-character.dto.js';
 
+export { type VehicleDto } from './dto/vehicle/get-vehicle.dto.js';
+export { type SearchVehicleDto } from './dto/vehicle/search-vehicle.dto.js';
+export { type UpdateVehicleDto } from './dto/vehicle/update-vehicle.dto.js';
+export { type CreateVehicleDto } from './dto/vehicle/create-vehicle.dto.js';
+
+export { type DriverLicenseDto } from './dto/driver-license/get-driver-license.dto.js';
+
+export type { ChargeDto, CitationDto } from './dto/citation/get-citation.dto.js';
+export { type CreateCitationDto } from './dto/citation/create-citation.dto.js';
+export { type UpdateCitationDto } from './dto/citation/update-citation.js';
 //Validation schemas
 
-export { createCharacterSchema, searchCharacterSchema } from './validators/character.schema.js';
+export {
+  createCharacterSchema,
+  searchCharacterSchema,
+  updateCharacterSchema,
+} from './validators/character.schema.js';
+
+export { createCitationSchema, updateCitationSchema } from './validators/citation.schema.js';
 
 export { paginationSchema } from './validators/pagination.schema.js';
 
@@ -56,6 +71,13 @@ export {
   updateEmailSchema,
   confirmEmailSchema,
 } from './validators/user.schema.js';
+
+export {
+  createVehicleSchema,
+  licensePlateValidator,
+  updateVehicleSchema,
+  searchVehicleSchema,
+} from './validators/vehicle.schema.js';
 
 export { idValidator, uuidValidator } from './validators/common.schema.js';
 

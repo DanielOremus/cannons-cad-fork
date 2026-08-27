@@ -7,6 +7,6 @@ export const VehicleType = {
   MARINE: 'MARINE',
   MOTORCYCLE: 'MOTORCYCLE',
   AIRCRAFT: 'AIRCRAFT',
-};
+} as const;
 
 export type VehicleType = (typeof VehicleType)[keyof typeof VehicleType];
