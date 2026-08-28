@@ -1,54 +1,44 @@
 services:
   db:
     image: postgres:17
+    container_name: cannons-cad_db
+    env_file:
+      - ./backend/.env.dev
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${DATABASE_USER}']
       interval: 5s
       timeout: 5s
       retries: 5
     ports:
-      - '5433:5432'
-    environment:
-      - POSTGRES_USER=${DATABASE_USER}
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - POSTGRES_DB=${DATABASE_NAME}
+      - '${DATABASE_PORT:-5432}:5432'
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
       - app_network
 
   redis:
-    image: redis:7-alpine
+    image: redis:alpine
     container_name: redis_cache
     restart: unless-stopped
-
+    env_file:
+      - ./backend/.env.dev
     environment:
       REDIS_PASSWORD: ${REDIS_PASSWORD}
-
-    command:
-      [
-        "sh",
-        "-c",
-        "exec redis-server --appendonly yes --requirepass \"$${REDIS_PASSWORD}\"",
-      ]
-
+    command: ['sh', '-c', 'exec redis-server --appendonly yes --requirepass "$${REDIS_PASSWORD}"']
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "redis-cli --no-auth-warning -a \"$${REDIS_PASSWORD}\" ping | grep PONG",
-        ]
+      test: ['CMD-SHELL', 'redis-cli --no-auth-warning -a "$${REDIS_PASSWORD}" ping | grep PONG']
       interval: 5s
       timeout: 3s
       retries: 10
       start_period: 5s
-
     ports:
-      - "127.0.0.1:6380:6379"
-
+      - '${REDIS_PORT:-6380}:6379'
     volumes:
       - redis_data:/data
-
     networks:
       - app_network
 
@@ -56,15 +46,13 @@ services:
     image: axllent/mailpit:latest
     container_name: cannons-cad_mailpit
     restart: unless-stopped
-
     environment:
       MP_MAX_MESSAGES: 500
-      MP_SMTP_AUTH_ACCEPT_ANY: "1"
-      MP_SMTP_AUTH_ALLOW_INSECURE: "1"
-
+      MP_SMTP_AUTH_ACCEPT_ANY: '1'
+      MP_SMTP_AUTH_ALLOW_INSECURE: '1'
     ports:
-      - "127.0.0.1:8025:8025"
-
+      - '127.0.0.1:8025:8025'
+      - '127.0.0.1:1025:1025'
     networks:
       - app_network
 
@@ -74,7 +62,7 @@ services:
       dockerfile: ./backend/Dockerfile.dev
     container_name: cannons-cad_migrations
     env_file:
-      - ./backend/.env
+      - ./backend/.env.dev
     environment:
       - DATABASE_HOST=db
     depends_on:
@@ -84,31 +72,51 @@ services:
     networks:
       - app_network
 
+  db_seeder:
+    build:
+      context: ./
+      dockerfile: ./backend/Dockerfile.dev
+    container_name: cannons-cad_seeder
+    env_file:
+      - ./backend/.env.dev
+    environment:
+      - DATABASE_HOST=db
+    depends_on:
+      db:
+        condition: service_healthy
+      db_migrations:
+        condition: service_completed_successfully
+    command: npx mikro-orm seeder:run
+    networks:
+      - app_network
+
   backend:
     build:
       context: ./
       dockerfile: ./backend/Dockerfile.dev
     container_name: cannons-cad_backend
     env_file:
-      - ./backend/.env
+      - ./backend/.env.dev
     environment:
       - DATABASE_HOST=db
       - REDIS_HOST=redis
     depends_on:
       db:
         condition: service_healthy
-
       redis:
         condition: service_healthy
-
       db_migrations:
         condition: service_completed_successfully
-
+      db_seeder:
+        condition: service_completed_successfully
       mailpit:
         condition: service_started
-
     ports:
-      - '${PORT}:${PORT}'
+      - '${PORT:-3000}:3000'
+    volumes:
+      - ./backend/src:/app/backend/src
+      - ./shared/src:/app/shared/src
+    command: npm run start:dev
     networks:
       - app_network
 

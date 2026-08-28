@@ -1,4 +1,4 @@
-FROM node:24
+FROM node:24-alpine
 
 WORKDIR /app
 
@@ -6,13 +6,9 @@ COPY . .
 
 RUN npm install
 
-WORKDIR /app/shared
-RUN npx tsc
+RUN npx tsc -b shared
 
 WORKDIR /app/backend
-RUN npm run build
 
 EXPOSE 3000
-
-CMD ["sleep", "infinity"]
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "start"]

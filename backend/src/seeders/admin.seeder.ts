@@ -17,7 +17,7 @@ export class AdminSeeder extends Seeder {
     const adminPassword = process.env.ADMIN_PASSWORD;
     if (!adminPassword) throw new Error('Admin password is not provided');
 
-    const passwordHash = await bcrypt.hash(adminEmail, 10);
+    const passwordHash = await bcrypt.hash(adminPassword, 10);
 
     em.create(UserEntity, {
       email: adminEmail,

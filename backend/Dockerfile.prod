@@ -1,0 +1,28 @@
+FROM node:24-alpine AS base
+WORKDIR /app
+
+COPY package*.json ./
+COPY backend/package*.json ./backend/
+COPY shared/package*.json ./shared/
+
+RUN npm install
+
+FROM base AS builder
+WORKDIR /app
+COPY . .
+RUN npx tsc -b shared
+RUN npm run build --prefix backend
+
+FROM node:24-alpine AS runner
+WORKDIR /app
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/backend/dist ./backend/dist
+COPY --from=builder /app/shared/dist ./shared/dist
+COPY --from=builder /app/backend/package*.json ./backend/
+
+WORKDIR /app/backend
+
+EXPOSE 3000
+
+CMD ["npm", "run", "start:prod"]
