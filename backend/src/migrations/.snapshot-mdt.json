@@ -943,6 +943,7 @@
             "CIVILIAN",
             "DISPATCH",
             "ADMIN",
+            "SUPER_ADMIN",
             "REGISTERED"
           ],
           "mappedType": "array"
@@ -995,8 +996,8 @@
       "checks": [
         {
           "name": "user_roles_check",
-          "expression": "\"roles\" <@ array['POLICE'::text, 'CIVILIAN'::text, 'DISPATCH'::text, 'ADMIN'::text, 'REGISTERED'::text]",
-          "definition": "check (\"roles\" <@ array['POLICE'::text, 'CIVILIAN'::text, 'DISPATCH'::text, 'ADMIN'::text, 'REGISTERED'::text])",
+          "expression": "\"roles\" <@ array['POLICE'::text, 'CIVILIAN'::text, 'DISPATCH'::text, 'ADMIN'::text, 'SUPER_ADMIN'::text, 'REGISTERED'::text]",
+          "definition": "check (\"roles\" <@ array['POLICE'::text, 'CIVILIAN'::text, 'DISPATCH'::text, 'ADMIN'::text, 'SUPER_ADMIN'::text, 'REGISTERED'::text])",
           "columnName": "roles"
         },
         {

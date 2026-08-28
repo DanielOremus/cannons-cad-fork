@@ -8,6 +8,9 @@ export const ResourceActions = {
     read: ['any', 'own'],
     delete: ['own'],
     update: ['own'],
+    'assign-role': ['any'],
+    'assign-status': ['any'],
+    'manage-admins': ['any'],
   },
   character: {
     create: ['own'],
