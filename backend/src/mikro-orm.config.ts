@@ -2,6 +2,7 @@ import { defineConfig } from '@mikro-orm/postgresql';
 import { buildConfig } from './core/config/config';
 import { validate } from './core/config/config.validation';
 import { Migrator } from '@mikro-orm/migrations';
+import { SeedManager } from '@mikro-orm/seeder';
 
 import 'dotenv/config';
 
@@ -19,7 +20,7 @@ export default defineConfig({
   debug: config.env === 'development',
   entities: ['dist/modules/**/*.entity.js', 'dist/shared/entities/*.entity.js'],
   entitiesTs: ['src/modules/**/*.entity.ts', 'src/shared/entities/*.entity.ts'],
-  extensions: [Migrator],
+  extensions: [Migrator, SeedManager],
   migrations: {
     path: 'src/migrations',
     transactional: true,
@@ -27,5 +28,10 @@ export default defineConfig({
     disableForeignKeys: false,
     allOrNothing: true,
     dropTables: true,
+  },
+  seeder: {
+    path: 'src/seeders',
+    defaultSeeder: 'DatabaseSeeder',
+    emit: 'ts',
   },
 });

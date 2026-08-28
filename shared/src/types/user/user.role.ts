@@ -5,13 +5,17 @@ export const UserRole = {
   CIVILIAN: 'CIVILIAN',
   DISPATCH: 'DISPATCH',
   ADMIN: 'ADMIN',
+  SUPER_ADMIN: 'SUPER_ADMIN',
   REGISTERED: 'REGISTERED',
 } as const;
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
 export const RolePermissions = {
+  SUPER_ADMIN: ['user:assign-role:any', 'user:assign-status:any', 'user:manage-admins:any'],
   ADMIN: [
+    'user:assign-status:any',
+    'user:assign-role:any',
     'user:read:any',
     'character:read:any',
     'character:delete:any',
