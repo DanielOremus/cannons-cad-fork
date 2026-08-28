@@ -19,6 +19,6 @@ export class GetUserHandler implements IQueryHandler<GetUserQuery> {
     const user = await this.userRepository.findById(userId);
     if (!user) throw new NotFoundError('User');
 
-    return this.userMapper.toUserDto(user);
+    return this.userMapper.toReadDto(user);
   }
 }
