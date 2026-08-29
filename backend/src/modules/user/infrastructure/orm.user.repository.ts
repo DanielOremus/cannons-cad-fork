@@ -7,11 +7,9 @@ import { Injectable } from '@nestjs/common';
 import { UsersFilterDto } from '../dto/get-users-filter.dto';
 
 @Injectable()
-export class OrmUserRepository extends UserRepository {
+export class OrmUserRepository implements UserRepository {
   private readonly entity = UserEntity;
-  constructor(private readonly em: EntityManager) {
-    super();
-  }
+  constructor(private readonly em: EntityManager) {}
   async findById(id: string): Promise<UserEntity | null> {
     return await this.em.findOne(this.entity, { id });
   }

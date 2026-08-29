@@ -1,18 +1,6 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  Param,
-  Patch,
-  Query,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Patch, Query, Req } from '@nestjs/common';
 import { type Request } from 'express';
 import { RequirePermission } from '../../common/decorators/require-permission.decorator';
-import { AuthGuard } from '../../common/guards/auth.guard';
-import { PermissionsGuard } from '../../common/guards/permissions.guard';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetOwnProfileQuery } from './queries/get-own-profile/get-own-profile.query';
 import { GetUserQuery } from './queries/get-user/get-user.query';
@@ -24,7 +12,6 @@ import { GetUsersListQuery } from './queries/get-users-list/get-users-list.query
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
 
 @Controller('/users')
-@UseGuards(AuthGuard, PermissionsGuard)
 export class UserController {
   constructor(
     private readonly queryBus: QueryBus,

@@ -7,17 +7,22 @@ import { Reflector } from '@nestjs/core';
 import { ACTIVE_CHECK_KEY, EMAIL_CONFIRM_KEY } from '../decorators/account.decorator';
 import { TokenStoreService } from '../../shared/modules/token/token-store.service';
 import { PermissionsCacheService } from '../../shared/modules/permissions/permissions-cache.service';
+import { PUBLIC_ROUTE_KEY } from '../decorators/public-route.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    @Inject(TokenService) private readonly tokenService: TokenService,
-    @Inject(TokenStoreService) private readonly tokenStore: TokenStoreService,
-    @Inject(PermissionsCacheService) private readonly permissionsCache: PermissionsCacheService,
+    private readonly tokenService: TokenService,
+    private readonly tokenStore: TokenStoreService,
+    private readonly permissionsCache: PermissionsCacheService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
+
+    const isRoutePublic = this.reflector.get<boolean>(PUBLIC_ROUTE_KEY, context.getHandler());
+    if (isRoutePublic) return true;
+
     const payload = this.tokenService.tryParseBearer(request.headers.authorization);
     if (!payload) throw new UnauthorizedError();
 

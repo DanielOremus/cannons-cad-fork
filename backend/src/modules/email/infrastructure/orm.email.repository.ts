@@ -5,11 +5,9 @@ import { CreateConfirmationInput } from '../inputs/create-confirmation.input';
 import { EmailConfirmationEntity } from '../entities/email-confirmation.entity';
 
 @Injectable()
-export class OrmEmailRepository extends EmailRepository {
+export class OrmEmailRepository implements EmailRepository {
   private readonly entity = EmailConfirmationEntity;
-  constructor(private readonly em: EntityManager) {
-    super();
-  }
+  constructor(private readonly em: EntityManager) {}
   async createConfirmation(input: CreateConfirmationInput): Promise<EmailConfirmationEntity> {
     return await this.em.create(this.entity, input);
   }
