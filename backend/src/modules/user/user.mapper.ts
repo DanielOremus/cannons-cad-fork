@@ -26,9 +26,12 @@ export class UserMapper {
       createdAt: createdAt.toISOString(),
     };
   }
-  toUserDto(user: UserEntity): UserDto {
+  toReadDto(user: UserEntity): UserDto {
     const { name, roles, status, createdAt } = user;
 
     return { name, roles, status, createdAt: createdAt.toISOString() };
+  }
+  toListDto(users: UserEntity[]): UserDto[] {
+    return users.map((u) => this.toReadDto(u));
   }
 }
