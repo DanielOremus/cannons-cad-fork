@@ -9,15 +9,12 @@ import {
   Post,
   Query,
   Req,
-  UseGuards,
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { SearchCharacterDto } from './dto/search-character.dto';
 import { CreateCharacterDto } from './dto/create-character.dto';
-import { AuthGuard } from '../../common/guards/auth.guard';
 import { RequirePermission } from '../../common/decorators/require-permission.decorator';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
-import { PermissionsGuard } from '../../common/guards/permissions.guard';
 import { type PaginationDto } from '@project/shared';
 import { paginationSchema } from '@project/shared';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -31,7 +28,6 @@ import { UpdateCharacterCommand } from './commands/update-character/update-chara
 import { DeleteCharacterCommand } from './commands/delete-character/delete-character.command';
 
 @Controller('/characters')
-@UseGuards(AuthGuard, PermissionsGuard)
 export class CharacterController {
   constructor(
     private readonly queryBus: QueryBus,

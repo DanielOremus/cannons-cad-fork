@@ -6,14 +6,11 @@ import {
   Post,
   Get,
   Req,
-  UseGuards,
   Query,
   Delete,
   Patch,
 } from '@nestjs/common';
 import { VehicleService } from './vehicle.service';
-import { AuthGuard } from '../../common/guards/auth.guard';
-import { PermissionsGuard } from '../../common/guards/permissions.guard';
 import { RequirePermission } from '../../common/decorators/require-permission.decorator';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
@@ -23,7 +20,6 @@ import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 import { SearchVehicleDto } from './dto/search-vehicle.dto';
 
 @Controller('/vehicles')
-@UseGuards(AuthGuard, PermissionsGuard)
 export class VehicleController {
   constructor(private readonly vehicleService: VehicleService) {}
 

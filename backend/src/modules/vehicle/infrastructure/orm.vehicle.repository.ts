@@ -7,11 +7,9 @@ import { CreateVehicleInput } from '../inputs/create-vehicle.input';
 import { UpdateVehicleDto } from '../dto/update-vehicle.dto';
 
 @Injectable()
-export class OrmVehicleRepository extends VehicleRepository {
+export class OrmVehicleRepository implements VehicleRepository {
   private readonly entity = VehicleEntity;
-  constructor(private readonly em: EntityManager) {
-    super();
-  }
+  constructor(private readonly em: EntityManager) {}
   async findByCharacter(
     characterId: number,
     pagination: PaginationDto,

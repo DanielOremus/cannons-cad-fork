@@ -1,19 +1,8 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-  UseInterceptors,
-  UsePipes,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Req, Res, UseInterceptors } from '@nestjs/common';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import type { Request, Response } from 'express';
 import { COOKEY_KEY } from './cookie.helper';
-import { AuthGuard } from '../../common/guards/auth.guard';
 import { AuthInterceptor } from '../../common/interceptors/auth.interceptor';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
 import {
@@ -32,16 +21,20 @@ import { LogoutUserCommand } from './commands/logout/logout.command';
 import { RefreshSessionCommand } from './commands/refresh-session/refresh-session.command';
 import { ConfirmEmailCommand } from './commands/confirm-email/confirm-email.command';
 import { ResendEmailConfirmationCommand } from './commands/resend-email-confirmation/resend-email-confirmation.command';
+import { Public } from '../../common/decorators/public-route.decorator';
 
 @Controller('/auth')
 export class AuthController {
   constructor(private readonly commandBus: CommandBus) {}
   @Post('/register')
+  @Public()
   @SetRefreshCookie()
   @UseInterceptors(AuthInterceptor)
-  @UsePipes(new ZodValidationPipe(RegisterUserDto.schema))
   @HttpCode(201)
-  async register(@Body() registerDto: RegisterUserDto, @Res({ passthrough: true }) res: Response) {
+  async register(
+    @Body(new ZodValidationPipe(RegisterUserDto.schema)) registerDto: RegisterUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const { refresh, access, user } = await this.commandBus.execute(
       new RegisterUserCommand(registerDto),
     );
@@ -50,18 +43,20 @@ export class AuthController {
     return { access, user };
   }
   @Post('/login')
+  @Public()
   @SetRefreshCookie()
   @UseInterceptors(AuthInterceptor)
-  @UsePipes(new ZodValidationPipe(LoginUserDto.schema))
   @HttpCode(200)
-  async login(@Body() loginDto: LoginUserDto, @Res({ passthrough: true }) res: Response) {
+  async login(
+    @Body(new ZodValidationPipe(LoginUserDto.schema)) loginDto: LoginUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const { refresh, access, user } = await this.commandBus.execute(new LoginUserCommand(loginDto));
     res.locals.refreshToken = refresh;
 
     return { access, user };
   }
   @Post('/logout')
-  @UseGuards(AuthGuard)
   @RequireConfirmedEmailOnly()
   @UseInterceptors(AuthInterceptor)
   @ClearRefreshCookie()
@@ -71,8 +66,9 @@ export class AuthController {
     res.clearCookie(COOKEY_KEY);
   }
   @Post('/refresh')
-  @UseInterceptors(AuthInterceptor)
+  @Public()
   @SetRefreshCookie()
+  @UseInterceptors(AuthInterceptor)
   @HttpCode(200)
   async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     try {
@@ -88,15 +84,15 @@ export class AuthController {
     }
   }
   @Post('/confirm-email')
-  @UseGuards(AuthGuard)
   @SkipActiveCheck()
-  @UsePipes(new ZodValidationPipe(ConfirmEmailDto.schema))
   @HttpCode(204)
-  async confirmEmail(@Req() req: Request, @Body() confirmDto: ConfirmEmailDto) {
+  async confirmEmail(
+    @Req() req: Request,
+    @Body(new ZodValidationPipe(ConfirmEmailDto.schema)) confirmDto: ConfirmEmailDto,
+  ) {
     await this.commandBus.execute(new ConfirmEmailCommand(req.user!, confirmDto.code));
   }
   @Post('/resend-code')
-  @UseGuards(AuthGuard)
   @SkipActiveCheck()
   @HttpCode(204)
   async resendEmailConfirmation(@Req() req: Request) {

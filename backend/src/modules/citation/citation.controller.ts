@@ -1,16 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  HttpCode,
-  Param,
-  Patch,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
-import { AuthGuard } from '../../common/guards/auth.guard';
-import { PermissionsGuard } from '../../common/guards/permissions.guard';
+import { Body, Controller, Delete, HttpCode, Param, Patch, Post, Req } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { RequirePermission } from '../../common/decorators/require-permission.decorator';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
@@ -23,7 +11,6 @@ import { UpdateCitationDto } from './dto/update-citation.dto';
 import { UpdateCitationCommand } from './commands/update-citation/update-citation.command';
 
 @Controller('/citations')
-@UseGuards(AuthGuard, PermissionsGuard)
 export class CitationController {
   constructor(private readonly commandBus: CommandBus) {}
 
