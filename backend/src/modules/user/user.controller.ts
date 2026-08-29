@@ -17,11 +17,11 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetOwnProfileQuery } from './queries/get-own-profile/get-own-profile.query';
 import { GetUserQuery } from './queries/get-user/get-user.query';
 import { UuidParamPipe } from '../../common/pipes/id-validation.pipe';
-import { ZodValidationPipe } from 'nestjs-zod';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserCommand } from './commands/update-user/update-user.command';
 import { UsersFilterDto } from './dto/get-users-filter.dto';
 import { GetUsersListQuery } from './queries/get-users-list/get-users-list.query';
+import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
 
 @Controller('/users')
 @UseGuards(AuthGuard, PermissionsGuard)

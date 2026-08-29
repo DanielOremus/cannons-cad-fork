@@ -7,7 +7,7 @@ export const ResourceActions = {
   user: {
     read: ['any', 'own'],
     delete: ['own'],
-    update: ['own'],
+    update: ['own', 'any'],
     'assign-role': ['any'],
     'assign-status': ['any'],
     'manage-admins': ['any'],

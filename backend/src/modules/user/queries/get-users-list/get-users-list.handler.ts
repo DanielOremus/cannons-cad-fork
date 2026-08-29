@@ -6,7 +6,7 @@ import { UserMapper } from '../../user.mapper';
 import { ForbiddenError } from '../../../../shared/errors/app.error';
 
 @QueryHandler(GetUsersListQuery)
-export class GetUserHandler implements IQueryHandler<GetUsersListQuery> {
+export class GetUsersListHandler implements IQueryHandler<GetUsersListQuery> {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly userMapper: UserMapper,
