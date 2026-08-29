@@ -1,3 +1,5 @@
+name: cannons-cad
+
 services:
   db:
     image: postgres:17
@@ -14,7 +16,7 @@ services:
       timeout: 5s
       retries: 5
     ports:
-      - '${DATABASE_PORT:-5432}:5432'
+      - '${DATABASE_PORT:-5433}:5432'
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
@@ -34,9 +36,9 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
-      start_period: 5s
+      start_period: 10s
     ports:
-      - '${REDIS_PORT:-6380}:6379'
+      - '${REDIS_PORT:-6379}:6379'
     volumes:
       - redis_data:/data
     networks:
@@ -100,6 +102,7 @@ services:
     environment:
       - DATABASE_HOST=db
       - REDIS_HOST=redis
+      - MAILER_HOST=mailpit
     depends_on:
       db:
         condition: service_healthy
@@ -113,10 +116,7 @@ services:
         condition: service_started
     ports:
       - '${PORT:-3000}:3000'
-    volumes:
-      - ./backend/src:/app/backend/src
-      - ./shared/src:/app/shared/src
-    command: npm run start:dev
+    command: npm run start
     networks:
       - app_network
 
