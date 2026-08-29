@@ -2,17 +2,19 @@ import { CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/commo
 import { TokenService } from '../../shared/modules/token/token.service';
 import { Request } from 'express';
 import { ForbiddenError, UnauthorizedError } from '../../shared/errors/app.error';
-import { RedisService } from '../../core/redis/redis.service';
 import { accountActive, getPermissionsFromRoles } from '@project/shared';
 import { Reflector } from '@nestjs/core';
 import { ACTIVE_CHECK_KEY, EMAIL_CONFIRM_KEY } from '../decorators/account.decorator';
+import { TokenStoreService } from '../../shared/modules/token/token-store.service';
+import { PermissionsCacheService } from '../../shared/modules/permissions/permissions-cache.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     @Inject(TokenService) private readonly tokenService: TokenService,
-    @Inject(RedisService) private readonly redisService: RedisService,
+    @Inject(TokenStoreService) private readonly tokenStore: TokenStoreService,
+    @Inject(PermissionsCacheService) private readonly permissionsCache: PermissionsCacheService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
@@ -20,8 +22,8 @@ export class AuthGuard implements CanActivate {
     if (!payload) throw new UnauthorizedError();
 
     const [familyExists, userPermsArr] = await Promise.all([
-      this.redisService.familyExists(payload.familyId),
-      this.redisService.getUserPermissions(payload.userId),
+      this.tokenStore.familyExists(payload.familyId),
+      this.permissionsCache.getUserPermissions(payload.userId),
     ]);
 
     if (!familyExists) throw new UnauthorizedError();

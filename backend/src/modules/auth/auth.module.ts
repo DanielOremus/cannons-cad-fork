@@ -12,6 +12,7 @@ import { LogoutUserHandler } from './commands/logout/logout.handler';
 import { RefreshSessionHandler } from './commands/refresh-session/refresh-session.handler';
 import { ResendEmailConfirmationHandler } from './commands/resend-email-confirmation/resend-email-confirmation.handler';
 import { ConfirmEmailHandler } from './commands/confirm-email/confirm-email.handler';
+import { PermissionsModule } from '../../shared/modules/permissions/permissions.module';
 
 const commandHandlers = [
   LoginUserHandler,
@@ -23,7 +24,7 @@ const commandHandlers = [
 ];
 
 @Module({
-  imports: [UserModule, EmailModule, TokenModule, DatabaseModule],
+  imports: [UserModule, EmailModule, TokenModule, PermissionsModule, DatabaseModule],
   controllers: [AuthController],
   providers: [...commandHandlers, EmailConfirmationService, AuthSessionService],
 })
