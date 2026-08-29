@@ -1,13 +1,7 @@
 node_modules/
 dist/
-.env
 .DS_Store
 build/
-
-# ========================
-# Prisma generated client
-# ========================
-backend/src/generated/prisma
 
 # ========================
 # Environment variables

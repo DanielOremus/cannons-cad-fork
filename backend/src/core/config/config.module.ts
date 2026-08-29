@@ -7,6 +7,7 @@ import { AppConfigService } from './config.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: process.env.NODE_ENV === 'production' ? undefined : '.env.dev',
       load: [registerConfig],
     }),
   ],
