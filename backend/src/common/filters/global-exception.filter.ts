@@ -1,5 +1,5 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus, Logger } from '@nestjs/common';
-import { ErrorCode } from '@project/shared';
+import { ErrorCode, ValidationIssue } from '@project/shared';
 import { Request, Response } from 'express';
 import { AppError, ValidationError } from '../../shared/errors/app.error';
 
@@ -26,7 +26,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     let errorCode: ErrorCode;
     let errorMessage: string;
-    let errorIssues;
+    let errorIssues: ValidationIssue[] | undefined;
 
     if (exception instanceof AppError) {
       errorCode = exception.code;

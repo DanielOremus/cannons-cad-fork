@@ -5,10 +5,12 @@ import { RedisModule } from './redis/redis.module';
 import { BullModule } from '@nestjs/bullmq';
 import { AppConfigService } from './config/config.service';
 import { MailerModule } from './mailer/mailer.module';
+import { AppThrottlerModule } from './throttler/throttler.module';
 
 @Module({
   imports: [
     AppConfigModule,
+    AppThrottlerModule,
     DatabaseModule,
     RedisModule,
     MailerModule,
