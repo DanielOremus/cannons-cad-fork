@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { RedisService } from '../../../core/redis/redis.service';
-import { Permission } from '@project/shared';
+import { Permission, UserRole } from '@project/shared';
 import { AppConfigService } from '../../../core/config/config.service';
 
 @Injectable()
-export class PermissionsCacheService {
+export class AuthCacheService {
+  private userRolesKey(userId: string) {
+    return `user:${userId}:roles`;
+  }
   private userPermissionsKey(userId: string) {
     return `user:${userId}:permissions`;
   }
@@ -14,8 +17,21 @@ export class PermissionsCacheService {
     private readonly config: AppConfigService,
   ) {}
 
-  //Permissions caching
+  //Roles caching
+  async cacheUserRoles(userId: string, roles: UserRole[]) {
+    await this.redis.client.setEx(
+      this.userRolesKey(userId),
+      this.config.jwt.access.ttl,
+      JSON.stringify(roles),
+    );
+  }
 
+  async getUserRoles(userId: string) {
+    const value = await this.redis.client.get(this.userRolesKey(userId));
+    return value ? (JSON.parse(value) as UserRole[]) : null;
+  }
+
+  //Permissions caching
   async cacheUserPermissions(userId: string, permissions: Permission[]) {
     await this.redis.client.setEx(
       this.userPermissionsKey(userId),
@@ -26,7 +42,6 @@ export class PermissionsCacheService {
 
   async getUserPermissions(userId: string) {
     const value = await this.redis.client.get(this.userPermissionsKey(userId));
-    if (!value) return [];
-    return JSON.parse(value) as Permission[];
+    return value ? (JSON.parse(value) as Permission[]) : null;
   }
 }
