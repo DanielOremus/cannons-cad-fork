@@ -1,4 +1,4 @@
-import { hasHigherOrSamePriority, getStaffPriority, UserRole } from '@project/shared';
+import { hasHigherOrSamePriority, getStaffPriority } from '@project/shared';
 import { UnitOfWork } from '../../../../core/database/unit-of-work';
 import { ForbiddenError, NotFoundError } from '../../../../shared/errors/app.error';
 import { UserRepository } from '../../user.repository';

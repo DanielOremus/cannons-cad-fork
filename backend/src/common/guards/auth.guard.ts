@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { TokenService } from '../../shared/modules/token/token.service';
 import { Request } from 'express';
 import { ForbiddenError, UnauthorizedError } from '../../shared/errors/app.error';
@@ -33,8 +33,8 @@ export class AuthGuard implements CanActivate {
 
     if (!familyExists) throw new UnauthorizedError();
 
-    let userRoles = !redisUserRoles ? payload.userRoles : redisUserRoles;
-    let userPerms = getPermissionsFromRoles(...userRoles);
+    const userRoles = !redisUserRoles ? payload.userRoles : redisUserRoles;
+    const userPerms = getPermissionsFromRoles(...userRoles);
 
     request.user = {
       id: payload.userId,

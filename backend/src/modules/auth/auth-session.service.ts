@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { UserEntity } from '../user/entities/user.entity';
 import { randomUUID } from 'crypto';
 import { TokenPayloads } from '../../shared/types/token';
-import { getPermissionsFromRoles } from '@project/shared';
 import { TokenService } from '../../shared/modules/token/token.service';
 import { TokenStoreService } from '../../shared/modules/token/token-store.service';
 import { AuthCacheService } from '../../shared/modules/auth-cache/auth-cache.service';
