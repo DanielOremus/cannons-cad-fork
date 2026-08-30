@@ -22,12 +22,15 @@ import { RefreshSessionCommand } from './commands/refresh-session/refresh-sessio
 import { ConfirmEmailCommand } from './commands/confirm-email/confirm-email.command';
 import { ResendEmailConfirmationCommand } from './commands/resend-email-confirmation/resend-email-confirmation.command';
 import { Public } from '../../common/decorators/public-route.decorator';
+import { Throttle } from '@nestjs/throttler';
+import { appThrottlers } from '../../core/throttler/throttlers';
 
 @Controller('/auth')
 export class AuthController {
   constructor(private readonly commandBus: CommandBus) {}
   @Post('/register')
   @Public()
+  @Throttle({ default: appThrottlers.register })
   @SetRefreshCookie()
   @UseInterceptors(AuthInterceptor)
   @HttpCode(201)
@@ -44,6 +47,7 @@ export class AuthController {
   }
   @Post('/login')
   @Public()
+  @Throttle({ default: appThrottlers.login })
   @SetRefreshCookie()
   @UseInterceptors(AuthInterceptor)
   @HttpCode(200)
@@ -67,6 +71,7 @@ export class AuthController {
   }
   @Post('/refresh')
   @Public()
+  @Throttle({ default: appThrottlers.refresh })
   @SetRefreshCookie()
   @UseInterceptors(AuthInterceptor)
   @HttpCode(200)
@@ -93,6 +98,7 @@ export class AuthController {
     await this.commandBus.execute(new ConfirmEmailCommand(req.user!, confirmDto.code));
   }
   @Post('/resend-code')
+  @Throttle({ default: appThrottlers.resendConfirmation })
   @SkipActiveCheck()
   @HttpCode(204)
   async resendEmailConfirmation(@Req() req: Request) {
