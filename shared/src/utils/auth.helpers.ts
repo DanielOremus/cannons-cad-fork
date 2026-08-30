@@ -3,6 +3,7 @@ import { type Permission, type ResourceAction } from '../types/permission/index.
 import { PermissionResource } from '../types/permission/permission.resource.js';
 import { UserStatus } from '../types/user/user.status.js';
 import type { PermissionScope } from '../types/permission/permission.scope.js';
+import { StaffRolePriority } from '../types/user/staff-role.priority.js';
 
 export function hasPermissionFromRoles<T extends PermissionResource>(
   roles: UserRole[],
@@ -43,6 +44,14 @@ type AccountActiveArgs = {
   status: UserStatus;
   emailConfirmed: boolean;
 };
+
+export function getStaffPriority(role: UserRole) {
+  return StaffRolePriority[role] ?? 0;
+}
+
+export function hasHigherOrSamePriority(roles: UserRole[], comparePriority: number) {
+  return roles.some((r) => getStaffPriority(r) >= comparePriority);
+}
 
 export function accountActive({ status, emailConfirmed }: AccountActiveArgs) {
   return status === UserStatus.APPROVED && emailConfirmed;

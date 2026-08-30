@@ -1,11 +1,12 @@
 import { Command } from '@nestjs/cqrs';
 import { UpdateUserDto } from '../../dto/update-user.dto';
-import { PermissionScope } from '@project/shared';
+import { PermissionScope, UserRole } from '@project/shared';
 
 export class UpdateUserCommand extends Command<void> {
   constructor(
+    readonly targetUserId: string,
     readonly dto: UpdateUserDto,
-    readonly userId: string,
+    readonly currentUserRoles: UserRole[],
     readonly scope: PermissionScope,
   ) {
     super();

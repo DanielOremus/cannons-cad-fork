@@ -5,14 +5,14 @@ import { TokenPayloads } from '../../shared/types/token';
 import { getPermissionsFromRoles } from '@project/shared';
 import { TokenService } from '../../shared/modules/token/token.service';
 import { TokenStoreService } from '../../shared/modules/token/token-store.service';
-import { PermissionsCacheService } from '../../shared/modules/permissions/permissions-cache.service';
+import { AuthCacheService } from '../../shared/modules/auth-cache/auth-cache.service';
 
 @Injectable()
 export class AuthSessionService {
   constructor(
     private readonly tokenService: TokenService,
     private readonly tokenStore: TokenStoreService,
-    private readonly permissionCache: PermissionsCacheService,
+    private readonly authCache: AuthCacheService,
   ) {}
   private async createBaseSession(user: UserEntity, familyId: string = randomUUID()) {
     const refreshJti = randomUUID();
@@ -30,10 +30,10 @@ export class AuthSessionService {
       userId: user.id,
     } satisfies TokenPayloads['access'];
 
-    await this.tokenStore.storeRToken(refreshPayload);
-
-    const userPerms = Array.from(getPermissionsFromRoles(...user.roles));
-    await this.permissionCache.cacheUserPermissions(user.id, userPerms);
+    await Promise.all([
+      this.tokenStore.storeRToken(refreshPayload),
+      this.authCache.cacheUserRoles(user.id, user.roles),
+    ]);
 
     const refresh = this.tokenService.generate('refresh', refreshPayload);
     const access = this.tokenService.generate('access', accessPayload);

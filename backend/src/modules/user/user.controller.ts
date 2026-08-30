@@ -44,6 +44,8 @@ export class UserController {
     @Req() req: Request,
     @Body(new ZodValidationPipe(UpdateUserDto.schema)) dto: UpdateUserDto,
   ) {
-    return await this.commandBus.execute(new UpdateUserCommand(dto, id, req.permissionScope!));
+    return await this.commandBus.execute(
+      new UpdateUserCommand(id, dto, req.user!.roles, req.permissionScope!),
+    );
   }
 }

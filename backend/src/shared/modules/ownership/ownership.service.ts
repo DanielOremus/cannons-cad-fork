@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { VehicleEntity } from '../../../modules/vehicle/entities/vehicle.entity';
 import { ForbiddenError, NotFoundError } from '../../errors/app.error';
 import { CharacterEntity } from '../../../modules/character/entities/character.entity';
-import { PermissionScope } from '@project/shared';
+import { PermissionScope, UserRole } from '@project/shared';
 import { CitationEntity } from '../../../modules/citation/entities/citation.entity';
+import { UserEntity } from '../../../modules/user/entities/user.entity';
 
 @Injectable()
 export class OwnershipService {
