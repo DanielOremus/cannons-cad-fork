@@ -7,6 +7,7 @@ import { AppConfigService } from './core/config/config.service';
 import { NextFunction, Request, Response } from 'express';
 import { RequestContext } from '@mikro-orm/core';
 import { MikroORM } from '@mikro-orm/postgresql';
+import { SocketIoAdapter } from './common/adapters/socket-io.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -18,7 +19,9 @@ async function bootstrap() {
   app.use((req: Request, res: Response, next: NextFunction) => {
     RequestContext.create(orm.em, next);
   });
+
   app.useGlobalFilters(new GlobalExceptionFilter());
+  app.useWebSocketAdapter(new SocketIoAdapter(app));
 
   if (config.env === 'production') app.set('trust proxy', 1);
 

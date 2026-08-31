@@ -3,7 +3,7 @@ import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
 import { UserRepository } from '../../../user/user.repository';
 import { UnauthorizedError } from '../../../../shared/errors/app.error';
 import { UserMapper } from '../../../user/user.mapper';
-import { AuthSessionService } from '../../auth-session.service';
+import { AuthSessionService } from '../../../../shared/modules/auth-session/auth-session.service';
 import bcrypt from 'bcrypt';
 
 @CommandHandler(LoginUserCommand)
