@@ -49,6 +49,10 @@ export function getStaffPriority(role: UserRole) {
   return StaffRolePriority[role] ?? 0;
 }
 
+export function getHighestRolePriority(roles: UserRole[]) {
+  return Math.max(0, ...roles.map(getStaffPriority));
+}
+
 export function hasHigherOrSamePriority(roles: UserRole[], comparePriority: number) {
   return roles.some((r) => getStaffPriority(r) >= comparePriority);
 }
