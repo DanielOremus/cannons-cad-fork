@@ -13,7 +13,7 @@ import EmailConfirmationForm from '../../features/auth/components/EmailConfirmat
 import EmailConfirmedState from '../../features/auth/components/EmailConfirmedState';
 import LoginForm from '../../features/auth/components/LoginForm';
 import RegisterForm from '../../features/auth/components/RegisterForm';
-import { type UserProfile } from '../../features/auth/model/auth.types';
+import { useAuth } from '../../features/auth/context/AuthContext';
 import {
   type AuthMode,
   type AuthStep,
@@ -32,11 +32,20 @@ import {
   validateLogin,
   validateRegister,
 } from '../../features/auth/utils/authValidation';
-import './AuthPage.css';
+import { BrandMark } from '../../shared/components/BrandMark';
 
 const RESEND_COOLDOWN_SECONDS = 45;
 
 function AuthPage() {
+  const {
+    accessToken,
+    user,
+    isAdmin,
+    setAuthSession,
+    setAccessToken,
+    setUser,
+    clearAuthSession,
+  } = useAuth();
   const [mode, setMode] = useState<AuthMode>('login');
   const [step, setStep] = useState<AuthStep>('forms');
   const [loginValues, setLoginValues] = useState(initialLoginValues);
@@ -46,8 +55,6 @@ function AuthPage() {
   const [confirmationCode, setConfirmationCode] = useState('');
   const [confirmationError, setConfirmationError] = useState('');
   const [message, setMessage] = useState('');
-  const [accessToken, setAccessToken] = useState('');
-  const [user, setUser] = useState<UserProfile | null>(null);
   const [registeredEmail, setRegisteredEmail] = useState('');
   const [loginCaptchaToken, setLoginCaptchaToken] = useState('');
   const [registerCaptchaToken, setRegisterCaptchaToken] = useState('');
@@ -103,8 +110,7 @@ function AuthPage() {
   }
 
   function clearAuthState() {
-    setAccessToken('');
-    setUser(null);
+    clearAuthSession();
     clearConfirmationState();
   }
 
@@ -149,8 +155,7 @@ function AuthPage() {
       });
 
       clearConfirmationState();
-      setAccessToken(response.access);
-      setUser(response.user);
+      setAuthSession(response.access, response.user);
       setRegisteredEmail(response.user.email ?? loginValues.email.trim());
       setStep(response.user.emailConfirmed === false ? 'confirm-email' : 'authenticated');
       setMessage('');
@@ -187,8 +192,7 @@ function AuthPage() {
       });
 
       clearConfirmationState();
-      setAccessToken(response.access);
-      setUser(response.user);
+      setAuthSession(response.access, response.user);
       setRegisteredEmail(registerValues.email.trim());
       setStep('confirm-email');
       setRegisterErrors({});
@@ -300,12 +304,22 @@ function AuthPage() {
     }
   }
 
+  const effectiveStep =
+    step === 'forms' && user
+      ? user.emailConfirmed === false
+        ? 'confirm-email'
+        : 'authenticated'
+      : step;
+  const confirmationEmail = registeredEmail || user?.email || '';
+
   return (
     <main className="auth-page">
       <section className="auth-card" aria-labelledby="auth-heading">
         <div className="auth-header">
-          <p className="auth-eyebrow">Cannons CAD</p>
-          <h1 id="auth-heading">{step === 'authenticated' ? 'Signed in' : 'Welcome back'}</h1>
+          <BrandMark />
+          <h1 id="auth-heading">
+            {effectiveStep === 'authenticated' ? 'Signed in' : 'Welcome back'}
+          </h1>
           <p>Sign in to access your role-play community dashboard.</p>
         </div>
 
@@ -315,7 +329,7 @@ function AuthPage() {
           </p>
         )}
 
-        {step === 'forms' && (
+        {effectiveStep === 'forms' && (
           <>
             <AuthTabs mode={mode} onChange={changeMode} />
             {mode === 'login' ? (
@@ -350,10 +364,10 @@ function AuthPage() {
           </>
         )}
 
-        {step === 'confirm-email' && (
+        {effectiveStep === 'confirm-email' && (
           <EmailConfirmationForm
             code={confirmationCode}
-            email={registeredEmail}
+            email={confirmationEmail}
             error={confirmationError}
             isSubmitting={isSubmittingConfirmation}
             isResending={isResending}
@@ -369,13 +383,14 @@ function AuthPage() {
           />
         )}
 
-        {step === 'email-confirmed' && (
+        {effectiveStep === 'email-confirmed' && (
           <EmailConfirmedState user={user} onReturnToLogin={() => returnToLogin()} />
         )}
 
-        {step === 'authenticated' && user && (
+        {effectiveStep === 'authenticated' && user && (
           <AuthenticatedState
             user={user}
+            isAdmin={isAdmin}
             isLoggingOut={isLoggingOut}
             onLogout={() => void handleLogout()}
           />
