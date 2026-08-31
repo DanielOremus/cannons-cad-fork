@@ -25,7 +25,7 @@ export class UserEntity extends UserSchema.class {}
 UserSchema.setClass(UserEntity);
 
 //block REGISTERED role from removal
-UserSchema.addHook('beforeUpdate', async (args: EventArgs<UserEntity>) => {
+UserSchema.addHook('beforeUpdate', (args: EventArgs<UserEntity>) => {
   const user = args.entity;
   if (Array.isArray(user.roles) && !user.roles.includes(UserRole.REGISTERED))
     user.roles.push(UserRole.REGISTERED);
