@@ -6,6 +6,7 @@ import {
 } from '@project/shared';
 
 export class UserDto implements PublicReadDto {
+  id: string;
   name: string;
   roles: UserRole[];
   status: UserStatus;
