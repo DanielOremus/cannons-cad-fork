@@ -1,5 +1,5 @@
 import { UserRole, UserStatus } from '@project/shared';
-import { p, defineEntity } from '@mikro-orm/core';
+import { p, defineEntity, EventArgs } from '@mikro-orm/core';
 import { BaseSensitiveSchema } from '../../../shared/entities/base.entity';
 import { CharacterEntity } from '../../character/entities/character.entity';
 
@@ -23,3 +23,10 @@ const UserSchema = defineEntity({
 
 export class UserEntity extends UserSchema.class {}
 UserSchema.setClass(UserEntity);
+
+//block REGISTERED role from removal
+UserSchema.addHook('beforeUpdate', async (args: EventArgs<UserEntity>) => {
+  const user = args.entity;
+  if (Array.isArray(user.roles) && !user.roles.includes(UserRole.REGISTERED))
+    user.roles.push(UserRole.REGISTERED);
+});
