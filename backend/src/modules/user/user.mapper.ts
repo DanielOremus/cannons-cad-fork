@@ -15,9 +15,10 @@ export class UserMapper {
     return `${firstChar}${stars}${lastChar}@${domain}`;
   }
   toProfileDto(user: UserEntity): ProfileDto {
-    const { name, roles, email, status, emailConfirmed, createdAt } = user;
+    const { id, name, roles, email, status, emailConfirmed, createdAt } = user;
 
     return {
+      id,
       name,
       email: this.maskEmail(email),
       emailConfirmed,
@@ -27,9 +28,9 @@ export class UserMapper {
     };
   }
   toReadDto(user: UserEntity): UserDto {
-    const { name, roles, status, createdAt } = user;
+    const { id, name, roles, status, createdAt } = user;
 
-    return { name, roles, status, createdAt: createdAt.toISOString() };
+    return { id, name, roles, status, createdAt: createdAt.toISOString() };
   }
   toListDto(users: UserEntity[]): UserDto[] {
     return users.map((u) => this.toReadDto(u));
