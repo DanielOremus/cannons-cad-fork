@@ -1,9 +1,15 @@
+import type {
+  UserRole as UserRoleType,
+  UserStatus as UserStatusType,
+} from '@project/shared'
+
 export type UserProfile = {
+  id?: string
   name: string
   email?: string
   emailConfirmed?: boolean
-  roles: string[]
-  status: string
+  roles: UserRoleType[]
+  status: UserStatusType
   createdAt?: string
 }
 
