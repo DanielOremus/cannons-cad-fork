@@ -1,9 +1,9 @@
-import { GetUserQuery } from './get-user.query';
+import { GetUserQuery } from './get-user.query.js';
 import { QueryHandler } from '@nestjs/cqrs';
 import { IQueryHandler } from '@nestjs/cqrs';
-import { UserRepository } from '../../user.repository';
-import { UserMapper } from '../../user.mapper';
-import { NotFoundError } from '../../../../shared/errors/app.error';
+import { UserRepository } from '../../user.repository.js';
+import { UserMapper } from '../../user.mapper.js';
+import { NotFoundError } from '../../../../shared/errors/app.error.js';
 
 @QueryHandler(GetUserQuery)
 export class GetUserHandler implements IQueryHandler<GetUserQuery> {

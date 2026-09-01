@@ -1,9 +1,9 @@
-import { LoginUserCommand } from './login.command';
+import { LoginUserCommand } from './login.command.js';
 import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
-import { UserRepository } from '../../../user/user.repository';
-import { UnauthorizedError } from '../../../../shared/errors/app.error';
-import { UserMapper } from '../../../user/user.mapper';
-import { AuthSessionService } from '../../../../shared/modules/auth-session/auth-session.service';
+import { UserRepository } from '../../../user/user.repository.js';
+import { UnauthorizedError } from '../../../../shared/errors/app.error.js';
+import { UserMapper } from '../../../user/user.mapper.js';
+import { AuthSessionService } from '../../../../shared/modules/auth-session/auth-session.service.js';
 import bcrypt from 'bcrypt';
 
 @CommandHandler(LoginUserCommand)

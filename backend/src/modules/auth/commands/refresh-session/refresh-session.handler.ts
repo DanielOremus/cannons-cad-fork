@@ -1,10 +1,10 @@
-import { UnauthorizedError } from '../../../../shared/errors/app.error';
-import { TokenStoreService } from '../../../../shared/modules/token/token-store.service';
-import { TokenService } from '../../../../shared/modules/token/token.service';
-import { UserMapper } from '../../../user/user.mapper';
-import { UserRepository } from '../../../user/user.repository';
-import { AuthSessionService } from '../../../../shared/modules/auth-session/auth-session.service';
-import { RefreshSessionCommand } from './refresh-session.command';
+import { UnauthorizedError } from '../../../../shared/errors/app.error.js';
+import { TokenStoreService } from '../../../../shared/modules/token/token-store.service.js';
+import { TokenService } from '../../../../shared/modules/token/token.service.js';
+import { UserMapper } from '../../../user/user.mapper.js';
+import { UserRepository } from '../../../user/user.repository.js';
+import { AuthSessionService } from '../../../../shared/modules/auth-session/auth-session.service.js';
+import { RefreshSessionCommand } from './refresh-session.command.js';
 import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
 
 @CommandHandler(RefreshSessionCommand)

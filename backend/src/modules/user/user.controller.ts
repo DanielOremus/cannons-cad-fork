@@ -1,15 +1,15 @@
 import { Body, Controller, Get, HttpCode, Param, Patch, Query, Req } from '@nestjs/common';
 import { type Request } from 'express';
-import { RequirePermission } from '../../common/decorators/require-permission.decorator';
+import { RequirePermission } from '../../common/decorators/require-permission.decorator.js';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { GetOwnProfileQuery } from './queries/get-own-profile/get-own-profile.query';
-import { GetUserQuery } from './queries/get-user/get-user.query';
-import { UuidParamPipe } from '../../common/pipes/id-validation.pipe';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UpdateUserCommand } from './commands/update-user/update-user.command';
-import { UsersFilterDto } from './dto/get-users-filter.dto';
-import { GetUsersListQuery } from './queries/get-users-list/get-users-list.query';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
+import { GetOwnProfileQuery } from './queries/get-own-profile/get-own-profile.query.js';
+import { GetUserQuery } from './queries/get-user/get-user.query.js';
+import { UuidParamPipe } from '../../common/pipes/id-validation.pipe.js';
+import { UpdateUserDto } from './dto/update-user.dto.js';
+import { UpdateUserCommand } from './commands/update-user/update-user.command.js';
+import { UsersFilterDto } from './dto/get-users-filter.dto.js';
+import { GetUsersListQuery } from './queries/get-users-list/get-users-list.query.js';
+import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe.js';
 
 @Controller('/users')
 export class UserController {

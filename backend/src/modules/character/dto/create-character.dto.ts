@@ -1,6 +1,6 @@
 import { createCharacterSchema } from '@project/shared';
 import { CreateCharacterResponseDto as CreateResponseDto } from '@project/shared';
-import { ZodDto } from '../../../shared/dto/zod.dto';
+import { ZodDto } from '../../../shared/dto/zod.dto.js';
 
 export class CreateCharacterDto extends ZodDto(createCharacterSchema) {}
 export class CreateCharacterResponseDto extends CreateCharacterDto implements CreateResponseDto {

@@ -1,10 +1,10 @@
 import { EntityManager, wrap } from '@mikro-orm/postgresql';
-import { CitationPopulate, CitationRepository } from '../citation.repository';
-import { CitationEntity } from '../entities/citation.entity';
+import { CitationPopulate, CitationRepository } from '../citation.repository.js';
+import { CitationEntity } from '../entities/citation.entity.js';
 import { PaginationDto } from '@project/shared';
 import { Injectable } from '@nestjs/common';
-import { CreateCitationInput } from '../inputs/create-citation.input';
-import { UpdateCitationDto } from '../dto/update-citation.dto';
+import { CreateCitationInput } from '../inputs/create-citation.input.js';
+import { UpdateCitationDto } from '../dto/update-citation.dto.js';
 
 @Injectable()
 export class OrmCitationRepository extends CitationRepository {

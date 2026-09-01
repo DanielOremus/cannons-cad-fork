@@ -1,5 +1,5 @@
 import { defineConfig } from '@mikro-orm/postgresql';
-import getConfig from './core/config/config';
+import getConfig from './core/config/config.js';
 import { Migrator } from '@mikro-orm/migrations';
 import { SeedManager } from '@mikro-orm/seeder';
 

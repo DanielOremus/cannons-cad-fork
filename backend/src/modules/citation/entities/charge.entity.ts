@@ -1,6 +1,6 @@
 import { p, defineEntity } from '@mikro-orm/core';
-import { BaseSchema } from '../../../shared/entities/base.entity';
-import { CitationEntity } from './citation.entity';
+import { BaseSchema } from '../../../shared/entities/base.entity.js';
+import { CitationEntity } from './citation.entity.js';
 
 export const ChargeSchema = defineEntity({
   name: 'Charge',

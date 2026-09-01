@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { RedisService } from '../../../core/redis/redis.service';
-import { RedisRTokenData, TokenPayloads } from '../../types/token';
-import { AppConfigService } from '../../../core/config/config.service';
+import { RedisService } from '../../../core/redis/redis.service.js';
+import { RedisRTokenData, TokenPayloads } from '../../types/token.js';
+import { AppConfigService } from '../../../core/config/config.service.js';
 
 @Injectable()
 export class TokenStoreService {

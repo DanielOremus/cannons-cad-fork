@@ -1,6 +1,6 @@
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
-import { EmailJobNames, EmailJobPayloads } from './email.jobs';
-import { EmailService } from '../email.service';
+import { EmailJobNames, EmailJobPayloads } from './email.jobs.js';
+import { EmailService } from '../email.service.js';
 import { Job } from 'bullmq';
 import { Logger } from '@nestjs/common';
 

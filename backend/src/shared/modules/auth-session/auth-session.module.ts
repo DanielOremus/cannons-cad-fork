@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AuthSessionService } from './auth-session.service';
-import { TokenModule } from '../token/token.module';
-import { AuthCacheModule } from '../auth-cache/auth-cache.module';
-import { TestGateway } from './test.gateway';
+import { AuthSessionService } from './auth-session.service.js';
+import { TokenModule } from '../token/token.module.js';
+import { AuthCacheModule } from '../auth-cache/auth-cache.module.js';
+import { TestGateway } from './test.gateway.js';
 
 @Module({
   imports: [TokenModule, AuthCacheModule],

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PaginationDto } from '@project/shared';
-import { CitationEntity } from './entities/citation.entity';
-import { CreateCitationInput } from './inputs/create-citation.input';
-import { UpdateCitationDto } from './dto/update-citation.dto';
+import { CitationEntity } from './entities/citation.entity.js';
+import { CreateCitationInput } from './inputs/create-citation.input.js';
+import { UpdateCitationDto } from './dto/update-citation.dto.js';
 
 @Injectable()
 export abstract class CitationRepository {

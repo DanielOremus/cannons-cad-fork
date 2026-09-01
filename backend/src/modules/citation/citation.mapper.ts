@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { ChargeMapper } from './charge.mapper';
-import { CitationEntity } from './entities/citation.entity';
-import { CitationDto } from './dto/get-citation.dto';
+import { ChargeMapper } from './charge.mapper.js';
+import { CitationEntity } from './entities/citation.entity.js';
+import { CitationDto } from './dto/get-citation.dto.js';
 
 @Injectable()
 export class CitationMapper {

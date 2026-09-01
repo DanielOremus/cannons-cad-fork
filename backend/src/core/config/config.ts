@@ -1,4 +1,4 @@
-import { validate } from './config.validation';
+import { validate } from './config.validation.js';
 
 const buildConfig = () => ({
   port: process.env.PORT,

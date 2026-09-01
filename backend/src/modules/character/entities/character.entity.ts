@@ -1,10 +1,10 @@
-import { BaseSchema } from '../../../shared/entities/base.entity';
+import { BaseSchema } from '../../../shared/entities/base.entity.js';
 import { defineEntity, Opt, p } from '@mikro-orm/core';
 import { CharacterFlag, CharacterGender } from '@project/shared';
-import { UserEntity } from '../../user/entities/user.entity';
-import { DriverLicenseEntity } from '../../driver-license/entities/driver-license.entity';
-import { VehicleEntity } from '../../vehicle/entities/vehicle.entity';
-import { CitationEntity } from '../../citation/entities/citation.entity';
+import { UserEntity } from '../../user/entities/user.entity.js';
+import { DriverLicenseEntity } from '../../driver-license/entities/driver-license.entity.js';
+import { VehicleEntity } from '../../vehicle/entities/vehicle.entity.js';
+import { CitationEntity } from '../../citation/entities/citation.entity.js';
 
 export const CharacterSchema = defineEntity({
   name: 'Character',

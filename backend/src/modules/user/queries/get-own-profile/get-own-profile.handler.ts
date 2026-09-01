@@ -1,9 +1,9 @@
 import { QueryHandler } from '@nestjs/cqrs';
 import { IQueryHandler } from '@nestjs/cqrs';
-import { UserRepository } from '../../user.repository';
-import { UserMapper } from '../../user.mapper';
-import { NotFoundError } from '../../../../shared/errors/app.error';
-import { GetOwnProfileQuery } from './get-own-profile.query';
+import { UserRepository } from '../../user.repository.js';
+import { UserMapper } from '../../user.mapper.js';
+import { NotFoundError } from '../../../../shared/errors/app.error.js';
+import { GetOwnProfileQuery } from './get-own-profile.query.js';
 
 @QueryHandler(GetOwnProfileQuery)
 export class GetOwnProfileHandler implements IQueryHandler<GetOwnProfileQuery> {

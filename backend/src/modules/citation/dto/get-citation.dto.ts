@@ -1,5 +1,5 @@
 import { CitationStatus, CitationDto as ReadDto, VehicleDto } from '@project/shared';
-import { ChargeDto } from './get-charge.dto';
+import { ChargeDto } from './get-charge.dto.js';
 
 export class CitationDto implements ReadDto {
   id: number;

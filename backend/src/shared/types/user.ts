@@ -1,6 +1,6 @@
 import { Permission, UserRole } from '@project/shared';
-import { UserEntity } from '../../modules/user/entities/user.entity';
-import { ProfileDto } from '../../modules/user/dto/get-user.dto';
+import { UserEntity } from '../../modules/user/entities/user.entity.js';
+import { ProfileDto } from '../../modules/user/dto/get-user.dto.js';
 
 export type UserProfileResponseType = 'public' | 'private';
 

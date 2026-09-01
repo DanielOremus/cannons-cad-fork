@@ -1,9 +1,9 @@
-import { GetUsersListQuery } from './get-users-list.query';
+import { GetUsersListQuery } from './get-users-list.query.js';
 import { QueryHandler } from '@nestjs/cqrs';
 import { IQueryHandler } from '@nestjs/cqrs';
-import { UserRepository } from '../../user.repository';
-import { UserMapper } from '../../user.mapper';
-import { ForbiddenError } from '../../../../shared/errors/app.error';
+import { UserRepository } from '../../user.repository.js';
+import { UserMapper } from '../../user.mapper.js';
+import { ForbiddenError } from '../../../../shared/errors/app.error.js';
 
 @QueryHandler(GetUsersListQuery)
 export class GetUsersListHandler implements IQueryHandler<GetUsersListQuery> {

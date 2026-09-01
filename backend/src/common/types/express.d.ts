@@ -1,4 +1,4 @@
-import { AuthUser } from '../../shared/types/user';
+import { AuthUser } from '../../shared/types/user.ts';
 import { PermissionScope } from '@project/shared';
 
 declare global {

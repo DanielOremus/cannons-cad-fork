@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { UserEntity } from './entities/user.entity';
-import { CreateUserInput } from './inputs/create-user.input';
-import { UpdateUserInput } from './inputs/update-user.input';
-import { UsersFilterDto } from './dto/get-users-filter.dto';
+import { UserEntity } from './entities/user.entity.js';
+import { CreateUserInput } from './inputs/create-user.input.js';
+import { UpdateUserInput } from './inputs/update-user.input.js';
+import { UsersFilterDto } from './dto/get-users-filter.dto.js';
 
 @Injectable()
 export abstract class UserRepository {

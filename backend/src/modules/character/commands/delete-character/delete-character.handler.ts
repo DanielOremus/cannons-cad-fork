@@ -1,10 +1,10 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { ICommandHandler } from '@nestjs/cqrs';
-import { DeleteCharacterCommand } from './delete-character.command';
-import { CharacterRepository } from '../../character.repository';
-import { NotFoundError } from '../../../../shared/errors/app.error';
-import { UnitOfWork } from '../../../../core/database/unit-of-work';
-import { OwnershipService } from '../../../../shared/modules/ownership/ownership.service';
+import { DeleteCharacterCommand } from './delete-character.command.js';
+import { CharacterRepository } from '../../character.repository.js';
+import { NotFoundError } from '../../../../shared/errors/app.error.js';
+import { UnitOfWork } from '../../../../core/database/unit-of-work.js';
+import { OwnershipService } from '../../../../shared/modules/ownership/ownership.service.js';
 
 @CommandHandler(DeleteCharacterCommand)
 export class DeleteCharacterHandler implements ICommandHandler<DeleteCharacterCommand> {

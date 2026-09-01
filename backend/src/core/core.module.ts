@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AppConfigModule } from './config/config.module';
-import { DatabaseModule } from './database/database.module';
-import { RedisModule } from './redis/redis.module';
+import { AppConfigModule } from './config/config.module.js';
+import { DatabaseModule } from './database/database.module.js';
+import { RedisModule } from './redis/redis.module.js';
 import { BullModule } from '@nestjs/bullmq';
-import { AppConfigService } from './config/config.service';
-import { MailerModule } from './mailer/mailer.module';
-import { AppThrottlerModule } from './throttler/throttler.module';
+import { AppConfigService } from './config/config.service.js';
+import { MailerModule } from './mailer/mailer.module.js';
+import { AppThrottlerModule } from './throttler/throttler.module.js';
 
 @Module({
   imports: [

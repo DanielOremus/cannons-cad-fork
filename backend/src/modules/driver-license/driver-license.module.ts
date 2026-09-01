@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { DriverLicenseMapper } from './driver-license.mapper';
+import { DriverLicenseMapper } from './driver-license.mapper.js';
 
 @Module({
   providers: [DriverLicenseMapper],

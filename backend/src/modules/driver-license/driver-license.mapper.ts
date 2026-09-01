@@ -1,5 +1,5 @@
 import { DriverLicenseDto } from '@project/shared';
-import { DriverLicenseEntity } from './entities/driver-license.entity';
+import { DriverLicenseEntity } from './entities/driver-license.entity.js';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

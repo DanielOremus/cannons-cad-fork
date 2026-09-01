@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { RedisService } from '../../../core/redis/redis.service';
+import { RedisService } from '../../../core/redis/redis.service.js';
 import { Permission, UserRole } from '@project/shared';
-import { AppConfigService } from '../../../core/config/config.service';
+import { AppConfigService } from '../../../core/config/config.service.js';
 
 @Injectable()
 export class AuthCacheService {

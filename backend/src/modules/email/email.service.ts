@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { MailerService } from '../../core/mailer/mailer.service';
-import { EmailJobPayloads, EmailTemplatePayloads, EmailJobNames } from './queue/email.jobs';
-import path from 'path';
+import { MailerService } from '../../core/mailer/mailer.service.js';
+import { EmailJobPayloads, EmailTemplatePayloads, EmailJobNames } from './queue/email.jobs.js';
+import { formatTtl } from './email.utils.js';
 import ejs from 'ejs';
-import { formatTtl } from './email.utils';
+import path from 'path';
 
 @Injectable()
 export class EmailService {
@@ -26,7 +26,7 @@ export class EmailService {
     changeEmail: async (payload) => {},
   };
   private templates: Record<EmailJobNames, string> = {
-    confirmEmail: path.join(__dirname, 'templates', 'confirm-email.template.ejs'),
+    confirmEmail: path.join(import.meta.dirname, 'templates', 'confirm-email.template.ejs'),
     changeEmail: '',
   };
   private async renderTemplate<T extends EmailJobNames>(

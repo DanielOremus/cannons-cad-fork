@@ -1,5 +1,5 @@
 import { Query } from '@nestjs/cqrs';
-import { CreateCitationDto } from '../../dto/create-citation.dto';
+import { CreateCitationDto } from '../../dto/create-citation.dto.js';
 
 export class IssueCitationCommand extends Query<void> {
   constructor(

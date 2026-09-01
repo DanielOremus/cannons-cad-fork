@@ -1,5 +1,5 @@
 import * as z from 'zod/v4';
-import { ValidationError } from '../../shared/errors/app.error';
+import { ValidationError } from '../../shared/errors/app.error.js';
 import { PipeTransform } from '@nestjs/common';
 import { mapZodIssue } from '@project/shared';
 

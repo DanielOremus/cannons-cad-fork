@@ -1,7 +1,7 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus, Logger } from '@nestjs/common';
 import { ErrorCode, ValidationIssue } from '@project/shared';
 import { Request, Response } from 'express';
-import { AppError, ValidationError } from '../../shared/errors/app.error';
+import { AppError, ValidationError } from '../../shared/errors/app.error.js';
 
 const ErrorCodeToHttpStatus: Record<ErrorCode, HttpStatus> = {
   ALREADY_EXISTS: HttpStatus.CONFLICT,

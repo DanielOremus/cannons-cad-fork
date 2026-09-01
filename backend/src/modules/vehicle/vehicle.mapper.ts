@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { VehicleEntity } from './entities/vehicle.entity';
-import { VehicleDto } from './dto/get-vehicle.dto';
+import { VehicleEntity } from './entities/vehicle.entity.js';
+import { VehicleDto } from './dto/get-vehicle.dto.js';
 
 @Injectable()
 export class VehicleMapper {

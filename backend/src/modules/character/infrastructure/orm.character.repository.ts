@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CharacterEntity } from '../entities/character.entity';
-import { CharacterRepository } from '../character.repository';
+import { CharacterEntity } from '../entities/character.entity.js';
+import { CharacterRepository } from '../character.repository.js';
 import { EntityManager, wrap } from '@mikro-orm/postgresql';
-import { SearchCharacterDto } from '../dto/search-character.dto';
-import { CreateCharacterInput } from '../inputs/create-character.input';
-import { CharacterPopulate } from '../character.repository';
-import { UpdateCharacterDto } from '../dto/update-character.dto';
+import { SearchCharacterDto } from '../dto/search-character.dto.js';
+import { CreateCharacterInput } from '../inputs/create-character.input.js';
+import { CharacterPopulate } from '../character.repository.js';
+import { UpdateCharacterDto } from '../dto/update-character.dto.js';
 
 @Injectable()
 export class OrmCharacterRepository extends CharacterRepository {

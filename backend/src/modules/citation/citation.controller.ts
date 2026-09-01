@@ -1,14 +1,14 @@
 import { Body, Controller, Delete, HttpCode, Param, Patch, Post, Req } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { RequirePermission } from '../../common/decorators/require-permission.decorator';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
-import { CreateCitationDto } from './dto/create-citation.dto';
-import { IssueCitationCommand } from './commands/issue-citation/issue-citation.command';
+import { RequirePermission } from '../../common/decorators/require-permission.decorator.js';
+import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe.js';
+import { CreateCitationDto } from './dto/create-citation.dto.js';
+import { IssueCitationCommand } from './commands/issue-citation/issue-citation.command.js';
 import { type Request } from 'express';
-import { IdParamPipe } from '../../common/pipes/id-validation.pipe';
-import { DeleteCitationCommand } from './commands/delete-citation/delete-citation.command';
-import { UpdateCitationDto } from './dto/update-citation.dto';
-import { UpdateCitationCommand } from './commands/update-citation/update-citation.command';
+import { IdParamPipe } from '../../common/pipes/id-validation.pipe.js';
+import { DeleteCitationCommand } from './commands/delete-citation/delete-citation.command.js';
+import { UpdateCitationDto } from './dto/update-citation.dto.js';
+import { UpdateCitationCommand } from './commands/update-citation/update-citation.command.js';
 
 @Controller('/citations')
 export class CitationController {

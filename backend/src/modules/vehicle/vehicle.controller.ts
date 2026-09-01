@@ -10,14 +10,14 @@ import {
   Delete,
   Patch,
 } from '@nestjs/common';
-import { VehicleService } from './vehicle.service';
-import { RequirePermission } from '../../common/decorators/require-permission.decorator';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
-import { CreateVehicleDto } from './dto/create-vehicle.dto';
+import { VehicleService } from './vehicle.service.js';
+import { RequirePermission } from '../../common/decorators/require-permission.decorator.js';
+import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe.js';
+import { CreateVehicleDto } from './dto/create-vehicle.dto.js';
 import { type Request } from 'express';
-import { IdParamPipe } from '../../common/pipes/id-validation.pipe';
-import { UpdateVehicleDto } from './dto/update-vehicle.dto';
-import { SearchVehicleDto } from './dto/search-vehicle.dto';
+import { IdParamPipe } from '../../common/pipes/id-validation.pipe.js';
+import { UpdateVehicleDto } from './dto/update-vehicle.dto.js';
+import { SearchVehicleDto } from './dto/search-vehicle.dto.js';
 
 @Controller('/vehicles')
 export class VehicleController {

@@ -1,6 +1,6 @@
 import { ThrottlerGuard, ThrottlerLimitDetail } from '@nestjs/throttler';
 import { ExecutionContext, Injectable } from '@nestjs/common';
-import { AppError } from '../../shared/errors/app.error';
+import { AppError } from '../../shared/errors/app.error.js';
 import { ErrorCode } from '@project/shared';
 import { Request } from 'express';
 

@@ -1,7 +1,7 @@
 import { defineEntity, p } from '@mikro-orm/core';
-import { BaseSchema } from '../../../shared/entities/base.entity';
+import { BaseSchema } from '../../../shared/entities/base.entity.js';
 import { DriverCategory } from '@project/shared';
-import { CharacterEntity } from '../../character/entities/character.entity';
+import { CharacterEntity } from '../../character/entities/character.entity.js';
 
 export const DriverLicenseSchema = defineEntity({
   name: 'DriverLicense',

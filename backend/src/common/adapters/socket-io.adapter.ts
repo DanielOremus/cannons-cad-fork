@@ -1,9 +1,9 @@
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { DefaultEventsMap, ExtendedError, Server, ServerOptions } from 'socket.io';
 import { INestApplicationContext } from '@nestjs/common';
-import { ForbiddenError, UnauthorizedError } from '../../shared/errors/app.error';
-import { AuthUser } from '../../shared/types/user';
-import { AuthSessionService } from '../../shared/modules/auth-session/auth-session.service';
+import { ForbiddenError, UnauthorizedError } from '../../shared/errors/app.error.js';
+import { AuthUser } from '../../shared/types/user.js';
+import { AuthSessionService } from '../../shared/modules/auth-session/auth-session.service.js';
 import { accountActive } from '@project/shared';
 
 type SocketData = {

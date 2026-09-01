@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { AppError, NotFoundError } from '../../shared/errors/app.error';
-import { EmailRepository } from '../email/email.repository';
-import { UnitOfWork } from '../../core/database/unit-of-work';
+import { AppError, NotFoundError } from '../../shared/errors/app.error.js';
+import { EmailRepository } from '../email/email.repository.js';
+import { UnitOfWork } from '../../core/database/unit-of-work.js';
 import { ErrorCode } from '@project/shared';
-import { UserEntity } from '../user/entities/user.entity';
-import { EmailProducer } from '../email/queue/email.producer';
-import { AppConfigService } from '../../core/config/config.service';
+import { UserEntity } from '../user/entities/user.entity.js';
+import { EmailProducer } from '../email/queue/email.producer.js';
+import { AppConfigService } from '../../core/config/config.service.js';
 import { randomInt } from 'crypto';
 
 @Injectable()

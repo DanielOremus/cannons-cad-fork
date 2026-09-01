@@ -1,7 +1,7 @@
-import { NotFoundError } from '../../../../shared/errors/app.error';
-import { CharacterMapper } from '../../character.mapper';
-import { CharacterRepository } from '../../character.repository';
-import { SearchCharacterQuery } from './search-character.query';
+import { NotFoundError } from '../../../../shared/errors/app.error.js';
+import { CharacterMapper } from '../../character.mapper.js';
+import { CharacterRepository } from '../../character.repository.js';
+import { SearchCharacterQuery } from './search-character.query.js';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 
 @QueryHandler(SearchCharacterQuery)

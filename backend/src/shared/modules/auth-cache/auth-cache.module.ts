@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { RedisModule } from '../../../core/redis/redis.module';
-import { AuthCacheService } from './auth-cache.service';
+import { RedisModule } from '../../../core/redis/redis.module.js';
+import { AuthCacheService } from './auth-cache.service.js';
 
 @Module({
   imports: [RedisModule],

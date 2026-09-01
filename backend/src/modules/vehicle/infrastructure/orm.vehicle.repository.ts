@@ -1,10 +1,10 @@
 import { EntityManager, wrap } from '@mikro-orm/postgresql';
-import { VehicleEntity } from '../entities/vehicle.entity';
-import { VehiclePopulate, VehicleRepository } from '../vehicle.repository';
+import { VehicleEntity } from '../entities/vehicle.entity.js';
+import { VehiclePopulate, VehicleRepository } from '../vehicle.repository.js';
 import { Injectable } from '@nestjs/common';
 import { PaginationDto } from '@project/shared';
-import { CreateVehicleInput } from '../inputs/create-vehicle.input';
-import { UpdateVehicleDto } from '../dto/update-vehicle.dto';
+import { CreateVehicleInput } from '../inputs/create-vehicle.input.js';
+import { UpdateVehicleDto } from '../dto/update-vehicle.dto.js';
 
 @Injectable()
 export class OrmVehicleRepository implements VehicleRepository {
