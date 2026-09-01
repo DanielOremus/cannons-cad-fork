@@ -1,17 +1,21 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { TokenService } from '../../shared/modules/token/token.service';
 import { Request } from 'express';
 import { ForbiddenError, UnauthorizedError } from '../../shared/errors/app.error';
-import { accountActive } from '@project/shared';
+import { accountActive, getPermissionsFromRoles } from '@project/shared';
 import { Reflector } from '@nestjs/core';
 import { ACTIVE_CHECK_KEY, EMAIL_CONFIRM_KEY } from '../decorators/account.decorator';
+import { TokenStoreService } from '../../shared/modules/token/token-store.service';
+import { AuthCacheService } from '../../shared/modules/auth-cache/auth-cache.service';
 import { PUBLIC_ROUTE_KEY } from '../decorators/public-route.decorator';
-import { AuthSessionService } from '../../shared/modules/auth-session/auth-session.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    private readonly authSessionService: AuthSessionService,
+    private readonly tokenService: TokenService,
+    private readonly tokenStore: TokenStoreService,
+    private readonly authCache: AuthCacheService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
@@ -19,27 +23,25 @@ export class AuthGuard implements CanActivate {
     const isRoutePublic = this.reflector.get<boolean>(PUBLIC_ROUTE_KEY, context.getHandler());
     if (isRoutePublic) return true;
 
-    // const payload = this.tokenService.tryParseBearer(request.headers.authorization);
-    // if (!payload) throw new UnauthorizedError();
+    const payload = this.tokenService.tryParseBearer(request.headers.authorization);
+    if (!payload) throw new UnauthorizedError();
 
-    // const [familyExists, redisUserRoles] = await Promise.all([
-    //   this.tokenStore.familyExists(payload.familyId),
-    //   this.authCache.getUserRoles(payload.userId),
-    // ]);
+    const [familyExists, redisUserRoles] = await Promise.all([
+      this.tokenStore.familyExists(payload.familyId),
+      this.authCache.getUserRoles(payload.userId),
+    ]);
 
-    // if (!familyExists) throw new UnauthorizedError();
+    if (!familyExists) throw new UnauthorizedError();
 
-    // const userRoles = !redisUserRoles ? payload.userRoles : redisUserRoles;
-    // const userPerms = getPermissionsFromRoles(...userRoles);
+    const userRoles = !redisUserRoles ? payload.userRoles : redisUserRoles;
+    const userPerms = getPermissionsFromRoles(...userRoles);
 
-    const {
-      success,
-      authUser,
-      tokenPayload: payload,
-    } = await this.authSessionService.validateSession(request.headers.authorization);
-    if (!success) throw new UnauthorizedError();
-
-    request.user = authUser;
+    request.user = {
+      id: payload.userId,
+      roles: userRoles,
+      permissions: userPerms,
+      familyId: payload.familyId,
+    };
 
     const skipAccountActiveCheck = this.reflector.get<boolean>(
       ACTIVE_CHECK_KEY,

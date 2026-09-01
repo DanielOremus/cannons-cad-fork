@@ -3,7 +3,7 @@ import { TokenStoreService } from '../../../../shared/modules/token/token-store.
 import { TokenService } from '../../../../shared/modules/token/token.service';
 import { UserMapper } from '../../../user/user.mapper';
 import { UserRepository } from '../../../user/user.repository';
-import { AuthSessionService } from '../../../../shared/modules/auth-session/auth-session.service';
+import { AuthSessionService } from '../../auth-session.service';
 import { RefreshSessionCommand } from './refresh-session.command';
 import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
 
