@@ -19,19 +19,6 @@ export class AuthGuard implements CanActivate {
     const isRoutePublic = this.reflector.get<boolean>(PUBLIC_ROUTE_KEY, context.getHandler());
     if (isRoutePublic) return true;
 
-    // const payload = this.tokenService.tryParseBearer(request.headers.authorization);
-    // if (!payload) throw new UnauthorizedError();
-
-    // const [familyExists, redisUserRoles] = await Promise.all([
-    //   this.tokenStore.familyExists(payload.familyId),
-    //   this.authCache.getUserRoles(payload.userId),
-    // ]);
-
-    // if (!familyExists) throw new UnauthorizedError();
-
-    // const userRoles = !redisUserRoles ? payload.userRoles : redisUserRoles;
-    // const userPerms = getPermissionsFromRoles(...userRoles);
-
     const {
       success,
       authUser,

@@ -1,4 +1,6 @@
-export default () => ({
+import { validate } from './config.validation';
+
+const buildConfig = () => ({
   port: process.env.PORT,
   env: process.env.NODE_ENV,
   cookieSecret: process.env.COOKIE_SECRET,
@@ -42,3 +44,8 @@ export default () => ({
     confirmationTtl: process.env.EMAIL_CONFIRMATION_TTL,
   },
 });
+
+export default () => {
+  const rawConfig = buildConfig();
+  return validate(rawConfig);
+};

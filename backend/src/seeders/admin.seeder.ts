@@ -3,7 +3,6 @@ import { EntityManager } from '@mikro-orm/postgresql';
 import { Seeder } from '@mikro-orm/seeder';
 import { UserEntity } from '../modules/user/entities/user.entity';
 import { UserRole, UserStatus } from '@project/shared';
-
 import 'dotenv/config';
 
 export class AdminSeeder extends Seeder {

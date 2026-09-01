@@ -20,8 +20,6 @@ export class CaptchaGuard implements CanActivate {
 
     const captchaToken = request.body[tokenField];
 
-    // if(typeof captchaToken !== "string" || captchaToken.trim() === ""){}
-
     const cloudflareRes = await fetch(this.config.turnstile.apiUrl, {
       method: 'POST',
       headers: {
