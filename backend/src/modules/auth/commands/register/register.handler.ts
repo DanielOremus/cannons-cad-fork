@@ -6,7 +6,7 @@ import { ValidationError } from '../../../../shared/errors/app.error';
 import { EmailConfirmationService } from '../../email-confirmation.service';
 import { UnitOfWork } from '../../../../core/database/unit-of-work';
 import bcrypt from 'bcrypt';
-import { AuthSessionService } from '../../auth-session.service';
+import { AuthSessionService } from '../../../../shared/modules/auth-session/auth-session.service';
 import { UserMapper } from '../../../user/user.mapper';
 
 @CommandHandler(RegisterUserCommand)
