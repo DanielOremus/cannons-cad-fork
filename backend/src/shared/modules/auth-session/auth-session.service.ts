@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { UserEntity } from '../../../modules/user/entities/user.entity';
+import { UserEntity } from '../../../modules/user/entities/user.entity.js';
 import { randomUUID } from 'crypto';
-import { TokenPayloads } from '../../types/token';
-import { TokenService } from '../token/token.service';
-import { TokenStoreService } from '../token/token-store.service';
-import { AuthCacheService } from '../auth-cache/auth-cache.service';
+import { TokenPayloads } from '../../types/token.js';
+import { TokenService } from '../token/token.service.js';
+import { TokenStoreService } from '../token/token-store.service.js';
+import { AuthCacheService } from '../auth-cache/auth-cache.service.js';
 import { getPermissionsFromRoles } from '@project/shared';
-import { AuthUser } from '../../types/user';
+import { AuthUser } from '../../types/user.js';
 
 type ValidateSessionReturnType =
   | { success: true; tokenPayload: TokenPayloads['access']; authUser: AuthUser }

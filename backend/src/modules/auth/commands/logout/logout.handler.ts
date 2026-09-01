@@ -1,5 +1,5 @@
-import { TokenStoreService } from '../../../../shared/modules/token/token-store.service';
-import { LogoutUserCommand } from './logout.command';
+import { TokenStoreService } from '../../../../shared/modules/token/token-store.service.js';
+import { LogoutUserCommand } from './logout.command.js';
 import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
 
 @CommandHandler(LogoutUserCommand)

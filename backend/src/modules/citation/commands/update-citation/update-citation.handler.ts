@@ -1,8 +1,8 @@
-import { UnitOfWork } from '../../../../core/database/unit-of-work';
-import { NotFoundError } from '../../../../shared/errors/app.error';
-import { OwnershipService } from '../../../../shared/modules/ownership/ownership.service';
-import { CitationRepository } from '../../citation.repository';
-import { UpdateCitationCommand } from './update-citation.command';
+import { UnitOfWork } from '../../../../core/database/unit-of-work.js';
+import { NotFoundError } from '../../../../shared/errors/app.error.js';
+import { OwnershipService } from '../../../../shared/modules/ownership/ownership.service.js';
+import { CitationRepository } from '../../citation.repository.js';
+import { UpdateCitationCommand } from './update-citation.command.js';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 @CommandHandler(UpdateCitationCommand)

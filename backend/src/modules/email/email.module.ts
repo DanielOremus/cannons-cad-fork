@@ -1,13 +1,13 @@
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
-import { MailerModule } from '../../core/mailer/mailer.module';
-import { EmailService } from './email.service';
-import { EmailConsumer } from './queue/email.consumer';
-import { EmailProducer } from './queue/email.producer';
-import { EmailRepository } from './email.repository';
+import { MailerModule } from '../../core/mailer/mailer.module.js';
+import { EmailService } from './email.service.js';
+import { EmailConsumer } from './queue/email.consumer.js';
+import { EmailProducer } from './queue/email.producer.js';
+import { EmailRepository } from './email.repository.js';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { EmailConfirmationEntity } from './entities/email-confirmation.entity';
-import { OrmEmailRepository } from './infrastructure/orm.email.repository';
+import { EmailConfirmationEntity } from './entities/email-confirmation.entity.js';
+import { OrmEmailRepository } from './infrastructure/orm.email.repository.js';
 
 @Module({
   imports: [

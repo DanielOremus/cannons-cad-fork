@@ -1,10 +1,10 @@
 import { p, defineEntity } from '@mikro-orm/core';
-import { BaseSchema } from '../../../shared/entities/base.entity';
-import { CharacterEntity } from '../../character/entities/character.entity';
-import { VehicleEntity } from '../../vehicle/entities/vehicle.entity';
-import { ChargeEntity } from './charge.entity';
+import { BaseSchema } from '../../../shared/entities/base.entity.js';
+import { CharacterEntity } from '../../character/entities/character.entity.js';
+import { VehicleEntity } from '../../vehicle/entities/vehicle.entity.js';
+import { ChargeEntity } from './charge.entity.js';
 import { CitationStatus } from '@project/shared';
-import { UserEntity } from '../../user/entities/user.entity';
+import { UserEntity } from '../../user/entities/user.entity.js';
 
 export const CitationSchema = defineEntity({
   name: 'Citation',

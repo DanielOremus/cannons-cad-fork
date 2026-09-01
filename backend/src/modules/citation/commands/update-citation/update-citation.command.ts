@@ -1,6 +1,6 @@
 import { Command } from '@nestjs/cqrs';
 import { PermissionScope } from '@project/shared';
-import { UpdateCitationDto } from '../../dto/update-citation.dto';
+import { UpdateCitationDto } from '../../dto/update-citation.dto.js';
 
 export class UpdateCitationCommand extends Command<void> {
   constructor(

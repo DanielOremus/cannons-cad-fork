@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateConfirmationInput } from './inputs/create-confirmation.input';
-import { EmailConfirmationEntity } from './entities/email-confirmation.entity';
+import { CreateConfirmationInput } from './inputs/create-confirmation.input.js';
+import { EmailConfirmationEntity } from './entities/email-confirmation.entity.js';
 
 @Injectable()
 export abstract class EmailRepository {

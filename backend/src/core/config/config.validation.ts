@@ -1,6 +1,6 @@
 import * as z from 'zod/v4';
 
-const configSchema = z.object({
+export const configSchema = z.object({
   port: z.coerce.number().int().positive().default(3000),
   env: z.enum(['production', 'development', 'test']).default('development'),
   cookieSecret: z.string(),
@@ -51,4 +51,4 @@ export function validate(config: Record<string, unknown>) {
   return result.data;
 }
 
-export type EnvConfig = z.infer<typeof configSchema>;
+export type Config = z.infer<typeof configSchema>;

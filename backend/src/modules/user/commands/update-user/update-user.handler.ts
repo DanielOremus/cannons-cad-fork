@@ -1,10 +1,10 @@
 import { hasHigherOrSamePriority, getStaffPriority } from '@project/shared';
-import { UnitOfWork } from '../../../../core/database/unit-of-work';
-import { ForbiddenError, NotFoundError } from '../../../../shared/errors/app.error';
-import { UserRepository } from '../../user.repository';
-import { UpdateUserCommand } from './update-user.command';
+import { UnitOfWork } from '../../../../core/database/unit-of-work.js';
+import { ForbiddenError, NotFoundError } from '../../../../shared/errors/app.error.js';
+import { UserRepository } from '../../user.repository.js';
+import { UpdateUserCommand } from './update-user.command.js';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { AuthCacheService } from '../../../../shared/modules/auth-cache/auth-cache.service';
+import { AuthCacheService } from '../../../../shared/modules/auth-cache/auth-cache.service.js';
 
 @CommandHandler(UpdateUserCommand)
 export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {

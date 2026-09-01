@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CharacterEntity } from './entities/character.entity';
-import { SearchCharacterDto } from './dto/search-character.dto';
-import { CreateCharacterInput } from './inputs/create-character.input';
-import { UpdateCharacterDto } from './dto/update-character.dto';
+import { CharacterEntity } from './entities/character.entity.js';
+import { SearchCharacterDto } from './dto/search-character.dto.js';
+import { CreateCharacterInput } from './inputs/create-character.input.js';
+import { UpdateCharacterDto } from './dto/update-character.dto.js';
 
 @Injectable()
 export abstract class CharacterRepository {

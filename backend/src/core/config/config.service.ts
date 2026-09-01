@@ -1,40 +1,37 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { registerConfig } from './config';
-import { type ConfigType } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Config } from './config.validation.js';
 
 @Injectable()
 export class AppConfigService {
-  constructor(
-    @Inject(registerConfig.KEY)
-    private readonly config: ConfigType<typeof registerConfig>,
-  ) {}
+  constructor(private readonly configService: ConfigService<Config, true>) {}
   get database() {
-    return this.config.database;
+    return this.configService.get('database', { infer: true });
   }
   get redis() {
-    return this.config.redis;
+    return this.configService.get('redis', { infer: true });
   }
   get mailer() {
-    return this.config.mailer;
+    return this.configService.get('mailer', { infer: true });
   }
   get jwt() {
-    return this.config.jwt;
-  }
-  get port() {
-    return this.config.port;
+    return this.configService.get('jwt', { infer: true });
   }
   get email() {
-    return this.config.email;
+    return this.configService.get('email', { infer: true });
+  }
+  get port() {
+    return this.configService.get('port', { infer: true });
   }
   get env() {
-    return this.config.env;
+    return this.configService.get('env', { infer: true });
   }
   get cookieSecret() {
-    return this.config.cookieSecret;
+    return this.configService.get('cookieSecret', { infer: true });
   }
   get turnstile() {
-    if (this.env !== 'production')
-      return { ...this.config.turnstile, secret: '1x0000000000000000000000000000000AA' };
-    return this.config.turnstile;
+    const turnstile = this.configService.get('turnstile', { infer: true });
+    if (this.env !== 'production') turnstile.secret = '1x0000000000000000000000000000000AA';
+    return turnstile;
   }
 }

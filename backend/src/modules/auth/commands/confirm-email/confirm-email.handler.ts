@@ -1,9 +1,9 @@
 import { ErrorCode } from '@project/shared';
-import { ConflictError, UnauthorizedError } from '../../../../shared/errors/app.error';
-import { UserRepository } from '../../../user/user.repository';
-import { ConfirmEmailCommand } from './confirm-email.command';
+import { ConflictError, UnauthorizedError } from '../../../../shared/errors/app.error.js';
+import { UserRepository } from '../../../user/user.repository.js';
+import { ConfirmEmailCommand } from './confirm-email.command.js';
 import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
-import { EmailConfirmationService } from '../../email-confirmation.service';
+import { EmailConfirmationService } from '../../email-confirmation.service.js';
 
 @CommandHandler(ConfirmEmailCommand)
 export class ConfirmEmailHandler implements ICommandHandler<ConfirmEmailCommand> {

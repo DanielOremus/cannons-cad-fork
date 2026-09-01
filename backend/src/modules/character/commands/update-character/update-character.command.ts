@@ -1,5 +1,5 @@
 import { Command } from '@nestjs/cqrs';
-import { UpdateCharacterDto } from '../../dto/update-character.dto';
+import { UpdateCharacterDto } from '../../dto/update-character.dto.js';
 import { PermissionScope } from '@project/shared';
 
 export class UpdateCharacterCommand extends Command<void> {

@@ -1,10 +1,10 @@
-import { UserRepository } from '../user.repository';
-import { UserEntity } from '../entities/user.entity';
-import { CreateUserInput } from '../inputs/create-user.input';
-import { UpdateUserInput } from '../inputs/update-user.input';
+import { UserRepository } from '../user.repository.js';
+import { UserEntity } from '../entities/user.entity.js';
+import { CreateUserInput } from '../inputs/create-user.input.js';
+import { UpdateUserInput } from '../inputs/update-user.input.js';
 import { EntityManager, FilterQuery, wrap } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
-import { UsersFilterDto } from '../dto/get-users-filter.dto';
+import { UsersFilterDto } from '../dto/get-users-filter.dto.js';
 
 @Injectable()
 export class OrmUserRepository implements UserRepository {

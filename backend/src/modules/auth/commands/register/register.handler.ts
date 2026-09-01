@@ -1,13 +1,13 @@
 import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
-import { RegisterUserCommand } from './register.command';
-import { UserRepository } from '../../../user/user.repository';
+import { RegisterUserCommand } from './register.command.js';
+import { UserRepository } from '../../../user/user.repository.js';
 import { nameof, ValidationIssue } from '@project/shared';
-import { ValidationError } from '../../../../shared/errors/app.error';
-import { EmailConfirmationService } from '../../email-confirmation.service';
-import { UnitOfWork } from '../../../../core/database/unit-of-work';
+import { ValidationError } from '../../../../shared/errors/app.error.js';
+import { EmailConfirmationService } from '../../email-confirmation.service.js';
+import { UnitOfWork } from '../../../../core/database/unit-of-work.js';
 import bcrypt from 'bcrypt';
-import { AuthSessionService } from '../../../../shared/modules/auth-session/auth-session.service';
-import { UserMapper } from '../../../user/user.mapper';
+import { AuthSessionService } from '../../../../shared/modules/auth-session/auth-session.service.js';
+import { UserMapper } from '../../../user/user.mapper.js';
 
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserHandler implements ICommandHandler<RegisterUserCommand> {

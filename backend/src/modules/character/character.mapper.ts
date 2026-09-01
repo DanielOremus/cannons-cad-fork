@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CharacterEntity } from './entities/character.entity';
-import { SearchCharacterResponseDto } from './dto/search-character.dto';
-import { CreateCharacterResponseDto } from './dto/create-character.dto';
-import { CharacterDto } from './dto/get-character.dto';
-import { DriverLicenseMapper } from '../driver-license/driver-license.mapper';
+import { CharacterEntity } from './entities/character.entity.js';
+import { SearchCharacterResponseDto } from './dto/search-character.dto.js';
+import { CreateCharacterResponseDto } from './dto/create-character.dto.js';
+import { CharacterDto } from './dto/get-character.dto.js';
+import { DriverLicenseMapper } from '../driver-license/driver-license.mapper.js';
 
 @Injectable()
 export class CharacterMapper {

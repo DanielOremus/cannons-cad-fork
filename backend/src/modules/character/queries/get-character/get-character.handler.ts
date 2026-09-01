@@ -1,8 +1,8 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { GetCharacterQuery } from './get-character.query';
-import { CharacterRepository } from '../../character.repository';
-import { NotFoundError } from '../../../../shared/errors/app.error';
-import { CharacterMapper } from '../../character.mapper';
+import { GetCharacterQuery } from './get-character.query.js';
+import { CharacterRepository } from '../../character.repository.js';
+import { NotFoundError } from '../../../../shared/errors/app.error.js';
+import { CharacterMapper } from '../../character.mapper.js';
 
 @QueryHandler(GetCharacterQuery)
 export class GetCharacterHandler implements IQueryHandler<GetCharacterQuery> {

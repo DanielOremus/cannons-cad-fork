@@ -1,6 +1,6 @@
 import * as z from 'zod/v4';
 import { ArgumentMetadata, PipeTransform } from '@nestjs/common';
-import { ValidationError } from '../../shared/errors/app.error';
+import { ValidationError } from '../../shared/errors/app.error.js';
 import { idValidator, uuidValidator } from '@project/shared';
 
 function createParamValidationPipe(schema: z.ZodType) {

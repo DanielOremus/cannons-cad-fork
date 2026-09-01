@@ -1,9 +1,9 @@
-import { UnitOfWork } from '../../../../core/database/unit-of-work';
-import { NotFoundError } from '../../../../shared/errors/app.error';
-import { UserRepository } from '../../../user/user.repository';
-import { CharacterMapper } from '../../character.mapper';
-import { CharacterRepository } from '../../character.repository';
-import { CreateCharacterCommand } from './create-character.command';
+import { UnitOfWork } from '../../../../core/database/unit-of-work.js';
+import { NotFoundError } from '../../../../shared/errors/app.error.js';
+import { UserRepository } from '../../../user/user.repository.js';
+import { CharacterMapper } from '../../character.mapper.js';
+import { CharacterRepository } from '../../character.repository.js';
+import { CreateCharacterCommand } from './create-character.command.js';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 @CommandHandler(CreateCharacterCommand)

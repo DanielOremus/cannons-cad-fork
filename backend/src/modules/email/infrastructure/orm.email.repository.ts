@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { EmailRepository } from '../email.repository';
+import { EmailRepository } from '../email.repository.js';
 import { EntityManager } from '@mikro-orm/postgresql';
-import { CreateConfirmationInput } from '../inputs/create-confirmation.input';
-import { EmailConfirmationEntity } from '../entities/email-confirmation.entity';
+import { CreateConfirmationInput } from '../inputs/create-confirmation.input.js';
+import { EmailConfirmationEntity } from '../entities/email-confirmation.entity.js';
 
 @Injectable()
 export class OrmEmailRepository implements EmailRepository {

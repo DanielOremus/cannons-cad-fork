@@ -1,9 +1,9 @@
-import { UnitOfWork } from '../../../../core/database/unit-of-work';
-import { NotFoundError } from '../../../../shared/errors/app.error';
-import { CharacterRepository } from '../../../character/character.repository';
-import { VehicleRepository } from '../../../vehicle/vehicle.repository';
-import { CitationRepository } from '../../citation.repository';
-import { IssueCitationCommand } from './issue-citation.command';
+import { UnitOfWork } from '../../../../core/database/unit-of-work.js';
+import { NotFoundError } from '../../../../shared/errors/app.error.js';
+import { CharacterRepository } from '../../../character/character.repository.js';
+import { VehicleRepository } from '../../../vehicle/vehicle.repository.js';
+import { CitationRepository } from '../../citation.repository.js';
+import { IssueCitationCommand } from './issue-citation.command.js';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 @CommandHandler(IssueCitationCommand)

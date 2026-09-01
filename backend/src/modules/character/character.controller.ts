@@ -11,21 +11,21 @@ import {
   Req,
 } from '@nestjs/common';
 import type { Request } from 'express';
-import { SearchCharacterDto } from './dto/search-character.dto';
-import { CreateCharacterDto } from './dto/create-character.dto';
-import { RequirePermission } from '../../common/decorators/require-permission.decorator';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
+import { SearchCharacterDto } from './dto/search-character.dto.js';
+import { CreateCharacterDto } from './dto/create-character.dto.js';
+import { RequirePermission } from '../../common/decorators/require-permission.decorator.js';
+import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe.js';
 import { type PaginationDto } from '@project/shared';
 import { paginationSchema } from '@project/shared';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { GetCharacterQuery } from './queries/get-character/get-character.query';
-import { SearchCharacterQuery } from './queries/search-character/search-character.query';
-import { CreateCharacterCommand } from './commands/create-character/create-character.command';
-import { GetCharacterCitationsQuery } from '../citation/queries/get-character-citations/get-character-citations.query';
-import { IdParamPipe } from '../../common/pipes/id-validation.pipe';
-import { UpdateCharacterDto } from './dto/update-character.dto';
-import { UpdateCharacterCommand } from './commands/update-character/update-character.command';
-import { DeleteCharacterCommand } from './commands/delete-character/delete-character.command';
+import { GetCharacterQuery } from './queries/get-character/get-character.query.js';
+import { SearchCharacterQuery } from './queries/search-character/search-character.query.js';
+import { CreateCharacterCommand } from './commands/create-character/create-character.command.js';
+import { GetCharacterCitationsQuery } from '../citation/queries/get-character-citations/get-character-citations.query.js';
+import { IdParamPipe } from '../../common/pipes/id-validation.pipe.js';
+import { UpdateCharacterDto } from './dto/update-character.dto.js';
+import { UpdateCharacterCommand } from './commands/update-character/update-character.command.js';
+import { DeleteCharacterCommand } from './commands/delete-character/delete-character.command.js';
 
 @Controller('/characters')
 export class CharacterController {

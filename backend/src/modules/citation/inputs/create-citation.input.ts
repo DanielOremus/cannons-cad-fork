@@ -1,8 +1,8 @@
-import { CharacterEntity } from '../../character/entities/character.entity';
-import { UserEntity } from '../../user/entities/user.entity';
-import { VehicleEntity } from '../../vehicle/entities/vehicle.entity';
-import { CreateCitationDto } from '../dto/create-citation.dto';
-import { CitationEntity } from '../entities/citation.entity';
+import { CharacterEntity } from '../../character/entities/character.entity.js';
+import { UserEntity } from '../../user/entities/user.entity.js';
+import { VehicleEntity } from '../../vehicle/entities/vehicle.entity.js';
+import { CreateCitationDto } from '../dto/create-citation.dto.js';
+import { CitationEntity } from '../entities/citation.entity.js';
 
 export type CreateCitationInput = Omit<
   CreateCitationDto,

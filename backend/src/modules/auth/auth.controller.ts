@@ -1,29 +1,29 @@
 import { Body, Controller, HttpCode, Post, Req, Res, UseInterceptors } from '@nestjs/common';
-import { LoginUserDto } from './dto/login-user.dto';
-import { RegisterUserDto } from './dto/register-user.dto';
+import { LoginUserDto } from './dto/login-user.dto.js';
+import { RegisterUserDto } from './dto/register-user.dto.js';
 import type { Request, Response } from 'express';
-import { COOKEY_KEY } from './cookie.helper';
-import { AuthInterceptor } from '../../common/interceptors/auth.interceptor';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
+import { COOKEY_KEY } from './cookie.helper.js';
+import { AuthInterceptor } from '../../common/interceptors/auth.interceptor.js';
+import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe.js';
 import {
   RequireConfirmedEmailOnly,
   SkipActiveCheck,
-} from '../../common/decorators/account.decorator';
-import { ConfirmEmailDto } from './dto/confirm-email.dto';
+} from '../../common/decorators/account.decorator.js';
+import { ConfirmEmailDto } from './dto/confirm-email.dto.js';
 import {
   ClearRefreshCookie,
   SetRefreshCookie,
-} from '../../common/decorators/refresh-cookie.decorator';
+} from '../../common/decorators/refresh-cookie.decorator.js';
 import { CommandBus } from '@nestjs/cqrs';
-import { RegisterUserCommand } from './commands/register/register.command';
-import { LoginUserCommand } from './commands/login/login.command';
-import { LogoutUserCommand } from './commands/logout/logout.command';
-import { RefreshSessionCommand } from './commands/refresh-session/refresh-session.command';
-import { ConfirmEmailCommand } from './commands/confirm-email/confirm-email.command';
-import { ResendEmailConfirmationCommand } from './commands/resend-email-confirmation/resend-email-confirmation.command';
-import { Public } from '../../common/decorators/public-route.decorator';
+import { RegisterUserCommand } from './commands/register/register.command.js';
+import { LoginUserCommand } from './commands/login/login.command.js';
+import { LogoutUserCommand } from './commands/logout/logout.command.js';
+import { RefreshSessionCommand } from './commands/refresh-session/refresh-session.command.js';
+import { ConfirmEmailCommand } from './commands/confirm-email/confirm-email.command.js';
+import { ResendEmailConfirmationCommand } from './commands/resend-email-confirmation/resend-email-confirmation.command.js';
+import { Public } from '../../common/decorators/public-route.decorator.js';
 import { Throttle } from '@nestjs/throttler';
-import { appThrottlers } from '../../core/throttler/throttlers';
+import { appThrottlers } from '../../core/throttler/throttlers.js';
 
 @Controller('/auth')
 export class AuthController {
@@ -67,7 +67,6 @@ export class AuthController {
   @HttpCode(204)
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     await this.commandBus.execute(new LogoutUserCommand(req.user!.id, req.user!.familyId));
-    res.clearCookie(COOKEY_KEY);
   }
   @Post('/refresh')
   @Public()
@@ -76,17 +75,12 @@ export class AuthController {
   @UseInterceptors(AuthInterceptor)
   @HttpCode(200)
   async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    try {
-      const { refresh, access, user } = await this.commandBus.execute(
-        new RefreshSessionCommand(req.signedCookies[COOKEY_KEY]),
-      );
-      res.locals.refreshToken = refresh;
+    const { refresh, access, user } = await this.commandBus.execute(
+      new RefreshSessionCommand(req.signedCookies[COOKEY_KEY]),
+    );
+    res.locals.refreshToken = refresh;
 
-      return { user, access };
-    } catch (error) {
-      res.clearCookie(COOKEY_KEY);
-      throw error;
-    }
+    return { user, access };
   }
   @Post('/confirm-email')
   @SkipActiveCheck()

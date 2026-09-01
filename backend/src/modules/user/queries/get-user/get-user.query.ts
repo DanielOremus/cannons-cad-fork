@@ -1,6 +1,6 @@
 import { Query } from '@nestjs/cqrs';
 import { PermissionScope } from '@project/shared';
-import { UserDto } from '../../dto/get-user.dto';
+import { UserDto } from '../../dto/get-user.dto.js';
 
 export class GetUserQuery extends Query<UserDto> {
   constructor(

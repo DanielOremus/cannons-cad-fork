@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { TokenPayloads, TokenType } from '../../types/token';
-import { AppConfigService } from '../../../core/config/config.service';
+import { TokenPayloads, TokenType } from '../../types/token.js';
+import { AppConfigService } from '../../../core/config/config.service.js';
 
 type VerifySuccessReturn<T> = {
   success: true;

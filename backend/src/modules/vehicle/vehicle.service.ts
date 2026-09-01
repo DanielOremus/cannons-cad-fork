@@ -1,14 +1,14 @@
 import { PaginatedList, PaginationDto, PermissionScope } from '@project/shared';
-import { CreateVehicleDto } from './dto/create-vehicle.dto';
-import { VehicleRepository } from './vehicle.repository';
+import { CreateVehicleDto } from './dto/create-vehicle.dto.js';
+import { VehicleRepository } from './vehicle.repository.js';
 import { Injectable } from '@nestjs/common';
-import { CharacterRepository } from '../character/character.repository';
-import { NotFoundError } from '../../shared/errors/app.error';
-import { VehicleMapper } from './vehicle.mapper';
-import { VehicleDto } from './dto/get-vehicle.dto';
-import { UnitOfWork } from '../../core/database/unit-of-work';
-import { UpdateVehicleDto } from './dto/update-vehicle.dto';
-import { OwnershipService } from '../../shared/modules/ownership/ownership.service';
+import { CharacterRepository } from '../character/character.repository.js';
+import { NotFoundError } from '../../shared/errors/app.error.js';
+import { VehicleMapper } from './vehicle.mapper.js';
+import { VehicleDto } from './dto/get-vehicle.dto.js';
+import { UnitOfWork } from '../../core/database/unit-of-work.js';
+import { UpdateVehicleDto } from './dto/update-vehicle.dto.js';
+import { OwnershipService } from '../../shared/modules/ownership/ownership.service.js';
 
 @Injectable()
 export class VehicleService {

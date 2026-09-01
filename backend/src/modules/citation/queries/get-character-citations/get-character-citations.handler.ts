@@ -1,8 +1,8 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { GetCharacterCitationsQuery } from './get-character-citations.query';
-import { CitationRepository } from '../../citation.repository';
+import { GetCharacterCitationsQuery } from './get-character-citations.query.js';
+import { CitationRepository } from '../../citation.repository.js';
 import { PaginatedList, CitationDto } from '@project/shared';
-import { CitationMapper } from '../../citation.mapper';
+import { CitationMapper } from '../../citation.mapper.js';
 
 @QueryHandler(GetCharacterCitationsQuery)
 export class GetCharacterCitationsHandler implements IQueryHandler<GetCharacterCitationsQuery> {

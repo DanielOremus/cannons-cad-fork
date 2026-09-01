@@ -1,4 +1,4 @@
 import { createCitationSchema } from '@project/shared';
-import { createZodDto } from 'nestjs-zod';
+import { ZodDto } from '../../../shared/dto/zod.dto.js';
 
-export class CreateCitationDto extends createZodDto(createCitationSchema) {}
+export class CreateCitationDto extends ZodDto(createCitationSchema) {}

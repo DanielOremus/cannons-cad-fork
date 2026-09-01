@@ -1,5 +1,5 @@
 import { ChargeDto } from '@project/shared';
-import { ChargeEntity } from './entities/charge.entity';
+import { ChargeEntity } from './entities/charge.entity.js';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

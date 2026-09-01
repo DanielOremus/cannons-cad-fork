@@ -89,7 +89,7 @@ export default defineConfig(
 
       parserOptions: {
         projectService: {
-          allowDefaultProject: ['test/*.ts'],
+          allowDefaultProject: ['test/*.ts', 'vitest.config*.ts'],
         },
 
         tsconfigRootDir: backendDir,
@@ -105,6 +105,7 @@ export default defineConfig(
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
       '@typescript-eslint/no-empty-object-type': 'off',
+      '@typescript-eslint/restrict-plus-operands': 'off',
       '@typescript-eslint/no-misused-promises': [
         'error',
         {

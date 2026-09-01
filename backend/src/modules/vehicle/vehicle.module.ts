@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { VehicleRepository } from './vehicle.repository';
-import { OrmVehicleRepository } from './infrastructure/orm.vehicle.repository';
-import { VehicleService } from './vehicle.service';
-import { VehicleMapper } from './vehicle.mapper';
-import { VehicleController } from './vehicle.controller';
-import { CharacterModule } from '../character/character.module';
+import { VehicleRepository } from './vehicle.repository.js';
+import { OrmVehicleRepository } from './infrastructure/orm.vehicle.repository.js';
+import { VehicleService } from './vehicle.service.js';
+import { VehicleMapper } from './vehicle.mapper.js';
+import { VehicleController } from './vehicle.controller.js';
+import { CharacterModule } from '../character/character.module.js';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { VehicleEntity } from './entities/vehicle.entity';
-import { OwnershipModule } from '../../shared/modules/ownership/ownership.module';
+import { VehicleEntity } from './entities/vehicle.entity.js';
+import { OwnershipModule } from '../../shared/modules/ownership/ownership.module.js';
 
 @Module({
   imports: [MikroOrmModule.forFeature([VehicleEntity]), CharacterModule, OwnershipModule],

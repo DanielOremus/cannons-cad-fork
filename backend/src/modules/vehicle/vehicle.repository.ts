@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PaginationDto } from '@project/shared';
-import { VehicleEntity } from './entities/vehicle.entity';
-import { CreateVehicleInput } from './inputs/create-vehicle.input';
-import { UpdateVehicleDto } from './dto/update-vehicle.dto';
+import { VehicleEntity } from './entities/vehicle.entity.js';
+import { CreateVehicleInput } from './inputs/create-vehicle.input.js';
+import { UpdateVehicleDto } from './dto/update-vehicle.dto.js';
 
 @Injectable()
 export abstract class VehicleRepository {

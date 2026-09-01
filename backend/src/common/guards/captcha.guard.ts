@@ -1,9 +1,9 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { CAPTCHA_KEY } from '../decorators/require-captcha.decorator';
+import { CAPTCHA_KEY } from '../decorators/require-captcha.decorator.js';
 import { Request } from 'express';
-import { AppConfigService } from '../../core/config/config.service';
-import { AppError } from '../../shared/errors/app.error';
+import { AppConfigService } from '../../core/config/config.service.js';
+import { AppError } from '../../shared/errors/app.error.js';
 import { ErrorCode } from '@project/shared';
 
 @Injectable()
@@ -19,8 +19,6 @@ export class CaptchaGuard implements CanActivate {
     const tokenField = this.reflector.get<string>(CAPTCHA_KEY, context.getHandler());
 
     const captchaToken = request.body[tokenField];
-
-    // if(typeof captchaToken !== "string" || captchaToken.trim() === ""){}
 
     const cloudflareRes = await fetch(this.config.turnstile.apiUrl, {
       method: 'POST',

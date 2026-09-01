@@ -1,11 +1,11 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
-import { ForbiddenError, UnauthorizedError } from '../../shared/errors/app.error';
+import { ForbiddenError, UnauthorizedError } from '../../shared/errors/app.error.js';
 import { accountActive } from '@project/shared';
 import { Reflector } from '@nestjs/core';
-import { ACTIVE_CHECK_KEY, EMAIL_CONFIRM_KEY } from '../decorators/account.decorator';
-import { PUBLIC_ROUTE_KEY } from '../decorators/public-route.decorator';
-import { AuthSessionService } from '../../shared/modules/auth-session/auth-session.service';
+import { ACTIVE_CHECK_KEY, EMAIL_CONFIRM_KEY } from '../decorators/account.decorator.js';
+import { PUBLIC_ROUTE_KEY } from '../decorators/public-route.decorator.js';
+import { AuthSessionService } from '../../shared/modules/auth-session/auth-session.service.js';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -18,19 +18,6 @@ export class AuthGuard implements CanActivate {
 
     const isRoutePublic = this.reflector.get<boolean>(PUBLIC_ROUTE_KEY, context.getHandler());
     if (isRoutePublic) return true;
-
-    // const payload = this.tokenService.tryParseBearer(request.headers.authorization);
-    // if (!payload) throw new UnauthorizedError();
-
-    // const [familyExists, redisUserRoles] = await Promise.all([
-    //   this.tokenStore.familyExists(payload.familyId),
-    //   this.authCache.getUserRoles(payload.userId),
-    // ]);
-
-    // if (!familyExists) throw new UnauthorizedError();
-
-    // const userRoles = !redisUserRoles ? payload.userRoles : redisUserRoles;
-    // const userPerms = getPermissionsFromRoles(...userRoles);
 
     const {
       success,

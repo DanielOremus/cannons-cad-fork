@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { AppConfigModule } from '../config/config.module';
-import { AppConfigService } from '../config/config.service';
+import { AppConfigModule } from '../config/config.module.js';
+import { AppConfigService } from '../config/config.service.js';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
-import { appThrottlers } from './throttlers';
+import { appThrottlers } from './throttlers.js';
 
 @Module({
   imports: [
