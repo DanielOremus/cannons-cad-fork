@@ -1,4 +1,5 @@
 import { type UserProfile } from '../model/auth.types';
+import { StatusBadge } from '@/shared/components/StatusBadge';
 
 type UserSummaryProps = {
   title: string;
@@ -24,7 +25,9 @@ function UserSummary({ title, user }: UserSummaryProps) {
         </div>
         <div>
           <dt>Status</dt>
-          <dd>{user.status}</dd>
+          <dd>
+            <StatusBadge status={user.status} />
+          </dd>
         </div>
         {typeof user.emailConfirmed === 'boolean' && (
           <div>

@@ -97,6 +97,7 @@ export {
   getPermissionsFromRoles,
   accountActive,
   getStaffPriority,
+  getHighestRolePriority,
   hasHigherOrSamePriority,
 } from './utils/auth.helpers.js';
 export { mapZodIssue } from './utils/validation.helpers.js';
