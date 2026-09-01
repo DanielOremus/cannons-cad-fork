@@ -5,7 +5,6 @@ import { EmailModule } from '../email/email.module';
 import { TokenModule } from '../../shared/modules/token/token.module';
 import { DatabaseModule } from '../../core/database/database.module';
 import { EmailConfirmationService } from './email-confirmation.service';
-import { AuthSessionService } from './auth-session.service';
 import { LoginUserHandler } from './commands/login/login.handler';
 import { RegisterUserHandler } from './commands/register/register.handler';
 import { LogoutUserHandler } from './commands/logout/logout.handler';
@@ -13,6 +12,7 @@ import { RefreshSessionHandler } from './commands/refresh-session/refresh-sessio
 import { ResendEmailConfirmationHandler } from './commands/resend-email-confirmation/resend-email-confirmation.handler';
 import { ConfirmEmailHandler } from './commands/confirm-email/confirm-email.handler';
 import { AuthCacheModule } from '../../shared/modules/auth-cache/auth-cache.module';
+import { AuthSessionModule } from '../../shared/modules/auth-session/auth-session.module';
 
 const commandHandlers = [
   LoginUserHandler,
@@ -24,8 +24,15 @@ const commandHandlers = [
 ];
 
 @Module({
-  imports: [UserModule, EmailModule, TokenModule, AuthCacheModule, DatabaseModule],
+  imports: [
+    UserModule,
+    EmailModule,
+    TokenModule,
+    AuthCacheModule,
+    AuthSessionModule,
+    DatabaseModule,
+  ],
   controllers: [AuthController],
-  providers: [...commandHandlers, EmailConfirmationService, AuthSessionService],
+  providers: [...commandHandlers, EmailConfirmationService],
 })
 export class AuthModule {}
