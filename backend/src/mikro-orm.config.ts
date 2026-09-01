@@ -1,12 +1,12 @@
 import { defineConfig } from '@mikro-orm/postgresql';
-import { buildConfig } from './core/config/config';
+import rawConfig from './core/config/config';
 import { validate } from './core/config/config.validation';
 import { Migrator } from '@mikro-orm/migrations';
 import { SeedManager } from '@mikro-orm/seeder';
 
 import 'dotenv/config';
 
-const config = validate(buildConfig());
+const config = validate(rawConfig());
 export default defineConfig({
   host: config.database.host,
   port: config.database.port,

@@ -1,4 +1,4 @@
 import { confirmEmailSchema } from '@project/shared';
-import { createZodDto } from 'nestjs-zod';
+import { ZodDto } from '../../../shared/dto/zod.dto';
 
-export class ConfirmEmailDto extends createZodDto(confirmEmailSchema) {}
+export class ConfirmEmailDto extends ZodDto(confirmEmailSchema) {}

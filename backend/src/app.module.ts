@@ -9,20 +9,20 @@ import { SharedModule } from './shared/modules/shared.module';
 import { ThrottlerBehindProxyGuard } from './common/guards/throttler-behind-proxy.guard';
 
 @Module({
-  imports: [CqrsModule.forRoot(), CoreModule, SharedModule, ModulesModule],
+  imports: [CqrsModule.forRoot(), CoreModule],
   providers: [
     {
       provide: APP_GUARD,
       useClass: ThrottlerBehindProxyGuard,
     },
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: PermissionsGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthGuard,
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: PermissionsGuard,
+    // },
   ],
 })
 export class AppModule {}

@@ -1,4 +1,4 @@
 import { registerUserSchema } from '@project/shared';
-import { createZodDto } from 'nestjs-zod';
+import { ZodDto } from '../../../shared/dto/zod.dto';
 
-export class RegisterUserDto extends createZodDto(registerUserSchema) {}
+export class RegisterUserDto extends ZodDto(registerUserSchema) {}

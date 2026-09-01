@@ -21,8 +21,9 @@
     "noImplicitAny": true,
     "strictBindCallApply": true,
     "noFallthroughCasesInSwitch": true,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "types": ["vitest/globals", "node"]
   },
   "references": [{ "path": "../shared" }],
-  "include": ["src/**/*"]
+  "include": ["./src/**/*"]
 }

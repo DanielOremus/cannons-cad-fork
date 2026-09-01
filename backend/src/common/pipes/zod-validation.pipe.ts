@@ -7,9 +7,8 @@ export class ZodValidationPipe implements PipeTransform {
   constructor(private readonly zodSchema: z.ZodType) {}
   transform(value: unknown) {
     const result = this.zodSchema.safeParse(value);
+    //mapping issues to my validation error
     if (!result.success) {
-      //mapping issues to my validation error
-
       const myIssues = result.error.issues.map((issue) => {
         console.log(issue);
         return mapZodIssue(issue);

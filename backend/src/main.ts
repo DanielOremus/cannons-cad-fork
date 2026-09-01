@@ -8,6 +8,7 @@ import { NextFunction, Request, Response } from 'express';
 import { RequestContext } from '@mikro-orm/core';
 import { MikroORM } from '@mikro-orm/postgresql';
 import { SocketIoAdapter } from './common/adapters/socket-io.adapter';
+import { StandardSchemaValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -22,6 +23,7 @@ async function bootstrap() {
 
   app.useGlobalFilters(new GlobalExceptionFilter());
   app.useWebSocketAdapter(new SocketIoAdapter(app));
+  // app.useGlobalPipes(new StandardSchemaValidationPipe)
 
   if (config.env === 'production') app.set('trust proxy', 1);
 

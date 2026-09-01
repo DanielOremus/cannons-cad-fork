@@ -1,4 +1,4 @@
 import { createVehicleSchema } from '@project/shared';
-import { createZodDto } from 'nestjs-zod';
+import { ZodDto } from '../../../shared/dto/zod.dto';
 
-export class CreateVehicleDto extends createZodDto(createVehicleSchema) {}
+export class CreateVehicleDto extends ZodDto(createVehicleSchema) {}

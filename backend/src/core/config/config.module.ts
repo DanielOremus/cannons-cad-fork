@@ -1,14 +1,16 @@
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { registerConfig } from './config';
 import { AppConfigService } from './config.service';
+import { configSchema } from './config.validation';
+import config from './config';
 
-@Global()
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: process.env.NODE_ENV === 'production' ? undefined : '.env.dev',
-      load: [registerConfig],
+      isGlobal: true,
+      envFilePath: process.env.NODE_ENV === 'production' ? '.env' : '.env.dev',
+      load: [config],
+      validationSchema: configSchema,
     }),
   ],
   providers: [AppConfigService],
