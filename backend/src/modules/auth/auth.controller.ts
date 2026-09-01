@@ -3,7 +3,7 @@ import { LoginUserDto } from './dto/login-user.dto.js';
 import { RegisterUserDto } from './dto/register-user.dto.js';
 import type { Request, Response } from 'express';
 import { COOKEY_KEY } from './cookie.helper.js';
-import { AuthInterceptor } from '../../common/interceptors/auth.interceptor.js';
+import { CookieInterceptor } from '../../common/interceptors/cookie.interceptor.js';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe.js';
 import {
   RequireConfirmedEmailOnly,
@@ -26,13 +26,13 @@ import { Throttle } from '@nestjs/throttler';
 import { appThrottlers } from '../../core/throttler/throttlers.js';
 
 @Controller('/auth')
+@UseInterceptors(CookieInterceptor)
 export class AuthController {
   constructor(private readonly commandBus: CommandBus) {}
   @Post('/register')
   @Public()
   @Throttle({ default: appThrottlers.register })
   @SetRefreshCookie()
-  @UseInterceptors(AuthInterceptor)
   @HttpCode(201)
   async register(
     @Body(new ZodValidationPipe(RegisterUserDto.schema)) registerDto: RegisterUserDto,
@@ -49,7 +49,6 @@ export class AuthController {
   @Public()
   @Throttle({ default: appThrottlers.login })
   @SetRefreshCookie()
-  @UseInterceptors(AuthInterceptor)
   @HttpCode(200)
   async login(
     @Body(new ZodValidationPipe(LoginUserDto.schema)) loginDto: LoginUserDto,
@@ -62,7 +61,6 @@ export class AuthController {
   }
   @Post('/logout')
   @RequireConfirmedEmailOnly()
-  @UseInterceptors(AuthInterceptor)
   @ClearRefreshCookie()
   @HttpCode(204)
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
@@ -72,7 +70,6 @@ export class AuthController {
   @Public()
   @Throttle({ default: appThrottlers.refresh })
   @SetRefreshCookie()
-  @UseInterceptors(AuthInterceptor)
   @HttpCode(200)
   async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const { refresh, access, user } = await this.commandBus.execute(

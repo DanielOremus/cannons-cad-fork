@@ -10,7 +10,7 @@ import {
 } from '../decorators/refresh-cookie.decorator.js';
 
 @Injectable()
-export class AuthInterceptor implements NestInterceptor {
+export class CookieInterceptor implements NestInterceptor {
   constructor(
     private readonly reflector: Reflector,
     @Inject(AppConfigService) private readonly config: AppConfigService,
@@ -30,6 +30,8 @@ export class AuthInterceptor implements NestInterceptor {
       context.getHandler(),
     );
 
+    console.log(`clear: ${clearRefreshCookie}`);
+
     return next.handle().pipe(
       tap({
         next: () => {
@@ -43,6 +45,9 @@ export class AuthInterceptor implements NestInterceptor {
           if (clearRefreshCookie) {
             response.clearCookie(COOKEY_KEY);
           }
+        },
+        error: () => {
+          response.clearCookie(COOKEY_KEY);
         },
       }),
     );
