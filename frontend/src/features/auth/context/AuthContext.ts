@@ -1,13 +1,16 @@
 import { createContext, useContext } from 'react';
 import { type UserProfile } from '../model/auth.types';
 
+export type AuthStatus = 'loading' | 'authenticated' | 'anonymous' | 'unavailable';
+
 export type AuthContextValue = {
+  status: AuthStatus;
   accessToken: string;
   user: UserProfile | null;
   isAdmin: boolean;
+  restorationError: string | null;
   setAuthSession: (accessToken: string, user: UserProfile) => void;
-  setAccessToken: (accessToken: string) => void;
-  setUser: (updater: UserProfile | null | ((user: UserProfile | null) => UserProfile | null)) => void;
+  updateAuthUser: (updater: (user: UserProfile) => UserProfile) => void;
   clearAuthSession: () => void;
 };
 

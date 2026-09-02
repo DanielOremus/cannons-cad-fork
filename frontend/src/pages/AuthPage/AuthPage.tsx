@@ -38,12 +38,13 @@ const RESEND_COOLDOWN_SECONDS = 45;
 
 function AuthPage() {
   const {
+    status,
     accessToken,
     user,
     isAdmin,
+    restorationError,
     setAuthSession,
-    setAccessToken,
-    setUser,
+    updateAuthUser,
     clearAuthSession,
   } = useAuth();
   const [mode, setMode] = useState<AuthMode>('login');
@@ -238,14 +239,11 @@ function AuthPage() {
 
       try {
         const refreshed = await refreshSession();
-        setAccessToken(refreshed.access);
+        setAuthSession(refreshed.access, refreshed.user);
       } catch {
         // Keep the current in-memory token if refresh is not available for this account state.
+        updateAuthUser((currentUser) => ({ ...currentUser, emailConfirmed: true }));
       }
-
-      setUser((currentUser) =>
-        currentUser ? { ...currentUser, emailConfirmed: true } : currentUser,
-      );
       setStep('email-confirmed');
     } catch (error) {
       setConfirmationError(
@@ -312,6 +310,20 @@ function AuthPage() {
       : step;
   const confirmationEmail = registeredEmail || user?.email || '';
 
+  if (status === 'loading') {
+    return (
+      <main className="auth-page">
+        <section className="auth-card" aria-live="polite" aria-busy="true">
+          <div className="auth-header">
+            <BrandMark />
+            <h1>Restoring session</h1>
+            <p>Checking your secure session...</p>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="auth-page">
       <section className="auth-card" aria-labelledby="auth-heading">
@@ -323,9 +335,9 @@ function AuthPage() {
           <p>Sign in to access your role-play community dashboard.</p>
         </div>
 
-        {message && (
+        {(message || restorationError) && (
           <p className="auth-message" role="status">
-            {message}
+            {message || restorationError}
           </p>
         )}
 

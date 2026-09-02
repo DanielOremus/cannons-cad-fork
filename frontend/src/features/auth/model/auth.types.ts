@@ -20,6 +20,7 @@ export type AuthResponse = {
 
 export type RefreshResponse = {
   access: string
+  user: UserProfile
 }
 
 export type LoginRequest = {
