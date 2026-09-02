@@ -7,6 +7,8 @@ import {
   type RegisterRequest,
 } from '../model/auth.types'
 
+let refreshSessionPromise: Promise<RefreshResponse> | null = null
+
 export function login(request: LoginRequest) {
   return apiRequest<AuthResponse>('/auth/login', {
     method: 'POST',
@@ -41,10 +43,16 @@ export function resendConfirmationCode(accessToken: string) {
 }
 
 export function refreshSession() {
-  return apiRequest<RefreshResponse>('/auth/refresh', {
-    method: 'POST',
-    credentials: 'include',
-  })
+  if (!refreshSessionPromise) {
+    refreshSessionPromise = apiRequest<RefreshResponse>('/auth/refresh', {
+      method: 'POST',
+      credentials: 'include',
+    }).finally(() => {
+      refreshSessionPromise = null
+    })
+  }
+
+  return refreshSessionPromise
 }
 
 export function logout(accessToken: string) {

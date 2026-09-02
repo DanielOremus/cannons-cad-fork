@@ -5,8 +5,27 @@ import { useAuth } from '../features/auth/context/AuthContext'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { BrandMark } from '../shared/components/BrandMark'
 
+function AppLoadingState() {
+  return (
+    <main className="min-h-screen bg-background px-6 py-8 text-foreground">
+      <section
+        className="mx-auto max-w-3xl rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm"
+        aria-live="polite"
+        aria-busy="true"
+      >
+        <BrandMark compact />
+        <p className="mt-6 text-sm text-muted-foreground">Restoring your session...</p>
+      </section>
+    </main>
+  )
+}
+
 function AdminRoute() {
-  const { accessToken, isAdmin } = useAuth()
+  const { status, accessToken, isAdmin } = useAuth()
+
+  if (status === 'loading') {
+    return <AppLoadingState />
+  }
 
   if (!accessToken) {
     return <Navigate to="/" replace />
