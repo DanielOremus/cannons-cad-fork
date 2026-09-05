@@ -7,11 +7,9 @@ import { CreateCitationInput } from '../inputs/create-citation.input.js';
 import { UpdateCitationDto } from '../dto/update-citation.dto.js';
 
 @Injectable()
-export class OrmCitationRepository extends CitationRepository {
+export class OrmCitationRepository implements CitationRepository {
   private readonly entity = CitationEntity;
-  constructor(private readonly em: EntityManager) {
-    super();
-  }
+  constructor(private readonly em: EntityManager) {}
   async findByCharacter(
     characterId: number,
     pagination: PaginationDto,
