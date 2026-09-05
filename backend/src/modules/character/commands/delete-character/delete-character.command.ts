@@ -1,11 +1,11 @@
 import { Command } from '@nestjs/cqrs';
-import { PermissionScope } from '@project/shared';
+import { PermissionMeta } from '@project/shared';
 
 export class DeleteCharacterCommand extends Command<void> {
   constructor(
     readonly characterId: number,
     readonly userId: string,
-    readonly scope: PermissionScope,
+    readonly permissionMeta: PermissionMeta,
   ) {
     super();
   }

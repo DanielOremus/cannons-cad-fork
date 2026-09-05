@@ -11,6 +11,8 @@ export const CitationSchema = defineEntity({
   extends: BaseSchema,
   properties: {
     status: p.enum(() => CitationStatus).default(CitationStatus.ACTIVE),
+    officerName: p.string(),
+    officerRank: p.string(),
     charges: () => p.oneToMany(ChargeEntity).mappedBy('citation'),
     issuedCharacter: () =>
       p.manyToOne(CharacterEntity).inversedBy('citations').deleteRule('cascade'),

@@ -18,13 +18,17 @@ import { type Request } from 'express';
 import { IdParamPipe } from '../../common/pipes/id-validation.pipe.js';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto.js';
 import { SearchVehicleDto } from './dto/search-vehicle.dto.js';
+import { GetAuthUser } from '../../common/decorators/get-auth.user.decorator.js';
+import { type AuthUser } from '../../shared/types/user.js';
+import { GetPermissionMeta } from '../../common/decorators/get-permission-meta.decorator.js';
+import { type PermissionMeta } from '@project/shared';
 
 @Controller('/vehicles')
 export class VehicleController {
   constructor(private readonly vehicleService: VehicleService) {}
 
   @Get('/search')
-  @RequirePermission('vehicle', 'search')
+  @RequirePermission('vehicle', 'read')
   async search(@Query(new ZodValidationPipe(SearchVehicleDto.schema)) query: SearchVehicleDto) {
     return await this.vehicleService.search(query.plate);
   }
@@ -32,25 +36,30 @@ export class VehicleController {
   @RequirePermission('vehicle', 'create')
   @HttpCode(201)
   async create(
-    @Req() req: Request,
     @Body(new ZodValidationPipe(CreateVehicleDto.schema)) dto: CreateVehicleDto,
+    @GetAuthUser() user: AuthUser,
   ) {
-    return await this.vehicleService.create(dto, req.user!.id, req.permissionScope!);
+    return await this.vehicleService.create(dto, user.id);
   }
   @Patch('/:id')
   @RequirePermission('vehicle', 'update')
   @HttpCode(204)
   async update(
-    @Req() req: Request,
     @Param('id', new IdParamPipe()) id: number,
     @Body(new ZodValidationPipe(UpdateVehicleDto.schema)) dto: UpdateVehicleDto,
+    @GetAuthUser() user: AuthUser,
+    @GetPermissionMeta() permissionMeta: PermissionMeta,
   ) {
-    await this.vehicleService.update(id, dto, req.user!.id, req.permissionScope!);
+    await this.vehicleService.update(id, dto, user.id, permissionMeta);
   }
   @Delete('/:id')
   @RequirePermission('vehicle', 'delete')
   @HttpCode(204)
-  async delete(@Req() req: Request, @Param('id', new IdParamPipe()) id: number) {
-    await this.vehicleService.delete(id, req.user!.id, req.permissionScope!);
+  async delete(
+    @Param('id', new IdParamPipe()) id: number,
+    @GetAuthUser() user: AuthUser,
+    @GetPermissionMeta() permissionMeta: PermissionMeta,
+  ) {
+    await this.vehicleService.delete(id, user.id, permissionMeta);
   }
 }

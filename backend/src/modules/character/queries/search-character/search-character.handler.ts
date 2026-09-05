@@ -1,4 +1,5 @@
-import { NotFoundError } from '../../../../shared/errors/app.error.js';
+import { PermissionType } from '@project/shared';
+import { ForbiddenError, NotFoundError } from '../../../../shared/errors/app.error.js';
 import { CharacterMapper } from '../../character.mapper.js';
 import { CharacterRepository } from '../../character.repository.js';
 import { SearchCharacterQuery } from './search-character.query.js';
@@ -13,6 +14,10 @@ export class SearchCharacterHandler implements IQueryHandler<SearchCharacterQuer
   async execute(query: SearchCharacterQuery) {
     const character = await this.characterRepository.findByNameAndDob(query.dto, ['user']);
     if (!character) throw new NotFoundError('Character');
+
+    if (query.permissionMeta.type !== PermissionType.SCOPED) throw new ForbiddenError();
+    const scopes = query.permissionMeta.scopes;
+    if (!scopes.includes('any')) throw new ForbiddenError();
 
     const [vehiclesCount, citationsCount] = await Promise.all([
       this.characterRepository.countVehicles(character),

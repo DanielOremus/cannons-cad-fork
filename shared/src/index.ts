@@ -8,18 +8,25 @@ export { CharacterFlag } from './types/character/character.flag.js';
 export { VehicleFlag } from './types/vehicle/vehicle.flag.js';
 export { VehicleType } from './types/vehicle/vehicle.type.js';
 export { DriverCategory } from './types/driver.category.js';
-export { PermissionAction } from './types/permission/permission.action.js';
-export { PermissionResource } from './types/permission/permission.resource.js';
-export { PermissionScope } from './types/permission/permission.scope.js';
 export { CitationStatus } from './types/citation/citation.status.js';
 export { type ValidationIssue } from './types/error/validation.error.js';
 export { type ApiErrorResponse } from './types/error/api-error.response.js';
+export { PermissionScope } from './types/permission/permission.scope.js';
+export type {
+  PermissionMeta,
+  ContextualPermissionMeta,
+  GlobalPermissionMeta,
+  ScopedPermissionMeta,
+} from './types/permission/permission.meta.js';
 export {
+  PermissionsMap,
   type Permission,
-  ResourceActions,
-  type ResourceAction,
-  type RequiredPermission,
+  type PermissionAction,
+  type PermissionBase,
+  type PermissionResource,
 } from './types/permission/index.js';
+export { PermissionType } from './types/permission/permission.type.js';
+
 export { SortOrder } from './types/sort.order.js';
 
 export { StaffRolePriority } from './types/user/staff-role.priority.js';
@@ -99,6 +106,7 @@ export {
   getStaffPriority,
   getHighestRolePriority,
   hasHigherOrSamePriority,
+  findPermissionsByPrefix,
 } from './utils/auth.helpers.js';
 export { mapZodIssue } from './utils/validation.helpers.js';
 export { nameof } from './utils/object.helpers.js';

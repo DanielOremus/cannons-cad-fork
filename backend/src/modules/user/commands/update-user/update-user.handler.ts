@@ -1,4 +1,4 @@
-import { hasHigherOrSamePriority, getStaffPriority } from '@project/shared';
+import { hasHigherOrSamePriority, getStaffPriority, PermissionType } from '@project/shared';
 import { UnitOfWork } from '../../../../core/database/unit-of-work.js';
 import { ForbiddenError, NotFoundError } from '../../../../shared/errors/app.error.js';
 import { UserRepository } from '../../user.repository.js';
@@ -15,7 +15,9 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
   ) {}
   async execute(command: UpdateUserCommand): Promise<void> {
     //ensure current user can update any user
-    if (command.scope !== 'any') throw new ForbiddenError();
+    if (command.permissionMeta.type !== PermissionType.SCOPED) throw new ForbiddenError();
+    const scopes = command.permissionMeta.scopes;
+    if (!scopes.includes('any')) throw new ForbiddenError();
 
     let targetUser = await this.userRepository.findById(command.targetUserId);
     if (!targetUser) throw new NotFoundError('User');

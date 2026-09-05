@@ -4,6 +4,7 @@ import { IQueryHandler } from '@nestjs/cqrs';
 import { UserRepository } from '../../user.repository.js';
 import { UserMapper } from '../../user.mapper.js';
 import { ForbiddenError } from '../../../../shared/errors/app.error.js';
+import { PermissionType } from '@project/shared';
 
 @QueryHandler(GetUsersListQuery)
 export class GetUsersListHandler implements IQueryHandler<GetUsersListQuery> {
@@ -12,7 +13,9 @@ export class GetUsersListHandler implements IQueryHandler<GetUsersListQuery> {
     private readonly userMapper: UserMapper,
   ) {}
   async execute(query: GetUsersListQuery) {
-    if (query.scope !== 'any') throw new ForbiddenError('User');
+    if (query.permissionMeta.type !== PermissionType.SCOPED) throw new ForbiddenError();
+    const scopes = query.permissionMeta.scopes;
+    if (!scopes.includes('any')) throw new ForbiddenError();
 
     const { items, total } = await this.userRepository.findMany(query.queryParams);
 

@@ -9,6 +9,10 @@ import { IdParamPipe } from '../../common/pipes/id-validation.pipe.js';
 import { DeleteCitationCommand } from './commands/delete-citation/delete-citation.command.js';
 import { UpdateCitationDto } from './dto/update-citation.dto.js';
 import { UpdateCitationCommand } from './commands/update-citation/update-citation.command.js';
+import { GetAuthUser } from '../../common/decorators/get-auth.user.decorator.js';
+import { type AuthUser } from '../../shared/types/user.js';
+import { GetPermissionMeta } from '../../common/decorators/get-permission-meta.decorator.js';
+import { type PermissionMeta } from '@project/shared';
 
 @Controller('/citations')
 export class CitationController {
@@ -26,21 +30,22 @@ export class CitationController {
   @Patch('/:id')
   @RequirePermission('citation', 'update')
   async update(
-    @Req() req: Request,
     @Param('id', new IdParamPipe()) id: number,
     @Body(new ZodValidationPipe(UpdateCitationDto.schema)) dto: UpdateCitationDto,
+    @GetAuthUser() user: AuthUser,
+    @GetPermissionMeta() permissionMeta: PermissionMeta,
   ) {
-    await this.commandBus.execute(
-      new UpdateCitationCommand(id, dto, req.user!.id, req.permissionScope!),
-    );
+    await this.commandBus.execute(new UpdateCitationCommand(id, dto, user.id, permissionMeta));
   }
 
   @Delete('/:id')
   @RequirePermission('citation', 'delete')
   @HttpCode(204)
-  async delete(@Req() req: Request, @Param('id', new IdParamPipe()) id: number) {
-    await this.commandBus.execute(
-      new DeleteCitationCommand(id, req.user!.id, req.permissionScope!),
-    );
+  async delete(
+    @Param('id', new IdParamPipe()) id: number,
+    @GetAuthUser() user: AuthUser,
+    @GetPermissionMeta() permissionMeta: PermissionMeta,
+  ) {
+    await this.commandBus.execute(new DeleteCitationCommand(id, user.id, permissionMeta));
   }
 }
