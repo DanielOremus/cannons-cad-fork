@@ -24,6 +24,8 @@ export { SortOrder } from './types/sort.order.js';
 
 export { StaffRolePriority } from './types/user/staff-role.priority.js';
 
+export { UnitStatus } from './types/unit.status.js';
+
 //Dto
 export type { PaginationDto, PaginationRequest, PaginatedList } from './dto/pagination.js';
 
@@ -57,6 +59,9 @@ export { type DriverLicenseDto } from './dto/driver-license/get-driver-license.d
 export type { ChargeDto, CitationDto } from './dto/citation/get-citation.dto.js';
 export { type CreateCitationDto } from './dto/citation/create-citation.dto.js';
 export { type UpdateCitationDto } from './dto/citation/update-citation.js';
+export { type UpdateUnitStatusDto } from './dto/unit/update-unit.dto.js';
+
+export type { StartDutyDto } from './dto/duty/start-duty.dto.js';
 
 //Validation schemas
 export {
@@ -85,6 +90,10 @@ export {
   updateVehicleSchema,
   searchVehicleSchema,
 } from './validators/vehicle.schema.js';
+
+export { updateUnitStatusSchema } from './validators/unit.schema.js';
+
+export { startDutySchema } from './validators/duty.schema.js';
 
 export { idValidator, uuidValidator } from './validators/common.schema.js';
 

@@ -8,9 +8,6 @@ export const ResourceActions = {
     read: ['any', 'own'],
     delete: ['own'],
     update: ['own', 'any'],
-    'assign-role': ['any'],
-    'assign-status': ['any'],
-    'manage-admins': ['any'],
   },
   character: {
     create: ['own'],
@@ -31,6 +28,9 @@ export const ResourceActions = {
     create: ['any'],
     delete: ['own', 'any'],
     update: ['own', 'any'],
+  },
+  duty: {
+    start: [],
   },
 } as const satisfies Record<PermissionResource, { [P in PermissionAction]?: PermissionScope[] }>;
 
