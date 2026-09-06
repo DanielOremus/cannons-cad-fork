@@ -20,14 +20,17 @@ export class PermissionsGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const required = this.reflector.get<PermissionBase>(PERMISSION_KEY, context.getHandler());
 
-    if (!required) throw new Error('Permission metadata is missing');
+    if (!required) return true;
 
     const request = context.switchToHttp().getRequest<Request>();
 
     if (!request.user) throw new UnauthorizedError();
     const userPermissions = request.user.permissions;
 
+    // eslint-disable-next-line
     const permMeta = (PermissionsMap[required.resource] as any)[required.action] as PermissionMeta;
+
+    console.log(permMeta);
 
     switch (permMeta.type) {
       case PermissionType.SCOPED: {
@@ -58,13 +61,15 @@ export class PermissionsGuard implements CanActivate {
         };
         break;
       }
-      default:
+      case PermissionType.GLOBAL:
+      default: {
         const perm = `${required.resource}:${required.action}` as Permission;
         if (!hasPermissionFromSet(userPermissions, perm)) throw new ForbiddenError();
         request.permissionMeta = {
           type: PermissionType.GLOBAL,
         };
         break;
+      }
     }
 
     return true;

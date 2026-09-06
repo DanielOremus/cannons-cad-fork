@@ -24,6 +24,8 @@ import { ResendEmailConfirmationCommand } from './commands/resend-email-confirma
 import { Public } from '../../common/decorators/public-route.decorator.js';
 import { Throttle } from '@nestjs/throttler';
 import { appThrottlers } from '../../core/throttler/throttlers.js';
+import { GetAuthUser } from '../../common/decorators/get-auth.user.decorator.js';
+import { type AuthUser } from '../../shared/types/user.js';
 
 @Controller('/auth')
 @UseInterceptors(CookieInterceptor)
@@ -63,8 +65,8 @@ export class AuthController {
   @RequireConfirmedEmailOnly()
   @ClearRefreshCookie()
   @HttpCode(204)
-  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    await this.commandBus.execute(new LogoutUserCommand(req.user!.id, req.user!.familyId));
+  async logout(@Res({ passthrough: true }) res: Response, @GetAuthUser() user: AuthUser) {
+    await this.commandBus.execute(new LogoutUserCommand(user.id, user.familyId));
   }
   @Post('/refresh')
   @Public()
@@ -83,16 +85,16 @@ export class AuthController {
   @SkipActiveCheck()
   @HttpCode(204)
   async confirmEmail(
-    @Req() req: Request,
     @Body(new ZodValidationPipe(ConfirmEmailDto.schema)) confirmDto: ConfirmEmailDto,
+    @GetAuthUser() user: AuthUser,
   ) {
-    await this.commandBus.execute(new ConfirmEmailCommand(req.user!, confirmDto.code));
+    await this.commandBus.execute(new ConfirmEmailCommand(user, confirmDto.code));
   }
   @Post('/resend-code')
   @Throttle({ default: appThrottlers.resendConfirmation })
   @SkipActiveCheck()
   @HttpCode(204)
-  async resendEmailConfirmation(@Req() req: Request) {
-    await this.commandBus.execute(new ResendEmailConfirmationCommand(req.user!));
+  async resendEmailConfirmation(@GetAuthUser() user: AuthUser) {
+    await this.commandBus.execute(new ResendEmailConfirmationCommand(user));
   }
 }

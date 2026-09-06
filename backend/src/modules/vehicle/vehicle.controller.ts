@@ -1,20 +1,8 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  Param,
-  Post,
-  Get,
-  Req,
-  Query,
-  Delete,
-  Patch,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, Param, Post, Get, Query, Delete, Patch } from '@nestjs/common';
 import { VehicleService } from './vehicle.service.js';
 import { RequirePermission } from '../../common/decorators/require-permission.decorator.js';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe.js';
 import { CreateVehicleDto } from './dto/create-vehicle.dto.js';
-import { type Request } from 'express';
 import { IdParamPipe } from '../../common/pipes/id-validation.pipe.js';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto.js';
 import { SearchVehicleDto } from './dto/search-vehicle.dto.js';
@@ -29,8 +17,11 @@ export class VehicleController {
 
   @Get('/search')
   @RequirePermission('vehicle', 'read')
-  async search(@Query(new ZodValidationPipe(SearchVehicleDto.schema)) query: SearchVehicleDto) {
-    return await this.vehicleService.search(query.plate);
+  async search(
+    @Query(new ZodValidationPipe(SearchVehicleDto.schema)) query: SearchVehicleDto,
+    @GetPermissionMeta() permissionMeta: PermissionMeta,
+  ) {
+    return await this.vehicleService.search(query.plate, permissionMeta);
   }
   @Post('/create')
   @RequirePermission('vehicle', 'create')

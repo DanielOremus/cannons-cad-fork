@@ -1,10 +1,11 @@
-import { hasHigherOrSamePriority, getStaffPriority, PermissionType } from '@project/shared';
+import { hasHigherOrSamePriority, getStaffPriority } from '@project/shared';
 import { UnitOfWork } from '../../../../core/database/unit-of-work.js';
 import { ForbiddenError, NotFoundError } from '../../../../shared/errors/app.error.js';
 import { UserRepository } from '../../user.repository.js';
 import { UpdateUserCommand } from './update-user.command.js';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthCacheService } from '../../../../shared/modules/auth-cache/auth-cache.service.js';
+import { getScopesOrThrow } from '../../../../shared/utils/permission.helpers.js';
 
 @CommandHandler(UpdateUserCommand)
 export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
@@ -15,8 +16,7 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
   ) {}
   async execute(command: UpdateUserCommand): Promise<void> {
     //ensure current user can update any user
-    if (command.permissionMeta.type !== PermissionType.SCOPED) throw new ForbiddenError();
-    const scopes = command.permissionMeta.scopes;
+    const scopes = getScopesOrThrow(command.permissionMeta);
     if (!scopes.includes('any')) throw new ForbiddenError();
 
     let targetUser = await this.userRepository.findById(command.targetUserId);

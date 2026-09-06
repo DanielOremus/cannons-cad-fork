@@ -1,16 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  Param,
-  Patch,
-  Post,
-  Query,
-  Req,
-} from '@nestjs/common';
-import type { Request } from 'express';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query } from '@nestjs/common';
 import { SearchCharacterDto } from './dto/search-character.dto.js';
 import { CreateCharacterDto } from './dto/create-character.dto.js';
 import { RequirePermission } from '../../common/decorators/require-permission.decorator.js';

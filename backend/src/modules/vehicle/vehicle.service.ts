@@ -1,4 +1,4 @@
-import { PaginatedList, PaginationDto, PermissionMeta, PermissionType } from '@project/shared';
+import { PaginatedList, PaginationDto, PermissionMeta } from '@project/shared';
 import { CreateVehicleDto } from './dto/create-vehicle.dto.js';
 import { VehicleRepository } from './vehicle.repository.js';
 import { Injectable } from '@nestjs/common';
@@ -9,6 +9,7 @@ import { VehicleDto } from './dto/get-vehicle.dto.js';
 import { UnitOfWork } from '../../core/database/unit-of-work.js';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto.js';
 import { OwnershipService } from '../../shared/modules/ownership/ownership.service.js';
+import { getScopesOrThrow } from '../../shared/utils/permission.helpers.js';
 
 @Injectable()
 export class VehicleService {
@@ -19,9 +20,12 @@ export class VehicleService {
     private readonly ownershipService: OwnershipService,
     private readonly uow: UnitOfWork,
   ) {}
-  async search(licensePlate: string) {
+  async search(licensePlate: string, permissionMeta: PermissionMeta) {
     const vehicle = await this.vehicleRepository.findByLicensePlate(licensePlate, ['owner']);
     if (!vehicle) throw new NotFoundError('Vehicle');
+
+    const scopes = getScopesOrThrow(permissionMeta);
+    if (!scopes.includes('any')) throw new ForbiddenError();
 
     return this.vehicleMapper.toReadDto(vehicle);
   }
@@ -59,8 +63,7 @@ export class VehicleService {
     const vehicle = await this.vehicleRepository.findById(vehicleId, ['owner']);
     if (!vehicle) throw new NotFoundError('Vehicle');
 
-    if (permissionMeta.type !== PermissionType.SCOPED) throw new ForbiddenError();
-    const scopes = permissionMeta.scopes;
+    const scopes = getScopesOrThrow(permissionMeta);
     if (!scopes.includes('any')) this.ownershipService.checkVehicle(vehicle, userId);
 
     await this.vehicleRepository.update(vehicle, dto);
@@ -70,8 +73,7 @@ export class VehicleService {
     const vehicle = await this.vehicleRepository.findById(vehicleId, ['owner']);
     if (!vehicle) throw new NotFoundError('Vehicle');
 
-    if (permissionMeta.type !== PermissionType.SCOPED) throw new ForbiddenError();
-    const scopes = permissionMeta.scopes;
+    const scopes = getScopesOrThrow(permissionMeta);
     if (!scopes.includes('any')) this.ownershipService.checkVehicle(vehicle, userId);
 
     await this.vehicleRepository.delete(vehicle);

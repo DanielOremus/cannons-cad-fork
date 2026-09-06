@@ -1,8 +1,10 @@
 import { RolePermissions, UserRole } from '../types/user/user.role.js';
-import { type PermissionResource } from '../types/permission/index.js';
+import { PermissionsMap, type PermissionResource } from '../types/permission/index.js';
 import { type Permission, type PermissionAction } from '../types/permission/index.js';
 import { UserStatus } from '../types/user/user.status.js';
 import { StaffRolePriority } from '../types/user/staff-role.priority.js';
+import type { PermissionMeta } from '../types/permission/permission.meta.js';
+import { PermissionType } from '../types/permission/permission.type.js';
 
 export function hasPermissionFromRoles(roles: UserRole[], required: Permission) {
   const userPerms = getPermissionsFromRoles(...roles);
@@ -62,8 +64,10 @@ export function buildPermission<R extends PermissionResource>(
   action: PermissionAction<R>,
   arg?: string,
 ) {
-  if (arg) return `${resource}:${action}:${arg}` as Permission;
-  return `${resource}:${action}` as Permission;
+  // eslint-disable-next-line
+  const permMeta = (PermissionsMap[resource] as any)[action] as PermissionMeta;
+  if (permMeta.type === PermissionType.GLOBAL) return `${resource}:${action}` as Permission;
+  return `${resource}:${action}:${arg}` as Permission;
 }
 
 export function accountActive({ status, emailConfirmed }: AccountActiveArgs) {

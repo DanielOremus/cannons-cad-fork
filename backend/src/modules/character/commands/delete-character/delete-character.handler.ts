@@ -2,10 +2,10 @@ import { CommandHandler } from '@nestjs/cqrs';
 import { ICommandHandler } from '@nestjs/cqrs';
 import { DeleteCharacterCommand } from './delete-character.command.js';
 import { CharacterRepository } from '../../character.repository.js';
-import { ForbiddenError, NotFoundError } from '../../../../shared/errors/app.error.js';
+import { NotFoundError } from '../../../../shared/errors/app.error.js';
 import { UnitOfWork } from '../../../../core/database/unit-of-work.js';
 import { OwnershipService } from '../../../../shared/modules/ownership/ownership.service.js';
-import { PermissionType } from '@project/shared';
+import { getScopesOrThrow } from '../../../../shared/utils/permission.helpers.js';
 
 @CommandHandler(DeleteCharacterCommand)
 export class DeleteCharacterHandler implements ICommandHandler<DeleteCharacterCommand> {
@@ -18,8 +18,7 @@ export class DeleteCharacterHandler implements ICommandHandler<DeleteCharacterCo
     const character = await this.characterRepository.findById(command.characterId);
     if (!character) throw new NotFoundError('Character');
 
-    if (command.permissionMeta.type !== PermissionType.SCOPED) throw new ForbiddenError();
-    const scopes = command.permissionMeta.scopes;
+    const scopes = getScopesOrThrow(command.permissionMeta);
     if (!scopes.includes('any')) this.ownershipService.checkCharacter(character, command.userId);
 
     await this.characterRepository.delete(character);
