@@ -1,39 +1,41 @@
 import { RolePermissions, UserRole } from '../types/user/user.role.js';
-import { type Permission, type ResourceAction } from '../types/permission/index.js';
-import { PermissionResource } from '../types/permission/permission.resource.js';
+import { PermissionsMap, type PermissionResource } from '../types/permission/index.js';
+import { type Permission, type PermissionAction } from '../types/permission/index.js';
 import { UserStatus } from '../types/user/user.status.js';
-import type { PermissionScope } from '../types/permission/permission.scope.js';
 import { StaffRolePriority } from '../types/user/staff-role.priority.js';
+import type { PermissionMeta } from '../types/permission/permission.meta.js';
+import { PermissionType } from '../types/permission/permission.type.js';
 
-export function hasPermissionFromRoles<T extends PermissionResource>(
-  roles: UserRole[],
-  resource: T,
-  action: ResourceAction<T>,
-  scope: PermissionScope,
-): boolean {
-  const required = `${resource}:${action}:${scope}` as Permission;
+export function hasPermissionFromRoles(roles: UserRole[], required: Permission) {
   const userPerms = getPermissionsFromRoles(...roles);
   return userPerms.has(required);
 }
 
-export function hasPermission<T extends PermissionResource>(
-  permissions: Permission[],
-  resource: T,
-  action: ResourceAction<T>,
-  scope: PermissionScope,
-) {
-  const required = `${resource}:${action}:${scope}` as Permission;
+export function hasPermission(permissions: Permission[], required: Permission) {
   return permissions.includes(required);
 }
 
-export function hasPermissionFromSet<T extends PermissionResource>(
+export function hasPermissionFromSet(permissions: Set<Permission>, permission: Permission) {
+  return permissions.has(permission);
+}
+
+export function findPermissionsByPrefix<T>(
   permissions: Set<Permission>,
-  resource: T,
-  action: ResourceAction<T>,
-  scope: PermissionScope,
+  prefix: string,
+  allowedArgs?: readonly T[],
 ) {
-  const required = `${resource}:${action}:${scope}` as Permission;
-  return permissions.has(required);
+  const resultArr: Permission[] = [];
+  const resultArgs: T[] = [];
+  for (const perm of permissions) {
+    if (perm.startsWith(prefix)) {
+      const permArg = perm.slice(prefix.length) as T;
+      if (!allowedArgs || allowedArgs.includes(permArg)) {
+        resultArr.push(perm);
+        resultArgs.push(permArg);
+      }
+    }
+  }
+  return { permissions: resultArr, permissionArgs: resultArgs };
 }
 
 export function getPermissionsFromRoles(...roles: UserRole[]): Set<Permission> {
@@ -55,6 +57,17 @@ export function getHighestRolePriority(roles: UserRole[]) {
 
 export function hasHigherOrSamePriority(roles: UserRole[], comparePriority: number) {
   return roles.some((r) => getStaffPriority(r) >= comparePriority);
+}
+
+export function buildPermission<R extends PermissionResource>(
+  resource: R,
+  action: PermissionAction<R>,
+  arg?: string,
+) {
+  // eslint-disable-next-line
+  const permMeta = (PermissionsMap[resource] as any)[action] as PermissionMeta;
+  if (permMeta.type === PermissionType.GLOBAL) return `${resource}:${action}` as Permission;
+  return `${resource}:${action}:${arg}` as Permission;
 }
 
 export function accountActive({ status, emailConfirmed }: AccountActiveArgs) {

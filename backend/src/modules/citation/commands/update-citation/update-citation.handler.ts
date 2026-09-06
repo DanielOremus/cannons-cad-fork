@@ -4,6 +4,7 @@ import { OwnershipService } from '../../../../shared/modules/ownership/ownership
 import { CitationRepository } from '../../citation.repository.js';
 import { UpdateCitationCommand } from './update-citation.command.js';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { getScopesOrThrow } from '../../../../shared/utils/permission.helpers.js';
 
 @CommandHandler(UpdateCitationCommand)
 export class UpdateCitationHandler implements ICommandHandler<UpdateCitationCommand> {
@@ -16,7 +17,8 @@ export class UpdateCitationHandler implements ICommandHandler<UpdateCitationComm
     const citation = await this.citationRepository.findById(command.id);
     if (!citation) throw new NotFoundError('Citation');
 
-    this.ownershipService.checkCitation(citation, command.userId, command.scope);
+    const scopes = getScopesOrThrow(command.permissionMeta);
+    if (!scopes.includes('any')) this.ownershipService.checkCitation(citation, command.userId);
 
     await this.citationRepository.update(citation, command.dto);
     await this.uow.saveChanges();

@@ -1,27 +1,3 @@
-// export const CitationSchema = defineEntity({
-//   name: 'Citation',
-//   extends: BaseSchema,
-//   properties: {
-//     charges: () => p.oneToMany(ChargeEntity).mappedBy('citation'),
-//     issuedVehicle: () => p.manyToOne(VehicleEntity).nullable().deleteRule('set null').owner(),
-//     issuedCharacter: () =>
-//       p.manyToOne(CharacterEntity).inversedBy('citations').deleteRule('cascade').owner(),
-//     issuedAt: p.datetime().onCreate(() => new Date()),
-//   },
-// });
-
-// export const ChargeSchema = defineEntity({
-//   name: 'ChargeEntity',
-//   extends: BaseSchema,
-//   properties: {
-//     amount: p.integer(),
-//     reason: p.string(),
-//     jailTime: p.string().nullable(),
-//     count: p.integer().default(1),
-//     citation: () => p.manyToOne(CitationEntity).deleteRule('cascade'),
-//   },
-// });
-
 import { z } from 'zod/v4';
 import { idValidator } from './common.schema.js';
 import { CitationStatus } from '../types/citation/citation.status.js';
@@ -34,6 +10,8 @@ const chargeValidator = z.object({
 });
 
 export const createCitationSchema = z.object({
+  officerName: z.string().trim().nonempty(),
+  officerRank: z.string().trim().nonempty(),
   charges: z.array(chargeValidator).nonempty(),
   issuedCharacterId: idValidator,
   issuedVehicleId: z.nullish(idValidator),

@@ -5,6 +5,7 @@ import { UserRepository } from '../../user.repository.js';
 import { UpdateUserCommand } from './update-user.command.js';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthCacheService } from '../../../../shared/modules/auth-cache/auth-cache.service.js';
+import { getScopesOrThrow } from '../../../../shared/utils/permission.helpers.js';
 
 @CommandHandler(UpdateUserCommand)
 export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
@@ -15,7 +16,8 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
   ) {}
   async execute(command: UpdateUserCommand): Promise<void> {
     //ensure current user can update any user
-    if (command.scope !== 'any') throw new ForbiddenError();
+    const scopes = getScopesOrThrow(command.permissionMeta);
+    if (!scopes.includes('any')) throw new ForbiddenError();
 
     let targetUser = await this.userRepository.findById(command.targetUserId);
     if (!targetUser) throw new NotFoundError('User');

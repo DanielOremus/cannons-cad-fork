@@ -10,6 +10,10 @@ import { UpdateUserCommand } from './commands/update-user/update-user.command.js
 import { UsersFilterDto } from './dto/get-users-filter.dto.js';
 import { GetUsersListQuery } from './queries/get-users-list/get-users-list.query.js';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe.js';
+import { GetPermissionMeta } from '../../common/decorators/get-permission-meta.decorator.js';
+import { type PermissionMeta } from '@project/shared';
+import { GetAuthUser } from '../../common/decorators/get-auth.user.decorator.js';
+import { type AuthUser } from '../../shared/types/user.js';
 
 @Controller('/users')
 export class UserController {
@@ -20,10 +24,10 @@ export class UserController {
   @Get('/')
   @RequirePermission('user', 'read')
   async getList(
-    @Req() req: Request,
     @Query(new ZodValidationPipe(UsersFilterDto.schema)) query: UsersFilterDto,
+    @GetPermissionMeta() permissionMeta: PermissionMeta,
   ) {
-    return await this.queryBus.execute(new GetUsersListQuery(query, req.permissionScope!));
+    return await this.queryBus.execute(new GetUsersListQuery(query, permissionMeta));
   }
   @Get('/me')
   @RequirePermission('user', 'read')
@@ -33,19 +37,23 @@ export class UserController {
   }
   @Get('/:id')
   @RequirePermission('user', 'read')
-  async getById(@Param('id', new UuidParamPipe()) id: string, @Req() req: Request) {
-    return await this.queryBus.execute(new GetUserQuery(id, req.permissionScope!));
+  async getById(
+    @Param('id', new UuidParamPipe()) id: string,
+    @GetPermissionMeta() permissionMeta: PermissionMeta,
+  ) {
+    return await this.queryBus.execute(new GetUserQuery(id, permissionMeta));
   }
   @Patch('/:id')
   @RequirePermission('user', 'update')
   @HttpCode(204)
   async update(
     @Param('id', new UuidParamPipe()) id: string,
-    @Req() req: Request,
     @Body(new ZodValidationPipe(UpdateUserDto.schema)) dto: UpdateUserDto,
+    @GetAuthUser() user: AuthUser,
+    @GetPermissionMeta() permissionMeta: PermissionMeta,
   ) {
     return await this.commandBus.execute(
-      new UpdateUserCommand(id, dto, req.user!.roles, req.permissionScope!),
+      new UpdateUserCommand(id, dto, user.roles, permissionMeta),
     );
   }
 }

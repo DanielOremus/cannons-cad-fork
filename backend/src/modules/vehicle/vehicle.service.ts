@@ -1,14 +1,15 @@
-import { PaginatedList, PaginationDto, PermissionScope } from '@project/shared';
+import { PaginatedList, PaginationDto, PermissionMeta } from '@project/shared';
 import { CreateVehicleDto } from './dto/create-vehicle.dto.js';
 import { VehicleRepository } from './vehicle.repository.js';
 import { Injectable } from '@nestjs/common';
 import { CharacterRepository } from '../character/character.repository.js';
-import { NotFoundError } from '../../shared/errors/app.error.js';
+import { ForbiddenError, NotFoundError } from '../../shared/errors/app.error.js';
 import { VehicleMapper } from './vehicle.mapper.js';
 import { VehicleDto } from './dto/get-vehicle.dto.js';
 import { UnitOfWork } from '../../core/database/unit-of-work.js';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto.js';
 import { OwnershipService } from '../../shared/modules/ownership/ownership.service.js';
+import { getScopesOrThrow } from '../../shared/utils/permission.helpers.js';
 
 @Injectable()
 export class VehicleService {
@@ -19,9 +20,12 @@ export class VehicleService {
     private readonly ownershipService: OwnershipService,
     private readonly uow: UnitOfWork,
   ) {}
-  async search(licensePlate: string) {
+  async search(licensePlate: string, permissionMeta: PermissionMeta) {
     const vehicle = await this.vehicleRepository.findByLicensePlate(licensePlate, ['owner']);
     if (!vehicle) throw new NotFoundError('Vehicle');
+
+    const scopes = getScopesOrThrow(permissionMeta);
+    if (!scopes.includes('any')) throw new ForbiddenError();
 
     return this.vehicleMapper.toReadDto(vehicle);
   }
@@ -38,10 +42,11 @@ export class VehicleService {
       total: result.total,
     };
   }
-  async create(dto: CreateVehicleDto, userId: string, scope: PermissionScope): Promise<VehicleDto> {
+  async create(dto: CreateVehicleDto, userId: string): Promise<VehicleDto> {
     const character = await this.characterRepository.findById(dto.characterId);
     if (!character) throw new NotFoundError('Character');
-    this.ownershipService.checkCharacter(character, userId, scope);
+    //Owns character (only own)
+    this.ownershipService.checkCharacter(character, userId);
 
     const { characterId: owner, ...rest } = dto;
     const vehicle = await this.vehicleRepository.create({ owner, ...rest });
@@ -49,19 +54,28 @@ export class VehicleService {
 
     return this.vehicleMapper.toReadDto(vehicle);
   }
-  async update(vehicleId: number, dto: UpdateVehicleDto, userId: string, scope: PermissionScope) {
+  async update(
+    vehicleId: number,
+    dto: UpdateVehicleDto,
+    userId: string,
+    permissionMeta: PermissionMeta,
+  ) {
     const vehicle = await this.vehicleRepository.findById(vehicleId, ['owner']);
     if (!vehicle) throw new NotFoundError('Vehicle');
 
-    this.ownershipService.checkVehicle(vehicle, userId, scope);
+    const scopes = getScopesOrThrow(permissionMeta);
+    if (!scopes.includes('any')) this.ownershipService.checkVehicle(vehicle, userId);
+
     await this.vehicleRepository.update(vehicle, dto);
     await this.uow.saveChanges();
   }
-  async delete(vehicleId: number, userId: string, scope: PermissionScope) {
+  async delete(vehicleId: number, userId: string, permissionMeta: PermissionMeta) {
     const vehicle = await this.vehicleRepository.findById(vehicleId, ['owner']);
     if (!vehicle) throw new NotFoundError('Vehicle');
 
-    this.ownershipService.checkVehicle(vehicle, userId, scope);
+    const scopes = getScopesOrThrow(permissionMeta);
+    if (!scopes.includes('any')) this.ownershipService.checkVehicle(vehicle, userId);
+
     await this.vehicleRepository.delete(vehicle);
     await this.uow.saveChanges();
   }

@@ -5,6 +5,7 @@ import { CharacterRepository } from '../../character.repository.js';
 import { NotFoundError } from '../../../../shared/errors/app.error.js';
 import { UnitOfWork } from '../../../../core/database/unit-of-work.js';
 import { OwnershipService } from '../../../../shared/modules/ownership/ownership.service.js';
+import { getScopesOrThrow } from '../../../../shared/utils/permission.helpers.js';
 
 @CommandHandler(DeleteCharacterCommand)
 export class DeleteCharacterHandler implements ICommandHandler<DeleteCharacterCommand> {
@@ -16,7 +17,10 @@ export class DeleteCharacterHandler implements ICommandHandler<DeleteCharacterCo
   async execute(command: DeleteCharacterCommand) {
     const character = await this.characterRepository.findById(command.characterId);
     if (!character) throw new NotFoundError('Character');
-    this.ownershipService.checkCharacter(character, command.userId, command.scope);
+
+    const scopes = getScopesOrThrow(command.permissionMeta);
+    if (!scopes.includes('any')) this.ownershipService.checkCharacter(character, command.userId);
+
     await this.characterRepository.delete(character);
     await this.uow.saveChanges();
   }

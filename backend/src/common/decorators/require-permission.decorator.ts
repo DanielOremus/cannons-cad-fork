@@ -1,11 +1,11 @@
 import { SetMetadata } from '@nestjs/common';
-import { PermissionResource, ResourceAction } from '@project/shared';
+import { PermissionAction, PermissionResource } from '@project/shared';
 
 export const PERMISSION_KEY = 'permission';
 
-export function RequirePermission<T extends PermissionResource>(
-  resource: T,
-  action: ResourceAction<T>,
+export function RequirePermission<R extends PermissionResource>(
+  resource: R,
+  action: PermissionAction<R>,
 ) {
-  return SetMetadata(PERMISSION_KEY, { action, resource });
+  return SetMetadata(PERMISSION_KEY, { resource, action });
 }

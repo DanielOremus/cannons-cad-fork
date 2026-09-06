@@ -1,8 +1,9 @@
-import { NotFoundError } from '../../../../shared/errors/app.error.js';
+import { ForbiddenError, NotFoundError } from '../../../../shared/errors/app.error.js';
 import { CharacterMapper } from '../../character.mapper.js';
 import { CharacterRepository } from '../../character.repository.js';
 import { SearchCharacterQuery } from './search-character.query.js';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { getScopesOrThrow } from '../../../../shared/utils/permission.helpers.js';
 
 @QueryHandler(SearchCharacterQuery)
 export class SearchCharacterHandler implements IQueryHandler<SearchCharacterQuery> {
@@ -13,6 +14,9 @@ export class SearchCharacterHandler implements IQueryHandler<SearchCharacterQuer
   async execute(query: SearchCharacterQuery) {
     const character = await this.characterRepository.findByNameAndDob(query.dto, ['user']);
     if (!character) throw new NotFoundError('Character');
+
+    const scopes = getScopesOrThrow(query.permissionMeta);
+    if (!scopes.includes('any')) throw new ForbiddenError();
 
     const [vehiclesCount, citationsCount] = await Promise.all([
       this.characterRepository.countVehicles(character),
