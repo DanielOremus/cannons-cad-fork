@@ -1,7 +1,7 @@
-import { defineEntity, p } from '@mikro-orm/core';
+import { defineEntity, EventArgs, p } from '@mikro-orm/core';
 import { BaseSchema } from '../../../shared/entities/base.entity.js';
 import { UserEntity } from '../../user/entities/user.entity.js';
-import { UnitEntity } from './unit.entity.js';
+import { UnitEntity } from '../../unit/entities/unit.entity.js';
 
 export const UnitMemberSchema = defineEntity({
   name: 'UnitMember',
@@ -10,7 +10,8 @@ export const UnitMemberSchema = defineEntity({
     name: p.string(),
     rank: p.string(),
     user: () => p.oneToOne(UserEntity).inversedBy('id').deleteRule('cascade'),
-    unit: () => p.manyToOne(UnitEntity).inversedBy('id').deleteRule('cascade'),
+    unit: () => p.manyToOne(UnitEntity).inversedBy('id').nullable().deleteRule('set null'),
+    lastJoinAt: p.datetime().onCreate(() => new Date()),
   },
 });
 

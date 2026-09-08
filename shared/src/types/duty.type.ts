@@ -1,6 +1,7 @@
 export const DutyType = {
   POLICE: 'police',
   DISPATCH: 'dispatch',
+  ADMIN: 'admin',
   CIVILIAN: 'civilian',
 } as const;
 

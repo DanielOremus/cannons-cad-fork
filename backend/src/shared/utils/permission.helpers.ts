@@ -5,3 +5,8 @@ export const getScopesOrThrow = (meta: PermissionMeta) => {
   if (meta.type !== PermissionType.SCOPED) throw new ForbiddenError();
   return meta.scopes;
 };
+
+export const getContextsOrThrow = (meta: PermissionMeta) => {
+  if (meta.type !== PermissionType.CONTEXTUAL) throw new ForbiddenError();
+  return meta.contexts;
+};

@@ -4,5 +4,6 @@ export const DefinedPermissionResource = [
   'character',
   'citation',
   'duty',
+  'unit',
 ] as const;
 export type DefinedPermissionResource = (typeof DefinedPermissionResource)[number];

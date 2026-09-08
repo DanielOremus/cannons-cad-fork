@@ -1,6 +1,6 @@
 import { defineEntity, p } from '@mikro-orm/core';
 import { BaseSchema } from '../../../shared/entities/base.entity.js';
-import { UnitMemberEntity } from './unit-member.entity.js';
+import { UnitMemberEntity } from '../../unit-member/entities/unit-member.entity.js';
 import { UnitStatus } from '@project/shared';
 
 export const UnitSchema = defineEntity({
