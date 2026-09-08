@@ -15,16 +15,13 @@ export class OrmVehicleRepository implements VehicleRepository {
     pagination: PaginationDto,
   ): Promise<{ items: VehicleEntity[]; total: number }> {
     const { limit, page } = pagination;
-    const itemsPromise = this.em.find(
+    const [items, total] = await this.em.findAndCount(
       this.entity,
       { owner: characterId },
       { limit, offset: (page - 1) * limit },
     );
-    const countPromise = this.em.count(this.entity, { owner: characterId });
 
-    const [vehicles, total] = await Promise.all([itemsPromise, countPromise]);
-
-    return { items: vehicles, total };
+    return { items, total };
   }
   async findByLicensePlate(
     plate: string,

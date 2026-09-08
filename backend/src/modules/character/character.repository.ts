@@ -3,6 +3,7 @@ import { CharacterEntity } from './entities/character.entity.js';
 import { SearchCharacterDto } from './dto/search-character.dto.js';
 import { CreateCharacterInput } from './inputs/create-character.input.js';
 import { UpdateCharacterDto } from './dto/update-character.dto.js';
+import { PaginatedList, PaginationDto } from '@project/shared';
 
 @Injectable()
 export abstract class CharacterRepository {
@@ -14,6 +15,10 @@ export abstract class CharacterRepository {
   abstract delete(entity: CharacterEntity): Promise<void>;
   abstract update(entity: CharacterEntity, input: UpdateCharacterDto): Promise<CharacterEntity>;
   abstract findById(id: number, populate?: CharacterPopulate[]): Promise<CharacterEntity | null>;
+  abstract findManyByUserId(
+    userId: string,
+    pagination: PaginationDto,
+  ): Promise<{ total: number; items: CharacterEntity[] }>;
   abstract countVehicles(entity: CharacterEntity): Promise<number>;
   abstract countCitations(entity: CharacterEntity): Promise<number>;
 }

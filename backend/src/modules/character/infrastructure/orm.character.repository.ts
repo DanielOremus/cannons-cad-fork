@@ -6,6 +6,7 @@ import { SearchCharacterDto } from '../dto/search-character.dto.js';
 import { CreateCharacterInput } from '../inputs/create-character.input.js';
 import { CharacterPopulate } from '../character.repository.js';
 import { UpdateCharacterDto } from '../dto/update-character.dto.js';
+import { PaginatedList, PaginationDto } from '@project/shared';
 
 @Injectable()
 export class OrmCharacterRepository extends CharacterRepository {
@@ -35,6 +36,22 @@ export class OrmCharacterRepository extends CharacterRepository {
   }
   async findById(id: number, populate?: CharacterPopulate[]): Promise<CharacterEntity | null> {
     return await this.em.findOne(this.entity, { id }, { populate });
+  }
+  async findManyByUserId(
+    userId: string,
+    pagination: PaginationDto,
+  ): Promise<{ total: number; items: CharacterEntity[] }> {
+    const [items, total] = await this.em.findAndCount(
+      this.entity,
+      {
+        user: userId,
+      },
+      {
+        limit: pagination.limit,
+        offset: (pagination.page - 1) * pagination.limit,
+      },
+    );
+    return { total, items };
   }
   async create(data: CreateCharacterInput): Promise<CharacterEntity> {
     return await this.em.create(this.entity, data);

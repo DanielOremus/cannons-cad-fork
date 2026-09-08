@@ -7,9 +7,11 @@ import { UsersFilterDto } from './dto/get-users-filter.dto.js';
 @Injectable()
 export abstract class UserRepository {
   abstract findMany(query: UsersFilterDto): Promise<{ items: UserEntity[]; total: number }>;
-  abstract findById(id: string): Promise<UserEntity | null>;
+  abstract findById(id: string, populate?: UserPopulate[]): Promise<UserEntity | null>;
   abstract findByEmail(email: string): Promise<UserEntity | null>;
   abstract create(input: CreateUserInput): Promise<UserEntity>;
   abstract update(entity: UserEntity, input: UpdateUserInput): Promise<UserEntity>;
   abstract delete(id: string): Promise<void>;
 }
+
+export type UserPopulate = 'characters';

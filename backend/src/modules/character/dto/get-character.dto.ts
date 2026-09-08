@@ -1,15 +1,23 @@
-import { CharacterFlag, DriverLicenseDto, CharacterDto as ReadDto } from '@project/shared';
+import {
+  CharacterFlag,
+  DriverLicenseDto,
+  CharacterDto as ReadDto,
+  CharacterListItemDto as ListItemDto,
+} from '@project/shared';
 
-export class CharacterDto implements ReadDto {
+export class CharacterListItemDto implements ListItemDto {
   id: number;
   firstName: string;
   lastName: string;
-  dob: string;
   age: number;
+  dob: string;
+  flags: CharacterFlag[];
+}
+
+export class CharacterDto extends CharacterListItemDto implements ReadDto {
   phoneNumber?: string | null;
   address?: string | null;
   hasGunPermit: boolean;
-  flags: CharacterFlag[];
   driverLicense: DriverLicenseDto | null;
   citationsCount: number;
   vehiclesCount: number;

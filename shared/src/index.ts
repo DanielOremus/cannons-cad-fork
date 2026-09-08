@@ -43,7 +43,7 @@ export type {
 } from './dto/user/auth-user.dto.js';
 export type { UpdateUserDto, UpdateUserEmailDto } from './dto/user/update-user.dto.js';
 
-export { type CharacterDto } from './dto/character/get-character.dto.js';
+export type { CharacterDto, CharacterListItemDto } from './dto/character/get-character.dto.js';
 export type {
   CreateCharacterDto,
   CreateCharacterResponseDto,
