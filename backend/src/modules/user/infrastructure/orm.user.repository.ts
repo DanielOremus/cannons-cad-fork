@@ -1,4 +1,4 @@
-import { UserRepository } from '../user.repository.js';
+import { UserPopulate, UserRepository } from '../user.repository.js';
 import { UserEntity } from '../entities/user.entity.js';
 import { CreateUserInput } from '../inputs/create-user.input.js';
 import { UpdateUserInput } from '../inputs/update-user.input.js';
@@ -10,25 +10,20 @@ import { UsersFilterDto } from '../dto/get-users-filter.dto.js';
 export class OrmUserRepository implements UserRepository {
   private readonly entity = UserEntity;
   constructor(private readonly em: EntityManager) {}
-  async findById(id: string): Promise<UserEntity | null> {
-    return await this.em.findOne(this.entity, { id });
+  async findById(id: string, populate: UserPopulate[] = []): Promise<UserEntity | null> {
+    return await this.em.findOne(this.entity, { id }, { populate });
   }
   async findMany(query: UsersFilterDto): Promise<{ items: UserEntity[]; total: number }> {
     const { status, sortBy, sortOrder, page, limit } = query;
     const where: FilterQuery<UserEntity> = {};
     if (status) where.status = status;
 
-    const usersPromise = this.em.findAll(this.entity, {
-      where,
+    const [items, total] = await this.em.findAndCount(this.entity, where, {
       limit,
       offset: (page - 1) * limit,
       orderBy: { [sortBy]: sortOrder },
     });
-    const countPromise = this.em.count(this.entity, where);
-
-    const [users, total] = await Promise.all([usersPromise, countPromise]);
-
-    return { items: users, total };
+    return { items, total };
   }
   async findByEmail(email: string): Promise<UserEntity | null> {
     return await this.em.findOne(this.entity, { email });

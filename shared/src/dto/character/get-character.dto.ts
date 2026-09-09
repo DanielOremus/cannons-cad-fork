@@ -15,3 +15,8 @@ export type CharacterDto = {
   vehiclesCount: number;
   citationsCount: number;
 };
+
+export type CharacterListItemDto = Pick<
+  CharacterDto,
+  'id' | 'firstName' | 'lastName' | 'age' | 'dob' | 'flags'
+>;

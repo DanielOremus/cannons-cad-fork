@@ -17,6 +17,7 @@ import { DeleteCharacterCommand } from './commands/delete-character/delete-chara
 import { GetPermissionMeta } from '../../common/decorators/get-permission-meta.decorator.js';
 import { GetAuthUser } from '../../common/decorators/get-auth.user.decorator.js';
 import { type AuthUser } from '../../shared/types/user.js';
+import { GetCharactersListQuery } from './queries/get-characters-list/get-characters-list.query.js';
 
 @Controller('/characters')
 export class CharacterController {
@@ -24,6 +25,18 @@ export class CharacterController {
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
   ) {}
+
+  @Get('/my')
+  @RequirePermission('character', 'read')
+  async getMyCharacters(
+    @Query(new ZodValidationPipe(paginationSchema)) pagination: PaginationDto,
+    @GetAuthUser() user: AuthUser,
+    @GetPermissionMeta() permissionMeta: PermissionMeta,
+  ) {
+    return await this.queryBus.execute(
+      new GetCharactersListQuery(user.id, user.id, permissionMeta, pagination),
+    );
+  }
 
   @Get('/search')
   @RequirePermission('character', 'read')

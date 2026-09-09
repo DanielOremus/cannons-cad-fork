@@ -13,8 +13,9 @@ import { CreateCharacterHandler } from './commands/create-character/create-chara
 import { UpdateCharacterHandler } from './commands/update-character/update-character.handler.js';
 import { DeleteCharacterHandler } from './commands/delete-character/delete-character.handler.js';
 import { OwnershipModule } from '../../shared/modules/ownership/ownership.module.js';
+import { GetCharactersListHandler } from './queries/get-characters-list/get-characters-list.handler.js';
 
-const queryHandlers = [GetCharacterHandler, SearchCharacterHandler];
+const queryHandlers = [GetCharacterHandler, SearchCharacterHandler, GetCharactersListHandler];
 const commandHandlers = [CreateCharacterHandler, UpdateCharacterHandler, DeleteCharacterHandler];
 
 @Module({

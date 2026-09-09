@@ -9,11 +9,28 @@ import { SearchVehicleDto } from './dto/search-vehicle.dto.js';
 import { GetAuthUser } from '../../common/decorators/get-auth.user.decorator.js';
 import { type AuthUser } from '../../shared/types/user.js';
 import { GetPermissionMeta } from '../../common/decorators/get-permission-meta.decorator.js';
-import { type PermissionMeta } from '@project/shared';
+import { type PaginationDto, paginationSchema, type PermissionMeta } from '@project/shared';
 
 @Controller('/vehicles')
 export class VehicleController {
   constructor(private readonly vehicleService: VehicleService) {}
+
+  @Get('/:characterId')
+  @RequirePermission('vehicle', 'read')
+  async getList(
+    @Param('characterId', new IdParamPipe()) characterId: number,
+    @Query(new ZodValidationPipe(paginationSchema)) pagination: PaginationDto,
+    @GetAuthUser()
+    user: AuthUser,
+    @GetPermissionMeta() permissionMeta: PermissionMeta,
+  ) {
+    return await this.vehicleService.findManyByCharacter(
+      characterId,
+      user.id,
+      permissionMeta,
+      pagination,
+    );
+  }
 
   @Get('/search')
   @RequirePermission('vehicle', 'read')
