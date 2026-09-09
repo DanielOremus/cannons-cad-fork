@@ -37,7 +37,7 @@ export class OrmCharacterRepository extends CharacterRepository {
   async findById(id: number, populate?: CharacterPopulate[]): Promise<CharacterEntity | null> {
     return await this.em.findOne(this.entity, { id }, { populate });
   }
-  async findManyByUserId(
+  async findManyByUser(
     userId: string,
     pagination: PaginationDto,
   ): Promise<{ total: number; items: CharacterEntity[] }> {

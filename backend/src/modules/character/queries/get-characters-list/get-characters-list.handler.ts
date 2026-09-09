@@ -21,24 +21,12 @@ export class GetCharactersListHandler implements IQueryHandler<GetCharactersList
     const { targetUserId, permissionMeta, currentUserId, pagination } = query;
     const scopes = getScopesOrThrow(permissionMeta);
 
-    if (!scopes.includes('any')) {
-      this.ownershipService.checkProfile(targetUserId, currentUserId);
-      const { total, items } = await this.characterRepository.findManyByUserId(
-        currentUserId,
-        pagination,
-      );
-      return {
-        total,
-        limit: pagination.limit,
-        page: pagination.page,
-        items: this.characterMapper.toListDto(items),
-      };
-    }
-
     const user = await this.userRepository.findById(targetUserId);
     if (!user) throw new NotFoundError('User');
 
-    const { total, items } = await this.characterRepository.findManyByUserId(
+    if (!scopes.includes('any')) this.ownershipService.checkProfile(targetUserId, currentUserId);
+
+    const { total, items } = await this.characterRepository.findManyByUser(
       targetUserId,
       pagination,
     );

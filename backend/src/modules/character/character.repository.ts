@@ -15,7 +15,7 @@ export abstract class CharacterRepository {
   abstract delete(entity: CharacterEntity): Promise<void>;
   abstract update(entity: CharacterEntity, input: UpdateCharacterDto): Promise<CharacterEntity>;
   abstract findById(id: number, populate?: CharacterPopulate[]): Promise<CharacterEntity | null>;
-  abstract findManyByUserId(
+  abstract findManyByUser(
     userId: string,
     pagination: PaginationDto,
   ): Promise<{ total: number; items: CharacterEntity[] }>;

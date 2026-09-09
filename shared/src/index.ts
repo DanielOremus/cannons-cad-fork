@@ -54,7 +54,7 @@ export type {
 } from './dto/character/search-character.dto.js';
 export { type UpdateCharacterDto } from './dto/character/update-character.dto.js';
 
-export { type VehicleDto } from './dto/vehicle/get-vehicle.dto.js';
+export type { VehicleDto } from './dto/vehicle/get-vehicle.dto.js';
 export { type SearchVehicleDto } from './dto/vehicle/search-vehicle.dto.js';
 export { type UpdateVehicleDto } from './dto/vehicle/update-vehicle.dto.js';
 export { type CreateVehicleDto } from './dto/vehicle/create-vehicle.dto.js';

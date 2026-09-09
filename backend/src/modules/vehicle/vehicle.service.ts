@@ -29,17 +29,26 @@ export class VehicleService {
 
     return this.vehicleMapper.toReadDto(vehicle);
   }
-  async findManyByOwner(
-    ownerId: number,
+  async findManyByCharacter(
+    characterId: number,
+    userId: string,
+    permissionMeta: PermissionMeta,
     pagination: PaginationDto,
   ): Promise<PaginatedList<VehicleDto>> {
-    const result = await this.vehicleRepository.findByCharacter(ownerId, pagination);
+    const scopes = getScopesOrThrow(permissionMeta);
+
+    const character = await this.characterRepository.findById(characterId);
+    if (!character) throw new NotFoundError('Character');
+
+    if (!scopes.includes('any')) this.ownershipService.checkCharacter(character, userId);
+
+    const { total, items } = await this.vehicleRepository.findByCharacter(characterId, pagination);
 
     return {
+      total,
       limit: pagination.limit,
       page: pagination.page,
-      items: this.vehicleMapper.toDtoList(result.items),
-      total: result.total,
+      items: this.vehicleMapper.toDtoList(items),
     };
   }
   async create(dto: CreateVehicleDto, userId: string): Promise<VehicleDto> {
