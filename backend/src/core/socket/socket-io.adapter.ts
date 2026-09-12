@@ -5,6 +5,9 @@ import { ForbiddenError, UnauthorizedError } from '../../shared/errors/app.error
 import { AuthUser } from '../../shared/types/user.js';
 import { AuthSessionService } from '../../shared/modules/auth-session/auth-session.service.js';
 import { accountActive } from '@project/shared';
+import { ServerToClientEvents } from '@project/shared';
+import { RedisService } from '../redis/redis.service.js';
+import { SocketSessionService } from './socket-session.service.js';
 
 type SocketData = {
   user?: AuthUser;
@@ -12,14 +15,16 @@ type SocketData = {
 
 export class SocketIoAdapter extends IoAdapter {
   private readonly authSessionService: AuthSessionService;
+  private readonly socketSession: SocketSessionService;
   constructor(private readonly app: INestApplicationContext) {
     super(app);
     this.authSessionService = this.app.get(AuthSessionService);
+    this.socketSession = this.app.get(SocketSessionService);
   }
   createIOServer(port: number, options?: ServerOptions) {
     const server = super.createIOServer(port, options) as Server<
       DefaultEventsMap,
-      DefaultEventsMap,
+      ServerToClientEvents,
       DefaultEventsMap,
       SocketData
     >;
@@ -54,6 +59,7 @@ export class SocketIoAdapter extends IoAdapter {
         socketError.data = { errorCode: error.code, errorMessage: error.message };
         return next(error);
       }
+      await this.socketSession.setUserSocket(authUser.id, socket.id);
 
       next();
     });

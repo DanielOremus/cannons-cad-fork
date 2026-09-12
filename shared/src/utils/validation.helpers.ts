@@ -4,6 +4,7 @@ import type {
   IssueCode,
   ValidationIssues,
 } from '../types/error/validation.error.js';
+import { LiveDuties, type DutyType } from '../types/duty.type.js';
 
 function generateIssueObj<C extends IssueCode>(
   issue: z.core.$ZodIssue,
@@ -64,3 +65,7 @@ export function mapZodIssue(issue: z.core.$ZodIssue): ValidationIssue {
 
 //   } satisfies ValidationIssues[typeof myCode];
 // }
+export function isLiveDuty(type: DutyType): type is LiveDuties {
+  // eslint-disable-next-line
+  return LiveDuties.includes(type as any);
+}

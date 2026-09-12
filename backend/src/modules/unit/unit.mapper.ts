@@ -7,10 +7,11 @@ import { UnitDto } from './dto/get-unit.dto.js';
 export class UnitMapper {
   constructor(private readonly unitMemberMapper: UnitMemberMapper) {}
   toReadDto(unit: UnitEntity): UnitDto {
-    const { id, callsign, status, members } = unit;
+    const { id, callsign, status, members, duty } = unit;
     return {
       id,
       callsign,
+      duty,
       status,
       members: this.unitMemberMapper.toListDto(Array.from(members)),
     };

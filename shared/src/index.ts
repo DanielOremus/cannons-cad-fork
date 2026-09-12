@@ -33,7 +33,7 @@ export { StaffRolePriority } from './types/user/staff-role.priority.js';
 
 export { UnitStatus } from './types/unit.status.js';
 
-export { DutyType } from './types/duty.type.js';
+export { DutyType, LiveDuty } from './types/duty.type.js';
 
 //Dto
 export type { PaginationDto, PaginationRequest, PaginatedList } from './dto/pagination.js';
@@ -71,9 +71,11 @@ export { type UpdateCitationDto } from './dto/citation/update-citation.js';
 
 export { type UpdateUnitStatusDto } from './dto/unit/update-unit.dto.js';
 export { type CreateUnitDto } from './dto/unit/create-unit.dto.js';
-export { type CreateUnitMemberDto } from './dto/unit/create-unit-member.dto.js';
-export { type UnitMemberDto } from './dto/unit/get-unit-member.dto.js';
+export { type CreateUnitMemberDto } from './dto/unit-member/create-unit-member.dto.js';
+export { type UpdateUnitMemberDto } from './dto/unit-member/update-unit-member.dto.js';
+export { type UnitMemberDto } from './dto/unit-member/get-unit-member.dto.js';
 export { type UnitDto } from './dto/unit/get-unit.dto.js';
+export type { GetUnitsQueryDto } from './dto/unit/get-units.query.js';
 
 export type { StartDutyDto } from './dto/duty/start-duty.dto.js';
 
@@ -106,9 +108,11 @@ export {
 } from './validators/vehicle.schema.js';
 
 export {
+  updateUnitMemberSchema,
   updateUnitStatusSchema,
   createUnitSchema,
   createUnitMemberSchema,
+  getUnitsQuerySchema,
 } from './validators/unit.schema.js';
 
 export { startDutySchema } from './validators/duty.schema.js';
@@ -127,6 +131,10 @@ export {
   getHighestRolePriority,
   hasHigherOrSamePriority,
   findPermissionsByPrefix,
+  buildPermission,
 } from './utils/auth.helpers.js';
-export { mapZodIssue } from './utils/validation.helpers.js';
+export { mapZodIssue, isLiveDuty } from './utils/validation.helpers.js';
 export { nameof } from './utils/object.helpers.js';
+
+//Events
+export { type ServerToClientEvents } from './events/socket.events.js';

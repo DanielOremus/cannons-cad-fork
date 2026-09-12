@@ -7,7 +7,7 @@ import { AppConfigService } from './core/config/config.service.js';
 import { NextFunction, Request, Response } from 'express';
 import { RequestContext } from '@mikro-orm/core';
 import { MikroORM } from '@mikro-orm/postgresql';
-import { SocketIoAdapter } from './common/adapters/socket-io.adapter.js';
+import { SocketIoAdapter } from './core/socket/socket-io.adapter.js';
 import { StandardSchemaValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {

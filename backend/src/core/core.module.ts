@@ -6,6 +6,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { AppConfigService } from './config/config.service.js';
 import { MailerModule } from './mailer/mailer.module.js';
 import { AppThrottlerModule } from './throttler/throttler.module.js';
+import { SocketSessionService } from './socket/socket-session.service.js';
 
 @Module({
   imports: [
@@ -26,5 +27,6 @@ import { AppThrottlerModule } from './throttler/throttler.module.js';
       }),
     }),
   ],
+  providers: [SocketSessionService],
 })
 export class CoreModule {}
