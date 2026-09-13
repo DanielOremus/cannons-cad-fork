@@ -12,7 +12,7 @@ export class CharacterMapper {
     character: CharacterEntity,
     counts: { vehicles: number; citations: number },
   ): SearchCharacterResponseDto {
-    const { vehicles, citations, ...rest } = character;
+    const { vehicles, citations, phoneNumber, address, ...rest } = character;
     return {
       ...rest,
       age: character.age,
@@ -21,6 +21,8 @@ export class CharacterMapper {
       driverLicense: character.driverLicense
         ? this.driverLicenseMapper.toReadDto(character.driverLicense)
         : null,
+      phoneNumber: phoneNumber ?? null,
+      address: address ?? null,
       user: { name: character.user?.name },
     };
   }
@@ -28,11 +30,13 @@ export class CharacterMapper {
     character: CharacterEntity,
     counts: { vehicles: number; citations: number },
   ): CharacterDto {
-    const { user, vehicles, citations, driverLicense, ...rest } = character;
+    const { user, vehicles, citations, driverLicense, phoneNumber, address, ...rest } = character;
     return {
       ...rest,
       age: character.age,
       driverLicense: driverLicense ? this.driverLicenseMapper.toReadDto(driverLicense) : null,
+      phoneNumber: phoneNumber ?? null,
+      address: address ?? null,
       vehiclesCount: counts.vehicles,
       citationsCount: counts.citations,
     };

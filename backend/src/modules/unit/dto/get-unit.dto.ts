@@ -2,7 +2,7 @@ import { LiveDuty, UnitDto as ReadDto, UnitMemberDto, UnitStatus } from '@projec
 
 export class UnitDto implements ReadDto {
   id: number;
-  callsign?: string | null;
+  callsign: string | null;
   duty: LiveDuty;
   status: UnitStatus;
   members: UnitMemberDto[];

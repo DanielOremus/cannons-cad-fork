@@ -14,7 +14,6 @@ import { ConflictError, ForbiddenError, NotFoundError } from '../../shared/error
 import { UnitMapper } from './unit.mapper.js';
 import { CreateUnitDto } from './dto/create-unit.dto.js';
 import { UnitMemberRepository } from '../unit-member/unit-member.repository.js';
-import { OwnershipService } from '../../shared/modules/ownership/ownership.service.js';
 import { UnitOfWork } from '../../core/database/unit-of-work.js';
 import { Events } from '../../shared/constants/events.js';
 import { UnitsFilterDto } from './dto/get-units-filter.dto.js';
@@ -26,7 +25,6 @@ export class UnitService {
     private readonly unitMemberRepository: UnitMemberRepository,
     private readonly unitRepository: UnitRepository,
     private readonly unitMapper: UnitMapper,
-    private readonly ownershipService: OwnershipService,
     private readonly uow: UnitOfWork,
     private readonly eventBus: EventBus,
   ) {}
@@ -34,7 +32,7 @@ export class UnitService {
     const scopes = getScopesOrThrow(permissionMeta);
     if (!scopes.includes('any')) throw new ForbiddenError();
 
-    const units = await this.unitRepository.findMany(filters);
+    const units = await this.unitRepository.findMany(filters, ['members']);
     return this.unitMapper.toListDto(units);
   }
   async create(dto: CreateUnitDto, user: AuthUser) {
@@ -44,20 +42,19 @@ export class UnitService {
     );
     if (!hasDutyContext) throw new ForbiddenError(`Cannot start '${dto.duty}' duty`);
 
-    const member = await this.unitMemberRepository.findById(dto.memberId);
+    const member = await this.unitMemberRepository.findByUser(user.id);
     if (!member) throw new NotFoundError('Member');
-    //owns member?
-    this.ownershipService.checkUnitMember(member, user.id);
     //already in unit
     if (member.unit) throw new ConflictError('Already in unit', ErrorCode.CONFLICT);
 
     const unit = await this.uow.withTransaction(async () => {
       const unit = await this.unitRepository.create({
         callsign: dto.callsign,
-        members: [member.id],
         status: dto.status,
+        members: [member],
+        duty: dto.duty,
       });
-      await this.unitMemberRepository.update(member, { lastJoinAt: new Date(), unit: unit.id });
+      await this.unitMemberRepository.update(member, { lastJoinAt: new Date() });
 
       return unit;
     });
@@ -71,6 +68,6 @@ export class UnitService {
   async updateStatus(dto: UpdateUnitStatusDto, unitId: number, userId: string): Promise<void> {
     // redis
     //event manager .emit ("unit-update", unit)
-    this.eventBus.emit(Events.UNIT_STATUS_UPDATED, { unitId, status: UnitStatus.AVAILABLE });
+    // this.eventBus.emit(Events.UNIT_STATUS_UPDATED, { unitId, status: UnitStatus.AVAILABLE });
   }
 }

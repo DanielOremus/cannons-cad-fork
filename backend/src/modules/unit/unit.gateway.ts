@@ -31,8 +31,44 @@ export class UnitGateway {
     const roomsToJoin = [unitMemberRoom, unitRoom];
     if (payload.unit.duty === DutyType.DISPATCH) roomsToJoin.push(Rooms.dispatch);
     //broadcast for dispatches and units (updates invitation list)
+
     //add duty type check
     this.server.to([Rooms.dispatch, Rooms.police, Rooms.ems]).emit('unit:joined', payload.unit);
     socket.join(roomsToJoin);
+  }
+  @OnEvent(Events.UNIT_JOIN_SENT)
+  async onUnitJoinSent(payload: EventPayload<typeof Events.UNIT_JOIN_SENT>) {
+    const { fromUser, toUser, requestId } = payload;
+
+    const unitMemberRoom = Rooms.unitMember(toUser.memberId);
+    this.server.to(unitMemberRoom).emit('unit:join-request:sent', {
+      requestId,
+      fromUser: { name: fromUser.name, memberName: fromUser.memberName },
+    });
+  }
+  @OnEvent(Events.UNIT_JOIN_ACCEPTED)
+  async onUnitJoinAccepted(payload: EventPayload<typeof Events.UNIT_JOIN_ACCEPTED>) {
+    const issuerSocketId = await this.socketSession.getUserSocket(payload.userId);
+    if (!issuerSocketId) return;
+    const issuerSocket = this.server.sockets.sockets.get(issuerSocketId);
+    if (!issuerSocket) return;
+
+    const unitMemberRoom = Rooms.unitMember(payload.addedMemberId);
+    const unitRoom = Rooms.unit(payload.unitId);
+
+    const roomsToJoin = [unitMemberRoom, unitRoom];
+    if (payload.duty === DutyType.DISPATCH) roomsToJoin.push(Rooms.dispatch);
+
+    issuerSocket.emit('unit:join-request:accepted');
+    issuerSocket.join(roomsToJoin);
+  }
+  @OnEvent(Events.UNIT_JOIN_DECLINED)
+  async onUnitJoinDeclined(payload: EventPayload<typeof Events.UNIT_JOIN_DECLINED>) {
+    const issuerSocketId = await this.socketSession.getUserSocket(payload.userId);
+    if (!issuerSocketId) return;
+    const issuerSocket = this.server.sockets.sockets.get(issuerSocketId);
+    if (!issuerSocket) return;
+
+    issuerSocket.emit('unit:join-request:declined');
   }
 }

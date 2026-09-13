@@ -13,4 +13,7 @@ export class SocketSessionService {
   async getUserSocket(userId: string) {
     return await this.redis.client.get(this.userSocketKey(userId));
   }
+  async deleteUserSocket(userId: string) {
+    await this.redis.client.unlink(this.userSocketKey(userId));
+  }
 }

@@ -6,10 +6,16 @@ import { UpdateUnitMemberInput } from './inputs/update-unit-member.input.js';
 @Injectable()
 export abstract class UnitMemberRepository {
   abstract create(input: CreateUnitMemberInput): Promise<UnitMemberEntity>;
-  abstract findByUserId(userId: string): Promise<UnitMemberEntity | null>;
+  abstract findByUser(
+    userId: string,
+    populate?: UnitMemberPopulate[],
+  ): Promise<UnitMemberEntity | null>;
   abstract findById(id: number): Promise<UnitMemberEntity | null>;
+  abstract findLeader(unitId: number): Promise<UnitMemberEntity | null>;
   abstract update(
     entity: UnitMemberEntity,
     input: UpdateUnitMemberInput,
   ): Promise<UnitMemberEntity>;
 }
+
+export type UnitMemberPopulate = 'user' | 'unit';

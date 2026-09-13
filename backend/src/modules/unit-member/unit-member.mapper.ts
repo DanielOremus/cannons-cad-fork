@@ -10,7 +10,7 @@ export class UnitMemberMapper {
       id,
       name,
       rank,
-      lastJoinAt,
+      lastJoinAt: lastJoinAt ?? null,
     };
   }
   toListDto(members: UnitMemberEntity[]): UnitMemberDto[] {

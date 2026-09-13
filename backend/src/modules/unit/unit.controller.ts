@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { RequirePermission } from '../../common/decorators/require-permission.decorator.js';
 import { GetAuthUser } from '../../common/decorators/get-auth.user.decorator.js';
 import type { AuthUser } from '../../shared/types/user.js';
@@ -8,6 +8,7 @@ import { createUnitSchema, type PermissionMeta } from '@project/shared';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe.js';
 import { UnitsFilterDto } from './dto/get-units-filter.dto.js';
 import { CreateUnitDto } from './dto/create-unit.dto.js';
+import { IdParamPipe } from '../../common/pipes/id-validation.pipe.js';
 
 @Controller('/units')
 export class UnitController {
@@ -29,7 +30,4 @@ export class UnitController {
   ) {
     return await this.unitService.create(dto, user);
   }
-  @Post('/:id/join')
-  //   @RequirePermission('')
-  async join() {}
 }

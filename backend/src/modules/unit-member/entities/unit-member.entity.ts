@@ -9,8 +9,8 @@ export const UnitMemberSchema = defineEntity({
   properties: {
     name: p.string(),
     rank: p.string(),
-    user: () => p.oneToOne(UserEntity).inversedBy('id').deleteRule('cascade'),
-    unit: () => p.manyToOne(UnitEntity).inversedBy('id').nullable().deleteRule('set null'),
+    user: () => p.oneToOne(UserEntity).deleteRule('cascade').owner(),
+    unit: () => p.manyToOne(UnitEntity).inversedBy('members').nullable().deleteRule('set null'),
     lastJoinAt: p.datetime().nullable(),
   },
 });

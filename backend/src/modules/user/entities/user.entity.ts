@@ -2,6 +2,7 @@ import { UserRole, UserStatus } from '@project/shared';
 import { p, defineEntity, EventArgs } from '@mikro-orm/core';
 import { BaseSensitiveSchema } from '../../../shared/entities/base.entity.js';
 import { CharacterEntity } from '../../character/entities/character.entity.js';
+import { UnitMemberEntity } from '../../unit-member/entities/unit-member.entity.js';
 
 const UserSchema = defineEntity({
   name: 'User',

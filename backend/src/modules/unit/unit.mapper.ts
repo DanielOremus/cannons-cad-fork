@@ -10,7 +10,7 @@ export class UnitMapper {
     const { id, callsign, status, members, duty } = unit;
     return {
       id,
-      callsign,
+      callsign: callsign ?? null,
       duty,
       status,
       members: this.unitMemberMapper.toListDto(Array.from(members)),

@@ -15,8 +15,8 @@ export class CharacterListItemDto implements ListItemDto {
 }
 
 export class CharacterDto extends CharacterListItemDto implements ReadDto {
-  phoneNumber?: string | null;
-  address?: string | null;
+  phoneNumber: string | null;
+  address: string | null;
   hasGunPermit: boolean;
   driverLicense: DriverLicenseDto | null;
   citationsCount: number;

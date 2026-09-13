@@ -11,7 +11,7 @@ export const createUnitSchema = z.object({
   duty: z.enum(LiveDuty),
   callsign: z.nullish(z.string()),
   status: z.enum(UnitStatus).default(UnitStatus.OFF_SERVICE),
-  memberId: idValidator,
+  // memberId: idValidator,
 });
 
 export const createUnitMemberSchema = z.object({

@@ -4,5 +4,5 @@ export class UnitMemberDto implements ReadDto {
   id: number;
   name: string;
   rank: string;
-  lastJoinAt: Date;
+  lastJoinAt: Date | null;
 }

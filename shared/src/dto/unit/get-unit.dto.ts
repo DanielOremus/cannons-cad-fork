@@ -4,7 +4,7 @@ import type { UnitMemberDto } from '../unit-member/get-unit-member.dto.js';
 
 export type UnitDto = {
   id: number;
-  callsign?: string | null;
+  callsign: string | null;
   duty: LiveDuty;
   status: UnitStatus;
   members: UnitMemberDto[];

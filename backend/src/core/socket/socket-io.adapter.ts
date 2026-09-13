@@ -6,7 +6,6 @@ import { AuthUser } from '../../shared/types/user.js';
 import { AuthSessionService } from '../../shared/modules/auth-session/auth-session.service.js';
 import { accountActive } from '@project/shared';
 import { ServerToClientEvents } from '@project/shared';
-import { RedisService } from '../redis/redis.service.js';
 import { SocketSessionService } from './socket-session.service.js';
 
 type SocketData = {
@@ -64,8 +63,13 @@ export class SocketIoAdapter extends IoAdapter {
       next();
     });
 
-    server.on('connection', (socket) => {
-      console.log(`Client connected: ${socket.id}`);
+    server.on('connection', async (socket) => {
+      const userId = socket.data.user!.id;
+      await this.socketSession.setUserSocket(userId, socket.id);
+
+      socket.on('disconnect', async () => {
+        await this.socketSession.deleteUserSocket(userId);
+      });
     });
 
     return server;
