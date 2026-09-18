@@ -1,23 +1,26 @@
-import { DutyType, LiveDuty, UnitStatus } from '@project/shared';
+import { LiveDuty, UnitStatus } from '@project/shared';
 import { UnitDto } from '../../modules/unit/dto/get-unit.dto.js';
+import { UnitMemberDto } from '../../modules/unit-member/dto/get-unit-member.dto.js';
 
 export const Events = {
   UNIT_STATUS_UPDATED: 'unit.status.updated',
   UNIT_UPDATED: 'unit.updated',
   INCIDENT_UPDATED: 'incident.updated',
-  DUTY_ENDED: 'duty.ended',
+  UNIT_MEMBER_LEFT: 'unit-member.left',
   UNIT_CREATED: 'unit.created',
   UNIT_JOIN_SENT: 'unit.join.sent',
   UNIT_JOIN_ACCEPTED: 'unit.join.accepted',
   UNIT_JOIN_DECLINED: 'unit.join.declined',
+  UNIT_DELETED: 'unit.deleted',
 } as const;
 
 type EventsMap = {
   [Events.UNIT_STATUS_UPDATED]: { status: UnitStatus; unitId: number };
   [Events.UNIT_UPDATED]: { id: number };
   [Events.INCIDENT_UPDATED]: { id: number };
-  [Events.DUTY_ENDED]: { unit: object };
+  [Events.UNIT_MEMBER_LEFT]: { unitId: number; memberId: number; userId: string };
   [Events.UNIT_CREATED]: { unit: UnitDto; userId: string };
+  [Events.UNIT_DELETED]: { id: number };
   [Events.UNIT_JOIN_SENT]: {
     requestId: string;
     fromUser: {
@@ -31,7 +34,7 @@ type EventsMap = {
   };
   [Events.UNIT_JOIN_ACCEPTED]: {
     userId: string;
-    addedMemberId: number;
+    member: UnitMemberDto;
     unitId: number;
     duty: LiveDuty;
   };

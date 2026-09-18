@@ -70,4 +70,21 @@ export class UnitService {
     //event manager .emit ("unit-update", unit)
     // this.eventBus.emit(Events.UNIT_STATUS_UPDATED, { unitId, status: UnitStatus.AVAILABLE });
   }
+  async leave(userId: string) {
+    const member = await this.unitMemberRepository.findByUser(userId, ['unit']);
+    if (!member) throw new NotFoundError('Member');
+
+    const unit = member.unit;
+    if (!unit) throw new ConflictError('Not attached to unit', ErrorCode.CONFLICT);
+
+    const shouldDeleteUnit = unit.members.length <= 1;
+
+    await this.uow.withTransaction(async () => {
+      await this.unitMemberRepository.update(member, { unit: null });
+      if (shouldDeleteUnit) await this.unitRepository.delete(unit);
+    });
+
+    this.eventBus.emit(Events.UNIT_MEMBER_LEFT, { memberId: member.id, userId, unitId: unit.id });
+    if (shouldDeleteUnit) this.eventBus.emit(Events.UNIT_DELETED, { id: unit.id });
+  }
 }

@@ -36,39 +36,22 @@ export class UnitGateway {
     this.server.to([Rooms.dispatch, Rooms.police, Rooms.ems]).emit('unit:joined', payload.unit);
     socket.join(roomsToJoin);
   }
-  @OnEvent(Events.UNIT_JOIN_SENT)
-  async onUnitJoinSent(payload: EventPayload<typeof Events.UNIT_JOIN_SENT>) {
-    const { fromUser, toUser, requestId } = payload;
-
-    const unitMemberRoom = Rooms.unitMember(toUser.memberId);
-    this.server.to(unitMemberRoom).emit('unit:join-request:sent', {
-      requestId,
-      fromUser: { name: fromUser.name, memberName: fromUser.memberName },
-    });
+  @OnEvent(Events.UNIT_DELETED)
+  onUnitDeleted(payload: EventPayload<typeof Events.UNIT_DELETED>) {
+    this.server.to(Rooms.dispatch).emit('unit:deleted', { unitId: payload.id });
   }
-  @OnEvent(Events.UNIT_JOIN_ACCEPTED)
-  async onUnitJoinAccepted(payload: EventPayload<typeof Events.UNIT_JOIN_ACCEPTED>) {
-    const issuerSocketId = await this.socketSession.getUserSocket(payload.userId);
-    if (!issuerSocketId) return;
-    const issuerSocket = this.server.sockets.sockets.get(issuerSocketId);
-    if (!issuerSocket) return;
-
-    const unitMemberRoom = Rooms.unitMember(payload.addedMemberId);
+  @OnEvent(Events.UNIT_MEMBER_LEFT)
+  async onUnitMemberLeft(payload: EventPayload<typeof Events.UNIT_MEMBER_LEFT>) {
     const unitRoom = Rooms.unit(payload.unitId);
+    this.server
+      .to([unitRoom, Rooms.dispatch])
+      .emit('unit:member:left', { memberId: payload.memberId });
 
-    const roomsToJoin = [unitMemberRoom, unitRoom];
-    if (payload.duty === DutyType.DISPATCH) roomsToJoin.push(Rooms.dispatch);
+    const socketId = await this.socketSession.getUserSocket(payload.userId);
+    if (!socketId) return;
+    const socket = this.server.sockets.sockets.get(socketId);
+    if (!socket) return;
 
-    issuerSocket.emit('unit:join-request:accepted');
-    issuerSocket.join(roomsToJoin);
-  }
-  @OnEvent(Events.UNIT_JOIN_DECLINED)
-  async onUnitJoinDeclined(payload: EventPayload<typeof Events.UNIT_JOIN_DECLINED>) {
-    const issuerSocketId = await this.socketSession.getUserSocket(payload.userId);
-    if (!issuerSocketId) return;
-    const issuerSocket = this.server.sockets.sockets.get(issuerSocketId);
-    if (!issuerSocket) return;
-
-    issuerSocket.emit('unit:join-request:declined');
+    socket.disconnect(true);
   }
 }

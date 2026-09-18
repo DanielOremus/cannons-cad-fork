@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
 import { RequirePermission } from '../../common/decorators/require-permission.decorator.js';
 import { GetAuthUser } from '../../common/decorators/get-auth.user.decorator.js';
 import type { AuthUser } from '../../shared/types/user.js';
@@ -15,6 +15,7 @@ export class UnitMemberController {
     return await this.unitMemberService.findOwn(user.id);
   }
   @Post('/create')
+  @HttpCode(201)
   @RequirePermission('unit', 'create')
   async create(
     @Body(new ZodValidationPipe(CreateUnitMemberDto.schema)) dto: CreateUnitMemberDto,

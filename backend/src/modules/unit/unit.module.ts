@@ -7,6 +7,7 @@ import { UnitMapper } from './unit.mapper.js';
 import { UnitController } from './unit.controller.js';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { UnitEntity } from './entities/unit.entity.js';
+import { UnitGateway } from './unit.gateway.js';
 
 @Module({
   imports: [UnitMemberModule, MikroOrmModule.forFeature([UnitEntity])],
@@ -18,6 +19,7 @@ import { UnitEntity } from './entities/unit.entity.js';
     },
     UnitMapper,
     UnitService,
+    UnitGateway,
   ],
   exports: [UnitRepository],
 })

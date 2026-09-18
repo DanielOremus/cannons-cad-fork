@@ -14,13 +14,13 @@ export class UnitMemberService {
     private readonly uow: UnitOfWork,
   ) {}
   async findOwn(userId: string) {
-    const member = await this.unitMemberRepository.findByUserId(userId);
+    const member = await this.unitMemberRepository.findByUser(userId);
     if (!member) throw new NotFoundError('Member');
 
     return this.unitMemberMapper.toReadDto(member);
   }
   async create(dto: CreateUnitMemberDto, userId: string) {
-    let member = await this.unitMemberRepository.findByUserId(userId);
+    let member = await this.unitMemberRepository.findByUser(userId);
     if (member) throw new ConflictError('Member already exists', ErrorCode.ALREADY_EXISTS);
 
     const { name, rank } = dto;
