@@ -2,15 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { UnitEntity } from './entities/unit.entity.js';
 import { UnitMemberMapper } from '../unit-member/unit-member.mapper.js';
 import { UnitDto } from './dto/get-unit.dto.js';
+import { UpdateUnitResponseDto } from './dto/update-unit.dto.js';
 
 @Injectable()
 export class UnitMapper {
   constructor(private readonly unitMemberMapper: UnitMemberMapper) {}
   toReadDto(unit: UnitEntity): UnitDto {
-    const { id, callsign, status, members, duty } = unit;
+    const { id, callsign = null, status, members, duty } = unit;
     return {
       id,
-      callsign: callsign ?? null,
+      callsign,
       duty,
       status,
       members: this.unitMemberMapper.toListDto(Array.from(members)),
@@ -18,5 +19,9 @@ export class UnitMapper {
   }
   toListDto(units: UnitEntity[]): UnitDto[] {
     return units.map((u) => this.toReadDto(u));
+  }
+  toUpdateResponseDto(unit: UnitEntity): UpdateUnitResponseDto {
+    const { id, callsign = null, status } = unit;
+    return { id, callsign, status };
   }
 }

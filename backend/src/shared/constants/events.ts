@@ -1,9 +1,9 @@
 import { LiveDuty, UnitStatus } from '@project/shared';
 import { UnitDto } from '../../modules/unit/dto/get-unit.dto.js';
 import { UnitMemberDto } from '../../modules/unit-member/dto/get-unit-member.dto.js';
+import { UpdateUnitResponseDto } from '../../modules/unit/dto/update-unit.dto.js';
 
 export const Events = {
-  UNIT_STATUS_UPDATED: 'unit.status.updated',
   UNIT_UPDATED: 'unit.updated',
   INCIDENT_UPDATED: 'incident.updated',
   UNIT_MEMBER_LEFT: 'unit-member.left',
@@ -15,8 +15,7 @@ export const Events = {
 } as const;
 
 type EventsMap = {
-  [Events.UNIT_STATUS_UPDATED]: { status: UnitStatus; unitId: number };
-  [Events.UNIT_UPDATED]: { id: number };
+  [Events.UNIT_UPDATED]: UpdateUnitResponseDto;
   [Events.INCIDENT_UPDATED]: { id: number };
   [Events.UNIT_MEMBER_LEFT]: { unitId: number; memberId: number; userId: string };
   [Events.UNIT_CREATED]: { unit: UnitDto; userId: string };

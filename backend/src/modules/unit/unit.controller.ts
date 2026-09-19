@@ -1,13 +1,15 @@
-import { Body, Controller, Get, HttpCode, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Patch, Post, Query } from '@nestjs/common';
 import { RequirePermission } from '../../common/decorators/require-permission.decorator.js';
 import { GetAuthUser } from '../../common/decorators/get-auth.user.decorator.js';
 import type { AuthUser } from '../../shared/types/user.js';
 import { UnitService } from './unit.service.js';
 import { GetPermissionMeta } from '../../common/decorators/get-permission-meta.decorator.js';
-import { createUnitSchema, type PermissionMeta } from '@project/shared';
+import { type PermissionMeta } from '@project/shared';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe.js';
 import { UnitsFilterDto } from './dto/get-units-filter.dto.js';
 import { CreateUnitDto } from './dto/create-unit.dto.js';
+import { UpdateUnitDto } from './dto/update-unit.dto.js';
+import { IdParamPipe } from '../../common/pipes/id-validation.pipe.js';
 
 @Controller('/units')
 export class UnitController {
@@ -19,16 +21,27 @@ export class UnitController {
     @GetPermissionMeta() permissionMeta: PermissionMeta,
   ) {
     return await this.unitService.getList(query, permissionMeta);
-    // return await this.unitMemberService.findOwn(user.id);
   }
   @Post('/create')
   @HttpCode(201)
   @RequirePermission('unit', 'create')
   async create(
-    @Body(new ZodValidationPipe(createUnitSchema)) dto: CreateUnitDto,
+    @Body(new ZodValidationPipe(CreateUnitDto.schema)) dto: CreateUnitDto,
     @GetAuthUser() user: AuthUser,
   ) {
     return await this.unitService.create(dto, user);
+  }
+  @Patch('/:id')
+  @HttpCode(204)
+  @RequirePermission('unit', 'update')
+  async update(
+    @Param('id', IdParamPipe) unitId: number,
+    @Body(new ZodValidationPipe(UpdateUnitDto.schema))
+    dto: UpdateUnitDto,
+    @GetAuthUser() user: AuthUser,
+    @GetPermissionMeta() permissionMeta: PermissionMeta,
+  ) {
+    return await this.unitService.update(dto, unitId, user.id, permissionMeta);
   }
   @Post('/leave')
   @HttpCode(204)

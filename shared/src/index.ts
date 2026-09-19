@@ -69,7 +69,7 @@ export type { ChargeDto, CitationDto } from './dto/citation/get-citation.dto.js'
 export { type CreateCitationDto } from './dto/citation/create-citation.dto.js';
 export { type UpdateCitationDto } from './dto/citation/update-citation.js';
 
-export { type UpdateUnitStatusDto } from './dto/unit/update-unit.dto.js';
+export type { UpdateUnitDto, UpdateUnitResponseDto } from './dto/unit/update-unit.dto.js';
 export { type CreateUnitDto } from './dto/unit/create-unit.dto.js';
 export { type CreateUnitMemberDto } from './dto/unit-member/create-unit-member.dto.js';
 export { type UpdateUnitMemberDto } from './dto/unit-member/update-unit-member.dto.js';
@@ -109,7 +109,7 @@ export {
 
 export {
   updateUnitMemberSchema,
-  updateUnitStatusSchema,
+  updateUnitSchema,
   createUnitSchema,
   createUnitMemberSchema,
   getUnitsQuerySchema,

@@ -1,17 +1,18 @@
 import type { UnitMemberDto } from '../dto/unit-member/get-unit-member.dto.js';
 import type { UnitDto } from '../dto/unit/get-unit.dto.js';
+import type { UpdateUnitResponseDto } from '../dto/unit/update-unit.dto.js';
 import { UnitStatus } from '../types/unit.status.js';
 
 export const SocketEvents = {
   unit: {
     joined: 'unit:joined',
-    statusChanged: 'unit:status:changed',
+    updated: 'unit:updated',
+    deleted: 'unit:deleted',
     joinRequest: {
       sent: 'unit:join-request:sent',
       accepted: 'unit:join-request:accepted',
       declined: 'unit:join-request:declined',
     },
-    deleted: 'unit:deleted',
     member: {
       joined: 'unit:member:joined',
       left: 'unit:member:left',
@@ -21,7 +22,7 @@ export const SocketEvents = {
 
 export type ServerToClientEvents = {
   [SocketEvents.unit.joined]: (payload: UnitDto) => void;
-  [SocketEvents.unit.statusChanged]: (payload: { unitId: number; status: UnitStatus }) => void;
+  [SocketEvents.unit.updated]: (payload: UpdateUnitResponseDto) => void;
   [SocketEvents.unit.deleted]: (payload: { unitId: number }) => void;
   [SocketEvents.unit.joinRequest.sent]: (payload: {
     requestId: string;

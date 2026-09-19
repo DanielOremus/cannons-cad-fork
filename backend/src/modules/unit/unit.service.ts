@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { UnitRepository } from './unit.repository.js';
-import { UpdateUnitStatusDto } from './dto/update-unit.dto.js';
 import {
   buildPermission,
   ErrorCode,
   hasPermissionFromSet,
   PermissionMeta,
   UnitStatus,
+  UpdateUnitDto,
 } from '@project/shared';
 import { EventBus } from '../../shared/modules/event/event.bus.js';
 import { getScopesOrThrow } from '../../shared/utils/permission.helpers.js';
@@ -65,10 +65,26 @@ export class UnitService {
 
     return mappedUnit;
   }
-  async updateStatus(dto: UpdateUnitStatusDto, unitId: number, userId: string): Promise<void> {
-    // redis
-    //event manager .emit ("unit-update", unit)
-    // this.eventBus.emit(Events.UNIT_STATUS_UPDATED, { unitId, status: UnitStatus.AVAILABLE });
+  async update(dto: UpdateUnitDto, unitId: number, userId: string, permissionMeta: PermissionMeta) {
+    const scopes = getScopesOrThrow(permissionMeta);
+
+    if (!scopes.includes('any')) {
+      const member = await this.unitMemberRepository.findByUser(userId);
+      if (!member) throw new NotFoundError('Initiator');
+      if (member.unit?.id !== unitId) throw new ForbiddenError();
+    }
+
+    let unit = await this.unitRepository.findById(unitId);
+    if (!unit) throw new NotFoundError('Unit');
+
+    unit = await this.unitRepository.update(unit, dto);
+    await this.uow.saveChanges();
+
+    const mappedUnit = this.unitMapper.toUpdateResponseDto(unit);
+
+    this.eventBus.emit('unit.updated', mappedUnit);
+
+    return mappedUnit;
   }
   async leave(userId: string) {
     const member = await this.unitMemberRepository.findByUser(userId, ['unit']);

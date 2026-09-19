@@ -13,10 +13,10 @@ export class UnitGateway {
 
   constructor(private readonly socketSession: SocketSessionService) {}
 
-  @OnEvent(Events.UNIT_STATUS_UPDATED)
-  onUnitStatusUpdated(payload: EventPayload<typeof Events.UNIT_STATUS_UPDATED>) {
-    const unitRoom = Rooms.unit(payload.unitId);
-    this.server.to([unitRoom, Rooms.dispatch]).emit('unit:status:changed', payload);
+  @OnEvent(Events.UNIT_UPDATED)
+  onUnitUpdated(payload: EventPayload<typeof Events.UNIT_UPDATED>) {
+    const unitRoom = Rooms.unit(payload.id);
+    this.server.to([unitRoom, Rooms.dispatch]).emit('unit:updated', payload);
   }
   @OnEvent(Events.UNIT_CREATED)
   async onUnitCreated(payload: EventPayload<typeof Events.UNIT_CREATED>) {
@@ -31,9 +31,11 @@ export class UnitGateway {
     const roomsToJoin = [unitMemberRoom, unitRoom];
     if (payload.unit.duty === DutyType.DISPATCH) roomsToJoin.push(Rooms.dispatch);
     //broadcast for dispatches and units (updates invitation list)
-
+    const roomsToInform: string[] = [Rooms.dispatch];
+    if (payload.unit.duty === DutyType.POLICE) roomsToInform.push(Rooms.police);
+    if (payload.unit.duty === DutyType.EMS) roomsToInform.push(Rooms.ems);
     //add duty type check
-    this.server.to([Rooms.dispatch, Rooms.police, Rooms.ems]).emit('unit:joined', payload.unit);
+    this.server.to(roomsToInform).emit('unit:joined', payload.unit);
     socket.join(roomsToJoin);
   }
   @OnEvent(Events.UNIT_DELETED)

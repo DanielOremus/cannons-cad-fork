@@ -1,4 +1,7 @@
 import * as z from 'zod/v4';
-import { updateUnitStatusSchema } from '../../validators/unit.schema.js';
+import { updateUnitSchema } from '../../validators/unit.schema.js';
+import type { UnitDto } from './get-unit.dto.js';
 
-export type UpdateUnitStatusDto = z.infer<typeof updateUnitStatusSchema>;
+export type UpdateUnitDto = z.infer<typeof updateUnitSchema>;
+
+export type UpdateUnitResponseDto = Pick<UnitDto, 'id' | 'callsign' | 'status'>;
