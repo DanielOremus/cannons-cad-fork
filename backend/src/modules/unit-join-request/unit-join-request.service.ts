@@ -10,6 +10,7 @@ import { EventBus } from '../../shared/modules/event/event.bus.js';
 import { JoinRequestData } from '../../shared/types/unit-join-request.js';
 import { UnitOfWork } from '../../core/database/unit-of-work.js';
 import { type UnitMemberEntity } from '../unit-member/entities/unit-member.entity.js';
+import { UnitMemberMapper } from '../unit-member/unit-member.mapper.js';
 
 @Injectable()
 export class UnitJoinRequestService {
@@ -68,6 +69,7 @@ export class UnitJoinRequestService {
     private readonly redis: RedisService,
     private readonly unitRepository: UnitRepository,
     private readonly unitMemberRepository: UnitMemberRepository,
+    private readonly unitMemberMapper: UnitMemberMapper,
     private readonly eventBus: EventBus,
     private readonly uow: UnitOfWork,
   ) {}
@@ -126,7 +128,7 @@ export class UnitJoinRequestService {
     this.eventBus.emit('unit.join.accepted', {
       userId: request.fromUserId,
       unitId: unit.id,
-      addedMemberId: memberToAdd.id,
+      member: this.unitMemberMapper.toReadDto(memberToAdd),
       duty: unit.duty,
     });
   }

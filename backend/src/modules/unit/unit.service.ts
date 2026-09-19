@@ -77,12 +77,14 @@ export class UnitService {
     const unit = member.unit;
     if (!unit) throw new ConflictError('Not attached to unit', ErrorCode.CONFLICT);
 
-    const shouldDeleteUnit = unit.members.length <= 1;
+    const unitMembersCount = await this.unitRepository.countMembers(unit);
 
-    await this.uow.withTransaction(async () => {
-      await this.unitMemberRepository.update(member, { unit: null });
-      if (shouldDeleteUnit) await this.unitRepository.delete(unit);
-    });
+    const shouldDeleteUnit = unitMembersCount <= 1;
+
+    if (shouldDeleteUnit) await this.unitRepository.delete(unit);
+    else await this.unitMemberRepository.update(member, { unit: null });
+
+    await this.uow.saveChanges();
 
     this.eventBus.emit(Events.UNIT_MEMBER_LEFT, { memberId: member.id, userId, unitId: unit.id });
     if (shouldDeleteUnit) this.eventBus.emit(Events.UNIT_DELETED, { id: unit.id });

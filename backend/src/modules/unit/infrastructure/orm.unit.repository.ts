@@ -15,6 +15,9 @@ export class OrmUnitRepository implements UnitRepository {
   async findById(id: number, populate: UnitPopulate[] = []): Promise<UnitEntity | null> {
     return await this.em.findOne(this.entity, { id }, { populate });
   }
+  async countMembers(entity: UnitEntity): Promise<number> {
+    return await entity.members.loadCount();
+  }
   async create(input: CreateUnitInput): Promise<UnitEntity> {
     return await this.em.create(this.entity, input);
   }
