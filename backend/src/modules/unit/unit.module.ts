@@ -8,6 +8,8 @@ import { UnitController } from './unit.controller.js';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { UnitEntity } from './entities/unit.entity.js';
 import { UnitGateway } from './unit.gateway.js';
+import { ROOM_PROVIDER } from '../../core/socket/room-provider.interface.js';
+import { UnitSessionService } from './unit-session.service.js';
 
 @Module({
   imports: [UnitMemberModule, MikroOrmModule.forFeature([UnitEntity])],
@@ -17,10 +19,11 @@ import { UnitGateway } from './unit.gateway.js';
       provide: UnitRepository,
       useClass: OrmUnitRepository,
     },
+    { provide: ROOM_PROVIDER, useClass: UnitSessionService },
     UnitMapper,
     UnitService,
     UnitGateway,
   ],
-  exports: [UnitRepository],
+  exports: [UnitRepository, ROOM_PROVIDER],
 })
 export class UnitModule {}

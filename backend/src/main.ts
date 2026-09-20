@@ -1,30 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module.js';
-import { GlobalExceptionFilter } from './common/filters/global-exception.filter.js';
-import cookieParser from 'cookie-parser';
 import { AppConfigService } from './core/config/config.service.js';
-import { NextFunction, Request, Response } from 'express';
-import { RequestContext } from '@mikro-orm/core';
-import { MikroORM } from '@mikro-orm/postgresql';
-import { SocketIoAdapter } from './core/socket/socket-io.adapter.js';
-import { StandardSchemaValidationPipe } from '@nestjs/common';
+import { setupApp } from './app.setup.js';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  await setupApp(app);
 
   const config = app.get(AppConfigService);
-  const orm = app.get(MikroORM);
-
-  app.use(cookieParser(config.cookieSecret));
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    RequestContext.create(orm.em, next);
-  });
-
-  app.useGlobalFilters(new GlobalExceptionFilter());
-  app.useWebSocketAdapter(new SocketIoAdapter(app));
-  // app.useGlobalPipes(new StandardSchemaValidationPipe)
-
   if (config.env === 'production') app.set('trust proxy', 1);
 
   await app.listen(config.port);

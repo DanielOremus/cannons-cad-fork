@@ -4,6 +4,7 @@ const buildConfig = () => ({
   port: process.env.PORT,
   env: process.env.NODE_ENV,
   cookieSecret: process.env.COOKIE_SECRET,
+  allowedOrigins: process.env.ALLOWED_ORIGINS,
   turnstile: {
     secret: process.env.TURNSTILE_SECRET,
     apiUrl: process.env.TURNSTILE_API,

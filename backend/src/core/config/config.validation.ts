@@ -4,6 +4,7 @@ export const configSchema = z.object({
   port: z.coerce.number().int().positive().default(3000),
   env: z.enum(['production', 'development', 'test']).default('development'),
   cookieSecret: z.string(),
+  allowedOrigins: z.string(),
   turnstile: z.object({
     secret: z.string(),
     apiUrl: z.string(),

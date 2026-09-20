@@ -6,6 +6,10 @@ import { Request } from 'express';
 
 @Injectable()
 export class ThrottlerBehindProxyGuard extends ThrottlerGuard {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    if (context.getType() === 'ws') return true;
+    return super.canActivate(context);
+  }
   protected async getTracker(req: Request): Promise<string> {
     return await Promise.resolve(req.ips.length ? req.ips[0] : (req.ip ?? '127.0.0.1'));
   }

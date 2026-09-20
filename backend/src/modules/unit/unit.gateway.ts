@@ -1,22 +1,38 @@
 import { OnEvent } from '@nestjs/event-emitter';
-import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { DefaultEventsMap, Server } from 'socket.io';
+import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
+import { DefaultEventsMap, Server, Socket } from 'socket.io';
 import { type EventPayload, Events } from '../../shared/constants/events.js';
 import { SocketSessionService } from '../../core/socket/socket-session.service.js';
 import { Rooms } from '../../core/socket/rooms.js';
 import { DutyType, ServerToClientEvents } from '@project/shared';
+import { AppConfigService } from '../../core/config/config.service.js';
 
 @WebSocketGateway()
 export class UnitGateway {
   @WebSocketServer()
   private readonly server: Server<DefaultEventsMap, ServerToClientEvents>;
 
-  constructor(private readonly socketSession: SocketSessionService) {}
+  constructor(
+    private readonly socketSession: SocketSessionService,
+    private readonly config: AppConfigService,
+  ) {}
 
   @OnEvent(Events.UNIT_UPDATED)
   onUnitUpdated(payload: EventPayload<typeof Events.UNIT_UPDATED>) {
     const unitRoom = Rooms.unit(payload.id);
     this.server.to([unitRoom, Rooms.dispatch]).emit('unit:updated', payload);
+  }
+  @SubscribeMessage('debug:join-room')
+  handleDebugJoin(@MessageBody() data: { room: string }, @ConnectedSocket() socket: Socket) {
+    if (this.config.env === 'production') return;
+    socket.join(data.room);
+    socket.emit('debug:joined', { room: data.room });
   }
   @OnEvent(Events.UNIT_CREATED)
   async onUnitCreated(payload: EventPayload<typeof Events.UNIT_CREATED>) {

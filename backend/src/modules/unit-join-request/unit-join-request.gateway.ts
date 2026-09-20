@@ -14,10 +14,11 @@ export class UnitJoinRequestGateway {
   constructor(private readonly socketSession: SocketSessionService) {}
 
   @OnEvent(Events.UNIT_JOIN_SENT)
-  async onUnitJoinSent(payload: EventPayload<typeof Events.UNIT_JOIN_SENT>) {
+  onUnitJoinSent(payload: EventPayload<typeof Events.UNIT_JOIN_SENT>) {
     const { fromUser, toUser, requestId } = payload;
 
     const unitMemberRoom = Rooms.unitMember(toUser.memberId);
+
     this.server.to(unitMemberRoom).emit('unit:join-request:sent', {
       requestId,
       fromUser: { name: fromUser.name, memberName: fromUser.memberName },

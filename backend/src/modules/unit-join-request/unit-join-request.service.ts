@@ -11,10 +11,11 @@ import { JoinRequestData } from '../../shared/types/unit-join-request.js';
 import { UnitOfWork } from '../../core/database/unit-of-work.js';
 import { type UnitMemberEntity } from '../unit-member/entities/unit-member.entity.js';
 import { UnitMemberMapper } from '../unit-member/unit-member.mapper.js';
+import { Events } from '../../shared/constants/events.js';
 
 @Injectable()
 export class UnitJoinRequestService {
-  private readonly requestTtl = 30000;
+  private readonly requestTtl = 30;
   private joinRequestKey(requestId: string) {
     return `unit-join-requests:${requestId}`;
   }
@@ -102,7 +103,7 @@ export class UnitJoinRequestService {
     if (!unitLeader) throw new NotFoundError('Unit leader');
     //Send request to the leader
     const requestId = await this.create(unit.id, ownMember.user.id, unitLeader.user.id);
-    this.eventBus.emit('unit.join.sent', {
+    this.eventBus.emit(Events.UNIT_JOIN_SENT, {
       requestId,
       fromUser: {
         id: ownMember.user.id,
@@ -113,6 +114,7 @@ export class UnitJoinRequestService {
         memberId: unitLeader.id,
       },
     });
+    console.log('from service invite send');
   }
   async accept(requestId: string, userId: string) {
     const { request, unit } = await this.validateJoinRequest(requestId, userId);
@@ -120,7 +122,7 @@ export class UnitJoinRequestService {
     const memberToAdd = await this.unitMemberRepository.findByUser(request.fromUserId);
     if (!memberToAdd) throw new NotFoundError('Member');
 
-    await this.unitMemberRepository.update(memberToAdd, { unit: unit.id });
+    await this.unitMemberRepository.update(memberToAdd, { unit: unit.id, lastJoinAt: new Date() });
     await this.uow.saveChanges();
 
     await this.delete(requestId, request.fromUserId);
