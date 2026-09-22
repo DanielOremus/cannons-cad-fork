@@ -20,11 +20,9 @@ export class AuthGuard implements CanActivate {
     const isRoutePublic = this.reflector.get<boolean>(PUBLIC_ROUTE_KEY, context.getHandler());
     if (isRoutePublic) return true;
 
-    const {
-      success,
-      authUser,
-      tokenPayload: payload,
-    } = await this.authSessionService.validateSession(request.headers.authorization);
+    const { success, authUser, tokenPayload } = await this.authSessionService.validateSession(
+      request.headers.authorization,
+    );
 
     if (!success) throw new UnauthorizedError();
 
@@ -41,14 +39,14 @@ export class AuthGuard implements CanActivate {
       context.getHandler(),
     );
     if (requireConfirmedEmailOnly) {
-      if (!payload.emailConfirmed) throw new ForbiddenError('Email is not confirmed');
+      if (!tokenPayload.emailConfirmed) throw new ForbiddenError('Email is not confirmed');
       return true;
     }
 
     if (
       !accountActive({
-        emailConfirmed: payload.emailConfirmed,
-        status: payload.userStatus,
+        emailConfirmed: tokenPayload.emailConfirmed,
+        status: authUser.status,
       })
     )
       throw new ForbiddenError('Account is inactive');

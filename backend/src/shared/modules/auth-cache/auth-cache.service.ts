@@ -1,21 +1,46 @@
 import { Injectable } from '@nestjs/common';
 import { RedisService } from '../../../core/redis/redis.service.js';
-import { Permission, UserRole } from '@project/shared';
+import { Permission, UserRole, UserStatus } from '@project/shared';
 import { AppConfigService } from '../../../core/config/config.service.js';
+
+type UserSession = {
+  status: UserStatus;
+  roles: UserRole[];
+};
 
 @Injectable()
 export class AuthCacheService {
+  private accessTokenTtl: number;
+
   private userRolesKey(userId: string) {
     return `user:${userId}:roles`;
   }
   private userPermissionsKey(userId: string) {
     return `user:${userId}:permissions`;
   }
+  private userSessionKey(userId: string) {
+    return `user:${userId}:session`;
+  }
 
   constructor(
     private readonly redis: RedisService,
     private readonly config: AppConfigService,
-  ) {}
+  ) {
+    this.accessTokenTtl = config.jwt.access.ttl;
+  }
+  //Session caching
+  async cacheUserSession(userId: string, payload: UserSession) {
+    await this.redis.client.setEx(
+      this.userSessionKey(userId),
+      this.accessTokenTtl,
+      JSON.stringify(payload),
+    );
+  }
+
+  async getUserSession(userId: string) {
+    const data = await this.redis.client.get(this.userSessionKey(userId));
+    return data ? (JSON.parse(data) as UserSession) : null;
+  }
 
   //Roles caching
   async cacheUserRoles(userId: string, roles: UserRole[]) {

@@ -28,18 +28,14 @@ export class AuthSessionService {
       userId: user.id,
     } satisfies TokenPayloads['refresh'];
     const accessPayload = {
-      userStatus: user.status,
       emailConfirmed: user.emailConfirmed,
       familyId,
-      userRoles: user.roles,
       userId: user.id,
     } satisfies TokenPayloads['access'];
 
-    //TODO: check the edge case if userStatus is not synced with token's
-
     await Promise.all([
       this.tokenStore.storeRToken(refreshPayload),
-      this.authCache.cacheUserRoles(user.id, user.roles),
+      this.authCache.cacheUserSession(user.id, { status: user.status, roles: user.roles }),
     ]);
 
     const refresh = this.tokenService.generate('refresh', refreshPayload);
@@ -60,14 +56,15 @@ export class AuthSessionService {
     const payload = this.tokenService.tryParseBearer(token);
     if (!payload) return { success: false, authUser: null, tokenPayload: null };
 
-    const [familyExists, redisUserRoles] = await Promise.all([
+    const [familyExists, userSession] = await Promise.all([
       this.tokenStore.familyExists(payload.familyId),
-      this.authCache.getUserRoles(payload.userId),
+      this.authCache.getUserSession(payload.userId),
     ]);
 
-    if (!familyExists) return { success: false, authUser: null, tokenPayload: null };
-    //TODO: add db fallback instead of token for user roles
-    const userRoles = !redisUserRoles ? payload.userRoles : redisUserRoles;
+    if (!familyExists || !userSession)
+      return { success: false, authUser: null, tokenPayload: null };
+
+    const userRoles = userSession.roles;
     const userPerms = getPermissionsFromRoles(...userRoles);
 
     return {
@@ -76,6 +73,7 @@ export class AuthSessionService {
       authUser: {
         familyId: payload.familyId,
         id: payload.userId,
+        status: userSession.status,
         roles: userRoles,
         permissions: userPerms,
       },

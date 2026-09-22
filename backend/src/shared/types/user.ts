@@ -1,10 +1,11 @@
-import { Permission, UserRole } from '@project/shared';
+import { Permission, UserRole, UserStatus } from '@project/shared';
 import { UserEntity } from '../../modules/user/entities/user.entity.js';
 import { ProfileDto } from '../../modules/user/dto/get-user.dto.js';
 
 export type UserProfileResponseType = 'public' | 'private';
 
 export type AuthUser = Pick<UserEntity, 'id'> & {
+  status: UserStatus;
   roles: UserRole[];
   permissions: Set<Permission>;
   familyId: string;

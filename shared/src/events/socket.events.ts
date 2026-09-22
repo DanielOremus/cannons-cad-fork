@@ -1,9 +1,12 @@
 import type { UnitMemberDto } from '../dto/unit-member/get-unit-member.dto.js';
 import type { UnitDto } from '../dto/unit/get-unit.dto.js';
 import type { UpdateUnitResponseDto } from '../dto/unit/update-unit.dto.js';
-import { UnitStatus } from '../types/unit.status.js';
 
 export const SocketEvents = {
+  user: {
+    statusChanged: 'user:status:changed',
+    rolesChanged: 'user:roles:changed',
+  },
   unit: {
     created: 'unit:created',
     updated: 'unit:updated',
@@ -21,6 +24,10 @@ export const SocketEvents = {
 } as const;
 
 export type ServerToClientEvents = {
+  //user events
+  [SocketEvents.user.statusChanged]: () => void;
+  [SocketEvents.user.rolesChanged]: () => void;
+  //unit events
   [SocketEvents.unit.created]: (payload: UnitDto) => void;
   [SocketEvents.unit.updated]: (payload: UpdateUnitResponseDto) => void;
   [SocketEvents.unit.deleted]: (payload: { unitId: number }) => void;

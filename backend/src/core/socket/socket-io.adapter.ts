@@ -75,7 +75,7 @@ export class SocketIoAdapter extends IoAdapter {
       if (
         !accountActive({
           emailConfirmed: tokenPayload.emailConfirmed,
-          status: tokenPayload.userStatus,
+          status: authUser.status,
         })
       ) {
         const error = new ForbiddenError('Account is inactive');

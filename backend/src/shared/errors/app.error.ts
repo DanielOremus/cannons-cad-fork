@@ -38,3 +38,12 @@ export class ForbiddenError extends AppError {
     super(message ? message : 'Access denied', ErrorCode.FORBIDDEN);
   }
 }
+
+export class ServerError extends AppError {
+  constructor(message?: string) {
+    super(
+      message ? message : 'Something went wrong, please try again later',
+      ErrorCode.UNHANDLED_ERROR,
+    );
+  }
+}

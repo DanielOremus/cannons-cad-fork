@@ -1,6 +1,6 @@
 import { hasHigherOrSamePriority, getStaffPriority, UserStatus } from '@project/shared';
 import { UnitOfWork } from '../../../../core/database/unit-of-work.js';
-import { ForbiddenError, NotFoundError } from '../../../../shared/errors/app.error.js';
+import { ForbiddenError, NotFoundError, ServerError } from '../../../../shared/errors/app.error.js';
 import { UserRepository } from '../../user.repository.js';
 import { UpdateUserCommand } from './update-user.command.js';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
@@ -8,12 +8,16 @@ import { AuthCacheService } from '../../../../shared/modules/auth-cache/auth-cac
 import { getScopesOrThrow } from '../../../../shared/utils/permission.helpers.js';
 import { EventBus } from '../../../../shared/modules/event/event.bus.js';
 import { Events } from '../../../../shared/constants/events.js';
+import { TokenStoreService } from '../../../../shared/modules/token/token-store.service.js';
+import { Logger } from '@nestjs/common';
 
 @CommandHandler(UpdateUserCommand)
 export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
+  private readonly logger = new Logger('UserUpdateHandler');
   constructor(
     private readonly userRepository: UserRepository,
     private readonly authCache: AuthCacheService,
+    private readonly tokenStore: TokenStoreService,
     private readonly eventBus: EventBus,
     private readonly uow: UnitOfWork,
   ) {}
@@ -38,11 +42,24 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
     targetUser = await this.userRepository.update(targetUser, command.dto);
     await this.uow.saveChanges();
 
-    await this.authCache.cacheUserRoles(targetUser.id, targetUser.roles);
-    //TODO: fallback if caching fails
+    //Update session cache
+    await this.authCache
+      .cacheUserSession(targetUser.id, {
+        status: targetUser.status,
+        roles: targetUser.roles,
+      })
+      .catch(() => {
+        this.logger.error(`Failed to cache session for user ${targetUser.id}`);
+        throw new ServerError();
+      });
 
-    if (command.dto.roles || (command.dto.status && command.dto.status !== UserStatus.APPROVED))
-      this.eventBus.emit(Events.USER_PERMISSIONS_CHANGED, { userId: targetUser.id });
-    //TODO: add listener for user permissions changed
+    await this.tokenStore
+      .revokeUserFamilies(targetUser.id)
+      .catch(() => this.logger.warn(`Failed to revoke families for user ${targetUser.id}`));
+
+    if (command.dto.status)
+      this.eventBus.emit(Events.USER_STATUS_CHANGED, { userId: targetUser.id });
+
+    if (command.dto.roles) this.eventBus.emit(Events.USER_ROLES_CHANGED, { userId: targetUser.id });
   }
 }
