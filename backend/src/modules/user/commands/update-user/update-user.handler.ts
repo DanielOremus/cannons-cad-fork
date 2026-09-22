@@ -1,4 +1,4 @@
-import { hasHigherOrSamePriority, getStaffPriority } from '@project/shared';
+import { hasHigherOrSamePriority, getStaffPriority, UserStatus } from '@project/shared';
 import { UnitOfWork } from '../../../../core/database/unit-of-work.js';
 import { ForbiddenError, NotFoundError } from '../../../../shared/errors/app.error.js';
 import { UserRepository } from '../../user.repository.js';
@@ -6,12 +6,15 @@ import { UpdateUserCommand } from './update-user.command.js';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthCacheService } from '../../../../shared/modules/auth-cache/auth-cache.service.js';
 import { getScopesOrThrow } from '../../../../shared/utils/permission.helpers.js';
+import { EventBus } from '../../../../shared/modules/event/event.bus.js';
+import { Events } from '../../../../shared/constants/events.js';
 
 @CommandHandler(UpdateUserCommand)
 export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly authCache: AuthCacheService,
+    private readonly eventBus: EventBus,
     private readonly uow: UnitOfWork,
   ) {}
   async execute(command: UpdateUserCommand): Promise<void> {
@@ -33,9 +36,13 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
       throw new ForbiddenError();
 
     targetUser = await this.userRepository.update(targetUser, command.dto);
+    await this.uow.saveChanges();
 
     await this.authCache.cacheUserRoles(targetUser.id, targetUser.roles);
+    //TODO: fallback if caching fails
 
-    await this.uow.saveChanges();
+    if (command.dto.roles || (command.dto.status && command.dto.status !== UserStatus.APPROVED))
+      this.eventBus.emit(Events.USER_PERMISSIONS_CHANGED, { userId: targetUser.id });
+    //TODO: add listener for user permissions changed
   }
 }

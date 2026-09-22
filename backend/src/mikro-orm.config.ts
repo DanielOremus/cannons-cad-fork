@@ -5,7 +5,9 @@ import { SeedManager } from '@mikro-orm/seeder';
 import path from 'path';
 import { configDotenv } from 'dotenv';
 
-configDotenv({ path: path.join(process.cwd(), '.env.dev') });
+configDotenv({
+  path: path.join(process.cwd(), `${process.env.NODE_ENV === 'production' ? '.env' : '.env.dev'}`),
+});
 
 const config = getConfig();
 

@@ -32,7 +32,6 @@ export class UnitController {
     return await this.unitService.create(dto, user);
   }
   @Patch('/:id')
-  @HttpCode(204)
   @RequirePermission('unit', 'update')
   async update(
     @Param('id', IdParamPipe) unitId: number,

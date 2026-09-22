@@ -86,9 +86,8 @@ export class UnitJoinRequestService {
 
     const ownMember = await this.unitMemberRepository.findByUser(userId, ['user']);
     if (!ownMember) throw new NotFoundError('Member');
-    //Does send request to own unit?
-    if (ownMember.unit?.id === unit.id)
-      throw new ConflictError('Cannot send request to own unit', ErrorCode.CONFLICT);
+    //Is already in unit?
+    if (ownMember.unit) throw new ConflictError('Already in unit', ErrorCode.CONFLICT);
     //Is request already pending?
     const alreadyPending = await this.exists(userId);
     if (alreadyPending)
@@ -114,7 +113,6 @@ export class UnitJoinRequestService {
         memberId: unitLeader.id,
       },
     });
-    console.log('from service invite send');
   }
   async accept(requestId: string, userId: string) {
     const { request, unit } = await this.validateJoinRequest(requestId, userId);
@@ -129,9 +127,13 @@ export class UnitJoinRequestService {
 
     this.eventBus.emit('unit.join.accepted', {
       userId: request.fromUserId,
-      unitId: unit.id,
-      member: this.unitMemberMapper.toReadDto(memberToAdd),
       duty: unit.duty,
+    });
+    this.eventBus.emit('unit-member.joined', {
+      userId: request.fromUserId,
+      unitId: unit.id,
+      duty: unit.duty,
+      member: this.unitMemberMapper.toReadDto(memberToAdd),
     });
   }
   async decline(requestId: string, userId: string) {

@@ -61,7 +61,13 @@ export class UnitService {
 
     const mappedUnit = this.unitMapper.toReadDto(unit);
 
-    this.eventBus.emit(Events.UNIT_CREATED, { unit: mappedUnit, userId: user.id });
+    this.eventBus.emit(Events.UNIT_CREATED, { unit: mappedUnit });
+    this.eventBus.emit(Events.UNIT_MEMBER_JOINED, {
+      userId: user.id,
+      duty: unit.duty,
+      unitId: unit.id,
+      member: mappedUnit.members[0],
+    });
 
     return mappedUnit;
   }
@@ -103,6 +109,6 @@ export class UnitService {
     await this.uow.saveChanges();
 
     this.eventBus.emit(Events.UNIT_MEMBER_LEFT, { memberId: member.id, userId, unitId: unit.id });
-    if (shouldDeleteUnit) this.eventBus.emit(Events.UNIT_DELETED, { id: unit.id });
+    if (shouldDeleteUnit) this.eventBus.emit(Events.UNIT_DELETED, { id: unit.id, duty: unit.duty });
   }
 }

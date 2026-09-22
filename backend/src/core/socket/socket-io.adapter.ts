@@ -9,9 +9,14 @@ import { ServerToClientEvents } from '@project/shared';
 import { SocketSessionService } from './socket-session.service.js';
 import { IRoomProvider, ROOM_PROVIDER } from './room-provider.interface.js';
 import { AppConfigService } from '../config/config.service.js';
+import { MikroORM, RequestContext } from '@mikro-orm/postgresql';
 
 type SocketData = {
   user?: AuthUser;
+};
+
+type VerifiedSocketData = {
+  user: AuthUser;
 };
 
 export class SocketIoAdapter extends IoAdapter {
@@ -19,6 +24,7 @@ export class SocketIoAdapter extends IoAdapter {
   private readonly socketSession: SocketSessionService;
   private readonly roomProvider: IRoomProvider;
   private readonly config: AppConfigService;
+  private readonly orm: MikroORM;
 
   private async rejoinRooms(
     socket: Socket<DefaultEventsMap, ServerToClientEvents, DefaultEventsMap, SocketData>,
@@ -35,6 +41,7 @@ export class SocketIoAdapter extends IoAdapter {
     this.authSessionService = this.app.get(AuthSessionService);
     this.socketSession = this.app.get(SocketSessionService);
     this.roomProvider = this.app.get(ROOM_PROVIDER);
+    this.orm = this.app.get(MikroORM);
   }
   createIOServer(port: number, options?: ServerOptions) {
     const server = super.createIOServer(port, {
@@ -52,11 +59,10 @@ export class SocketIoAdapter extends IoAdapter {
         (socket.handshake.auth.token as string | undefined) ??
         socket.handshake.headers.authorization;
       const socketError = new Error() as ExtendedError;
-      const {
-        success,
-        authUser,
-        tokenPayload: payload,
-      } = await this.authSessionService.validateSession(token);
+
+      const { success, authUser, tokenPayload } =
+        await this.authSessionService.validateSession(token);
+
       if (!success) {
         const error = new UnauthorizedError();
         socketError.message = error.message;
@@ -68,8 +74,8 @@ export class SocketIoAdapter extends IoAdapter {
 
       if (
         !accountActive({
-          emailConfirmed: payload.emailConfirmed,
-          status: payload.userStatus,
+          emailConfirmed: tokenPayload.emailConfirmed,
+          status: tokenPayload.userStatus,
         })
       ) {
         const error = new ForbiddenError('Account is inactive');
@@ -85,7 +91,10 @@ export class SocketIoAdapter extends IoAdapter {
       const userId = socket.data.user!.id;
       await this.socketSession.setUserSocket(userId, socket.id);
 
-      await this.rejoinRooms(socket);
+      await RequestContext.create(this.orm.em, async () => {
+        await this.rejoinRooms(socket);
+      });
+      //TODO: add socket global exception handler
 
       socket.on('disconnect', async () => {
         await this.socketSession.deleteUserSocket(userId);

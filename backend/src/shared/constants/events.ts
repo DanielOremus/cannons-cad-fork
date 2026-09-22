@@ -4,9 +4,12 @@ import { UnitMemberDto } from '../../modules/unit-member/dto/get-unit-member.dto
 import { UpdateUnitResponseDto } from '../../modules/unit/dto/update-unit.dto.js';
 
 export const Events = {
+  USER_PERMISSIONS_CHANGED: 'user.permissions.changed',
+
   UNIT_UPDATED: 'unit.updated',
   INCIDENT_UPDATED: 'incident.updated',
   UNIT_MEMBER_LEFT: 'unit-member.left',
+  UNIT_MEMBER_JOINED: 'unit-member.joined',
   UNIT_CREATED: 'unit.created',
   UNIT_JOIN_SENT: 'unit.join.sent',
   UNIT_JOIN_ACCEPTED: 'unit.join.accepted',
@@ -15,11 +18,18 @@ export const Events = {
 } as const;
 
 type EventsMap = {
+  [Events.USER_PERMISSIONS_CHANGED]: { userId: string };
   [Events.UNIT_UPDATED]: UpdateUnitResponseDto;
   [Events.INCIDENT_UPDATED]: { id: number };
   [Events.UNIT_MEMBER_LEFT]: { unitId: number; memberId: number; userId: string };
-  [Events.UNIT_CREATED]: { unit: UnitDto; userId: string };
-  [Events.UNIT_DELETED]: { id: number };
+  [Events.UNIT_MEMBER_JOINED]: {
+    userId: string;
+    member: UnitMemberDto;
+    unitId: number;
+    duty: LiveDuty;
+  };
+  [Events.UNIT_CREATED]: { unit: UnitDto };
+  [Events.UNIT_DELETED]: { id: number; duty: LiveDuty };
   [Events.UNIT_JOIN_SENT]: {
     requestId: string;
     fromUser: {
@@ -33,8 +43,6 @@ type EventsMap = {
   };
   [Events.UNIT_JOIN_ACCEPTED]: {
     userId: string;
-    member: UnitMemberDto;
-    unitId: number;
     duty: LiveDuty;
   };
   [Events.UNIT_JOIN_DECLINED]: { userId: string };

@@ -35,6 +35,8 @@ export class AuthSessionService {
       userId: user.id,
     } satisfies TokenPayloads['access'];
 
+    //TODO: check the edge case if userStatus is not synced with token's
+
     await Promise.all([
       this.tokenStore.storeRToken(refreshPayload),
       this.authCache.cacheUserRoles(user.id, user.roles),
@@ -64,7 +66,7 @@ export class AuthSessionService {
     ]);
 
     if (!familyExists) return { success: false, authUser: null, tokenPayload: null };
-
+    //TODO: add db fallback instead of token for user roles
     const userRoles = !redisUserRoles ? payload.userRoles : redisUserRoles;
     const userPerms = getPermissionsFromRoles(...userRoles);
 

@@ -25,6 +25,7 @@ export class AuthGuard implements CanActivate {
       authUser,
       tokenPayload: payload,
     } = await this.authSessionService.validateSession(request.headers.authorization);
+
     if (!success) throw new UnauthorizedError();
 
     request.user = authUser;

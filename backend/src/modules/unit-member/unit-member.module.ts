@@ -6,6 +6,7 @@ import { UnitMemberService } from './unit-member.service.js';
 import { UnitMemberController } from './unit-member.controller.js';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { UnitMemberEntity } from './entities/unit-member.entity.js';
+import { UnitMemberGateway } from './unit-member.gateway.js';
 @Module({
   imports: [MikroOrmModule.forFeature([UnitMemberEntity])],
   controllers: [UnitMemberController],
@@ -14,6 +15,7 @@ import { UnitMemberEntity } from './entities/unit-member.entity.js';
       provide: UnitMemberRepository,
       useClass: OrmUnitMemberRepository,
     },
+    UnitMemberGateway,
     UnitMemberService,
     UnitMemberMapper,
   ],

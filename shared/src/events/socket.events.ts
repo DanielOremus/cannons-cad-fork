@@ -5,7 +5,7 @@ import { UnitStatus } from '../types/unit.status.js';
 
 export const SocketEvents = {
   unit: {
-    joined: 'unit:joined',
+    created: 'unit:created',
     updated: 'unit:updated',
     deleted: 'unit:deleted',
     joinRequest: {
@@ -21,7 +21,7 @@ export const SocketEvents = {
 } as const;
 
 export type ServerToClientEvents = {
-  [SocketEvents.unit.joined]: (payload: UnitDto) => void;
+  [SocketEvents.unit.created]: (payload: UnitDto) => void;
   [SocketEvents.unit.updated]: (payload: UpdateUnitResponseDto) => void;
   [SocketEvents.unit.deleted]: (payload: { unitId: number }) => void;
   [SocketEvents.unit.joinRequest.sent]: (payload: {
@@ -30,6 +30,6 @@ export type ServerToClientEvents = {
   }) => void;
   [SocketEvents.unit.joinRequest.accepted]: () => void;
   [SocketEvents.unit.joinRequest.declined]: () => void;
-  [SocketEvents.unit.member.left]: (payload: { memberId: number }) => void;
+  [SocketEvents.unit.member.left]: (payload: { unitId: number; memberId: number }) => void;
   [SocketEvents.unit.member.joined]: (payload: { unitId: number; member: UnitMemberDto }) => void;
 };

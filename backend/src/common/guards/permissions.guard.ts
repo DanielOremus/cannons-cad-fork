@@ -12,6 +12,7 @@ import {
 import { PERMISSION_KEY } from '../decorators/require-permission.decorator.js';
 import { Request } from 'express';
 import { ForbiddenError, UnauthorizedError } from '../../shared/errors/app.error.js';
+import { Socket } from 'socket.io';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -21,6 +22,12 @@ export class PermissionsGuard implements CanActivate {
     const required = this.reflector.get<PermissionBase>(PERMISSION_KEY, context.getHandler());
 
     if (!required) return true;
+
+    if (context.getType() === 'ws') {
+      const socket = context.switchToWs().getClient<Socket>();
+      if (!socket.data.user) {
+      }
+    }
 
     const request = context.switchToHttp().getRequest<Request>();
 
