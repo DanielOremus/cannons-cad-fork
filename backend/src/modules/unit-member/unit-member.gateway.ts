@@ -1,6 +1,6 @@
 import { OnEvent } from '@nestjs/event-emitter';
 import { WebSocketGateway } from '@nestjs/websockets';
-import { DutyType } from '@project/shared';
+import { DutyType, LiveDuty } from '@project/shared';
 import { type EventPayload, Events } from '../../shared/constants/events.js';
 import { SocketSessionService } from '../../core/socket/socket-session.service.js';
 import { Rooms } from '../../core/socket/rooms.js';
@@ -25,7 +25,12 @@ export class UnitMemberGateway extends BaseGateway {
       .emit('unit:member:joined', { unitId: payload.unitId, member: payload.member });
 
     const issuerSocket = await this.getSocket(payload.userId);
-    if (issuerSocket) issuerSocket.join(roomsToJoin);
+    if (issuerSocket) {
+      for (const duty of LiveDuty) {
+        issuerSocket.leave(Rooms.lobby(duty));
+      }
+      issuerSocket.join(roomsToJoin);
+    }
   }
   @OnEvent(Events.UNIT_MEMBER_LEFT)
   async onUnitMemberLeft(payload: EventPayload<typeof Events.UNIT_MEMBER_LEFT>) {

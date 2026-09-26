@@ -1,6 +1,7 @@
 import type { UnitMemberDto } from '../dto/unit-member/get-unit-member.dto.js';
 import type { UnitDto } from '../dto/unit/get-unit.dto.js';
 import type { UpdateUnitResponseDto } from '../dto/unit/update-unit.dto.js';
+import type { LiveDuty } from '../types/duty.type.js';
 import type { ApiSocketErrorData } from '../types/error/api-error.response.js';
 
 export const SocketEvents = {
@@ -13,6 +14,7 @@ export const SocketEvents = {
     rolesChanged: 'user:roles:changed',
   },
   unit: {
+    joinLobby: 'unit:lobby:join',
     created: 'unit:created',
     updated: 'unit:updated',
     deleted: 'unit:deleted',
@@ -28,12 +30,12 @@ export const SocketEvents = {
   },
 } as const;
 
-type UserEvents = {
+type ServerUserEvents = {
   [SocketEvents.user.statusChanged]: () => void;
   [SocketEvents.user.rolesChanged]: () => void;
 };
 
-type UnitEvents = {
+type ServerUnitEvents = {
   [SocketEvents.unit.created]: (payload: UnitDto) => void;
   [SocketEvents.unit.updated]: (payload: UpdateUnitResponseDto) => void;
   [SocketEvents.unit.deleted]: (payload: { unitId: number }) => void;
@@ -47,9 +49,13 @@ type UnitEvents = {
   [SocketEvents.unit.member.joined]: (payload: { unitId: number; member: UnitMemberDto }) => void;
 };
 
-type MiscEvents = {
+type ServerMiscEvents = {
   [SocketEvents.debug.joined]: (payload: { room: string }) => void;
   [SocketEvents.error]: (payload: ApiSocketErrorData) => void;
 };
 
-export type ServerToClientEvents = MiscEvents & UserEvents & UnitEvents;
+export type ServerToClientEvents = ServerMiscEvents & ServerUserEvents & ServerUnitEvents;
+
+export type ClientToServerEvents = {
+  [SocketEvents.unit.joinLobby]: (payload: { duty: LiveDuty }) => void;
+};

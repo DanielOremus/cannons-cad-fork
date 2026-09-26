@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter.js';
 import { SocketIoAdapter } from './core/socket/socket-io.adapter.js';
 
-export async function setupApp(app: NestExpressApplication) {
+export function setupApp(app: NestExpressApplication) {
   const config = app.get(AppConfigService);
   const orm = app.get(MikroORM);
 

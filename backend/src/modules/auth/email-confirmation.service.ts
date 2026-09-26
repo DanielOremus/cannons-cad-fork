@@ -51,7 +51,6 @@ export class EmailConfirmationService {
       confirmation.incrementAttempt();
       await this.uow.saveChanges();
       //must be outside the transaction, we don't want to revert confirmation removal
-      // throw new ValidationError([], "Code does not match")
       throw new AppError('Code does not match', ErrorCode.VALIDATION_FAILED);
     }
     await this.uow.withTransaction(async () => {

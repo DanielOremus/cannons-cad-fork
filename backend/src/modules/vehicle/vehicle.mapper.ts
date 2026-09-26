@@ -4,7 +4,6 @@ import { VehicleDto } from './dto/get-vehicle.dto.js';
 
 @Injectable()
 export class VehicleMapper {
-  // constructor(private readonly )
   toReadDto(vehicle: VehicleEntity): VehicleDto {
     const { owner, color, flags, id, licensePlate, make, model, type, year } = vehicle;
     return {

@@ -17,14 +17,5 @@ export class UnitSessionService implements IRoomProvider {
     if (duty === DutyType.DISPATCH) rooms.push(Rooms.dispatch);
 
     return rooms;
-    // switch (duty) {
-    //     case DutyType.DISPATCH:
-    //         rooms.push(Rooms.dispatch)
-    //         break;
-    //     case DutyType.POLICE:
-    //         rooms.push
-    //     default:
-    //         break;
-    // }
   }
 }

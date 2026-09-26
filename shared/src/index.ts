@@ -35,6 +35,8 @@ export { UnitStatus } from './types/unit.status.js';
 
 export { DutyType, LiveDuty } from './types/duty.type.js';
 
+export { SocketEvents } from './events/socket.events.js';
+
 //Dto
 export type { PaginationDto, PaginationRequest, PaginatedList } from './dto/pagination.js';
 
@@ -113,6 +115,7 @@ export {
   createUnitSchema,
   createUnitMemberSchema,
   getUnitsQuerySchema,
+  joinUnitLobbySchema,
 } from './validators/unit.schema.js';
 
 export { startDutySchema } from './validators/duty.schema.js';

@@ -17,6 +17,4 @@ export class DebugGateway {
     socket.join(data.room);
     socket.emit('debug:joined', { room: data.room });
   }
-
-  //TODO: subscribe to lobby:join
 }

@@ -77,7 +77,7 @@ export class TokenStoreService {
       Infinity,
     );
     const [activeFamilyIds] = await Promise.all([getFamilyIds, this.detachExpiredFamilies(userId)]);
-    //
+
     //Deleting active families and get their tokens' jti
     const deleteJtis = await Promise.all(
       activeFamilyIds.map((id) => this.redis.client.getDel(this.familyKey(id))),
