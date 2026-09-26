@@ -1,7 +1,8 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus, Logger } from '@nestjs/common';
-import { ErrorCode, ValidationIssue } from '@project/shared';
-import { Request, Response } from 'express';
+import { ApiErrorResponse, ErrorCode, ValidationIssue } from '@project/shared';
+import { Response } from 'express';
 import { AppError, ValidationError } from '../../shared/errors/app.error.js';
+import { AppSocket } from '../../shared/types/socket.js';
 
 const ErrorCodeToHttpStatus: Record<ErrorCode, HttpStatus> = {
   ALREADY_EXISTS: HttpStatus.CONFLICT,
@@ -16,36 +17,51 @@ const ErrorCodeToHttpStatus: Record<ErrorCode, HttpStatus> = {
   CONFLICT: HttpStatus.CONFLICT,
 };
 
+type ExceptionParseResult = {
+  errorCode: ErrorCode;
+  errorMessage?: string;
+  errorIssues?: ValidationIssue[];
+};
+
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
-  catch(exception: unknown, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    // const request = ctx.getRequest<Request>();
 
+  private parseException(exception: unknown): ExceptionParseResult {
     let errorCode: ErrorCode;
-    let errorMessage: string;
-    let errorIssues: ValidationIssue[] | undefined;
+    let errorMessage;
+    let errorIssues;
 
     if (exception instanceof AppError) {
       errorCode = exception.code;
       errorMessage = exception.message;
-      if (exception instanceof ValidationError) {
-        errorIssues = exception.issues;
-      }
+
+      if (exception instanceof ValidationError) errorIssues = exception.issues;
     } else {
       errorCode = ErrorCode.UNHANDLED_ERROR;
       errorMessage = 'Something went wrong, please try again later';
     }
-    const status = ErrorCodeToHttpStatus[errorCode];
 
+    return { errorCode, errorMessage, errorIssues };
+  }
+
+  catch(exception: unknown, host: ArgumentsHost) {
     this.logger.error(exception);
 
-    response.status(status).json({
-      errorCode,
-      errorMessage,
-      errorIssues,
-    });
+    const { errorCode, errorIssues, errorMessage } = this.parseException(exception);
+
+    if (host.getType() === 'ws') {
+      const socket = host.switchToWs().getClient<AppSocket>();
+      socket.emit('error', { errorCode, errorMessage });
+      return;
+    }
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
+
+    const status = ErrorCodeToHttpStatus[errorCode];
+
+    response
+      .status(status)
+      .json({ errorCode, errorMessage, errorIssues } satisfies ApiErrorResponse);
   }
 }

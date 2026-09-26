@@ -10,7 +10,7 @@ export { VehicleType } from './types/vehicle/vehicle.type.js';
 export { DriverCategory } from './types/driver.category.js';
 export { CitationStatus } from './types/citation/citation.status.js';
 export { type ValidationIssue } from './types/error/validation.error.js';
-export { type ApiErrorResponse } from './types/error/api-error.response.js';
+export type { ApiSocketErrorData, ApiErrorResponse } from './types/error/api-error.response.js';
 export { PermissionScope } from './types/permission/permission.scope.js';
 export type {
   PermissionMeta,
