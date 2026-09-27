@@ -4,6 +4,7 @@ import { ForbiddenError, NotFoundError } from '../../errors/app.error.js';
 import { CharacterEntity } from '../../../modules/character/entities/character.entity.js';
 import { CitationEntity } from '../../../modules/citation/entities/citation.entity.js';
 import { UserEntity } from '../../../modules/user/entities/user.entity.js';
+import { UnitMemberEntity } from '../../../modules/unit-member/entities/unit-member.entity.js';
 
 @Injectable()
 export class OwnershipService {
@@ -20,6 +21,9 @@ export class OwnershipService {
     if (!this.isOwner(userId, citation.issuedBy?.id)) throw new ForbiddenError();
   }
   checkProfile(targetUserId: string, currentUserId: string) {
-    if (!this.isOwner(targetUserId, currentUserId)) throw new ForbiddenError();
+    if (!this.isOwner(currentUserId, targetUserId)) throw new ForbiddenError();
+  }
+  checkUnitMember(member: UnitMemberEntity, currentUserId: string) {
+    if (!this.isOwner(currentUserId, member.user.id)) throw new ForbiddenError();
   }
 }

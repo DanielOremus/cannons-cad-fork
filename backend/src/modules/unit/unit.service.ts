@@ -1,0 +1,114 @@
+import { Injectable } from '@nestjs/common';
+import { UnitRepository } from './unit.repository.js';
+import {
+  buildPermission,
+  ErrorCode,
+  hasPermissionFromSet,
+  PermissionMeta,
+  UnitStatus,
+  UpdateUnitDto,
+} from '@project/shared';
+import { EventBus } from '../../shared/modules/event/event.bus.js';
+import { getScopesOrThrow } from '../../shared/utils/permission.helpers.js';
+import { ConflictError, ForbiddenError, NotFoundError } from '../../shared/errors/app.error.js';
+import { UnitMapper } from './unit.mapper.js';
+import { CreateUnitDto } from './dto/create-unit.dto.js';
+import { UnitMemberRepository } from '../unit-member/unit-member.repository.js';
+import { UnitOfWork } from '../../core/database/unit-of-work.js';
+import { Events } from '../../shared/constants/events.js';
+import { UnitsFilterDto } from './dto/get-units-filter.dto.js';
+import { AuthUser } from '../../shared/types/user.js';
+
+@Injectable()
+export class UnitService {
+  constructor(
+    private readonly unitMemberRepository: UnitMemberRepository,
+    private readonly unitRepository: UnitRepository,
+    private readonly unitMapper: UnitMapper,
+    private readonly uow: UnitOfWork,
+    private readonly eventBus: EventBus,
+  ) {}
+  async getList(filters: UnitsFilterDto, permissionMeta: PermissionMeta) {
+    const scopes = getScopesOrThrow(permissionMeta);
+    if (!scopes.includes('any')) throw new ForbiddenError();
+
+    const units = await this.unitRepository.findMany(filters, ['members']);
+    return this.unitMapper.toListDto(units);
+  }
+  async create(dto: CreateUnitDto, user: AuthUser) {
+    const hasDutyContext = hasPermissionFromSet(
+      user.permissions,
+      buildPermission('duty', 'start', dto.duty),
+    );
+    if (!hasDutyContext) throw new ForbiddenError(`Cannot start '${dto.duty}' duty`);
+
+    const member = await this.unitMemberRepository.findByUser(user.id);
+    if (!member) throw new NotFoundError('Member');
+    //already in unit
+    if (member.unit) throw new ConflictError('Already in unit', ErrorCode.CONFLICT);
+
+    const unit = await this.uow.withTransaction(async () => {
+      const unit = await this.unitRepository.create({
+        callsign: dto.callsign,
+        status: dto.status,
+        members: [member],
+        duty: dto.duty,
+      });
+      await this.unitMemberRepository.update(member, { lastJoinAt: new Date() });
+
+      return unit;
+    });
+
+    const mappedUnit = this.unitMapper.toReadDto(unit);
+
+    this.eventBus.emit(Events.UNIT_CREATED, { unit: mappedUnit });
+    this.eventBus.emit(Events.UNIT_MEMBER_JOINED, {
+      userId: user.id,
+      duty: unit.duty,
+      unitId: unit.id,
+      member: mappedUnit.members[0],
+    });
+
+    return mappedUnit;
+  }
+  async update(dto: UpdateUnitDto, unitId: number, userId: string, permissionMeta: PermissionMeta) {
+    const scopes = getScopesOrThrow(permissionMeta);
+
+    if (!scopes.includes('any')) {
+      const member = await this.unitMemberRepository.findByUser(userId);
+      if (!member) throw new NotFoundError('Initiator');
+      if (member.unit?.id !== unitId) throw new ForbiddenError();
+    }
+
+    let unit = await this.unitRepository.findById(unitId);
+    if (!unit) throw new NotFoundError('Unit');
+
+    unit = await this.unitRepository.update(unit, dto);
+    await this.uow.saveChanges();
+
+    const mappedUnit = this.unitMapper.toUpdateResponseDto(unit);
+
+    this.eventBus.emit('unit.updated', mappedUnit);
+
+    return mappedUnit;
+  }
+  async leave(userId: string) {
+    const member = await this.unitMemberRepository.findByUser(userId, ['unit']);
+    if (!member) throw new NotFoundError('Member');
+
+    const unit = member.unit;
+    if (!unit) throw new ConflictError('Not attached to unit', ErrorCode.CONFLICT);
+
+    const unitMembersCount = await this.unitRepository.countMembers(unit);
+
+    const shouldDeleteUnit = unitMembersCount <= 1;
+
+    if (shouldDeleteUnit) await this.unitRepository.delete(unit);
+    else await this.unitMemberRepository.update(member, { unit: null });
+
+    await this.uow.saveChanges();
+
+    this.eventBus.emit(Events.UNIT_MEMBER_LEFT, { memberId: member.id, userId, unitId: unit.id });
+    if (shouldDeleteUnit) this.eventBus.emit(Events.UNIT_DELETED, { id: unit.id, duty: unit.duty });
+  }
+}

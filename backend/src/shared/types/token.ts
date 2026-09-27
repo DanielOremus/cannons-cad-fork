@@ -1,20 +1,12 @@
-import { UserRole, UserStatus } from '@project/shared';
-
-export const TokenType = {
-  access: 'access',
-  refresh: 'refresh',
-} as const;
-export type TokenType = (typeof TokenType)[keyof typeof TokenType];
+import { TokenCategory } from '../constants/token-category.js';
 
 export type TokenPayloads = {
-  [TokenType.access]: {
-    userStatus: UserStatus;
+  [TokenCategory.access]: {
     emailConfirmed: boolean;
     userId: string;
-    userRoles: UserRole[];
     familyId: string;
   };
-  [TokenType.refresh]: {
+  [TokenCategory.refresh]: {
     jti: string;
     familyId: string;
     userId: string;

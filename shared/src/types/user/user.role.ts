@@ -32,7 +32,7 @@ export const RolePermissions = {
     'vehicle:update:own',
     'vehicle:delete:own',
   ],
-  DISPATCH: [],
+  DISPATCH: ['unit:read:any', 'unit:update:any', 'duty:start:dispatch', 'duty:end'],
   POLICE: [
     'character:read:any',
     'vehicle:read:any',
@@ -40,6 +40,11 @@ export const RolePermissions = {
     'citation:read:any',
     'citation:delete:own',
     'citation:update:own',
+    'unit:create',
+    'unit:read:any',
+    'unit:update:own',
+    'duty:start:police',
+    'duty:end',
   ],
   REGISTERED: ['user:read:own', 'user:update:own', 'user:delete:own'],
 } as const satisfies Record<UserRole, Permission[]>;

@@ -3,9 +3,10 @@ import { OwnershipModule } from './ownership/ownership.module.js';
 import { AuthCacheModule } from './auth-cache/auth-cache.module.js';
 import { TokenModule } from './token/token.module.js';
 import { AuthSessionModule } from './auth-session/auth-session.module.js';
+import { EventModule } from './event/event.module.js';
 
 @Module({
-  imports: [TokenModule, OwnershipModule, AuthCacheModule, AuthSessionModule],
-  exports: [TokenModule, OwnershipModule, AuthCacheModule, AuthSessionModule],
+  imports: [TokenModule, OwnershipModule, AuthCacheModule, AuthSessionModule, EventModule],
+  exports: [TokenModule, OwnershipModule, AuthCacheModule, AuthSessionModule, EventModule],
 })
 export class SharedModule {}

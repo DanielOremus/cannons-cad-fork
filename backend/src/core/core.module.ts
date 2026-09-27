@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { AppConfigModule } from './config/config.module.js';
 import { DatabaseModule } from './database/database.module.js';
 import { RedisModule } from './redis/redis.module.js';
@@ -6,13 +6,16 @@ import { BullModule } from '@nestjs/bullmq';
 import { AppConfigService } from './config/config.service.js';
 import { MailerModule } from './mailer/mailer.module.js';
 import { AppThrottlerModule } from './throttler/throttler.module.js';
+import { SocketModule } from './socket/socket.module.js';
 
+@Global()
 @Module({
   imports: [
     AppConfigModule,
     AppThrottlerModule,
     DatabaseModule,
     RedisModule,
+    SocketModule,
     MailerModule,
     BullModule.forRootAsync({
       inject: [AppConfigService],

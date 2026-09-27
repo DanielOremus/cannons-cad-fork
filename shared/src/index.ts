@@ -10,7 +10,7 @@ export { VehicleType } from './types/vehicle/vehicle.type.js';
 export { DriverCategory } from './types/driver.category.js';
 export { CitationStatus } from './types/citation/citation.status.js';
 export { type ValidationIssue } from './types/error/validation.error.js';
-export { type ApiErrorResponse } from './types/error/api-error.response.js';
+export type { ApiSocketErrorData, ApiErrorResponse } from './types/error/api-error.response.js';
 export { PermissionScope } from './types/permission/permission.scope.js';
 export type {
   PermissionMeta,
@@ -30,6 +30,12 @@ export { PermissionType } from './types/permission/permission.type.js';
 export { SortOrder } from './types/sort.order.js';
 
 export { StaffRolePriority } from './types/user/staff-role.priority.js';
+
+export { UnitStatus } from './types/unit.status.js';
+
+export { DutyType, LiveDuty } from './types/duty.type.js';
+
+export { SocketEvents } from './events/socket.events.js';
 
 //Dto
 export type { PaginationDto, PaginationRequest, PaginatedList } from './dto/pagination.js';
@@ -65,6 +71,16 @@ export type { ChargeDto, CitationDto } from './dto/citation/get-citation.dto.js'
 export { type CreateCitationDto } from './dto/citation/create-citation.dto.js';
 export { type UpdateCitationDto } from './dto/citation/update-citation.js';
 
+export type { UpdateUnitDto, UpdateUnitResponseDto } from './dto/unit/update-unit.dto.js';
+export { type CreateUnitDto } from './dto/unit/create-unit.dto.js';
+export { type CreateUnitMemberDto } from './dto/unit-member/create-unit-member.dto.js';
+export { type UpdateUnitMemberDto } from './dto/unit-member/update-unit-member.dto.js';
+export { type UnitMemberDto } from './dto/unit-member/get-unit-member.dto.js';
+export { type UnitDto } from './dto/unit/get-unit.dto.js';
+export type { GetUnitsQueryDto } from './dto/unit/get-units.query.js';
+
+export type { StartDutyDto } from './dto/duty/start-duty.dto.js';
+
 //Validation schemas
 export {
   createCharacterSchema,
@@ -93,6 +109,17 @@ export {
   searchVehicleSchema,
 } from './validators/vehicle.schema.js';
 
+export {
+  updateUnitMemberSchema,
+  updateUnitSchema,
+  createUnitSchema,
+  createUnitMemberSchema,
+  getUnitsQuerySchema,
+  joinUnitLobbySchema,
+} from './validators/unit.schema.js';
+
+export { startDutySchema } from './validators/duty.schema.js';
+
 export { idValidator, uuidValidator } from './validators/common.schema.js';
 
 //Utils
@@ -107,6 +134,10 @@ export {
   getHighestRolePriority,
   hasHigherOrSamePriority,
   findPermissionsByPrefix,
+  buildPermission,
 } from './utils/auth.helpers.js';
-export { mapZodIssue } from './utils/validation.helpers.js';
+export { mapZodIssue, isLiveDuty } from './utils/validation.helpers.js';
 export { nameof } from './utils/object.helpers.js';
+
+//Events
+export { type ServerToClientEvents } from './events/socket.events.js';

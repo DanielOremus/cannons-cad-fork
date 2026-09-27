@@ -3,7 +3,10 @@ import { EntityManager } from '@mikro-orm/postgresql';
 import { Seeder } from '@mikro-orm/seeder';
 import { UserEntity } from '../modules/user/entities/user.entity.js';
 import { UserRole, UserStatus } from '@project/shared';
-import 'dotenv/config';
+import path from 'path';
+import { configDotenv } from 'dotenv';
+
+configDotenv({ path: path.join(process.cwd(), '.env.dev') });
 
 export class AdminSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {

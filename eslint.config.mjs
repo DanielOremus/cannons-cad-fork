@@ -89,7 +89,7 @@ export default defineConfig(
 
       parserOptions: {
         projectService: {
-          allowDefaultProject: ['test/*.ts', 'vitest.config*.ts'],
+          allowDefaultProject: ['vitest.config*.ts'],
         },
 
         tsconfigRootDir: backendDir,

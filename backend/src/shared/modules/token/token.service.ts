@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { TokenPayloads, TokenType } from '../../types/token.js';
+import { TokenPayloads } from '../../types/token.js';
+import { TokenCategory } from '../../constants/token-category.js';
 import { AppConfigService } from '../../../core/config/config.service.js';
 
 type VerifySuccessReturn<T> = {
@@ -32,14 +33,14 @@ export class TokenService {
       return null;
     }
   }
-  generate<T extends TokenType>(type: T, payload: TokenPayloads[T]) {
+  generate<T extends TokenCategory>(type: T, payload: TokenPayloads[T]) {
     const { secret, ttl } = this.config.jwt[type];
     return this.jwtService.sign(payload, {
       secret,
       expiresIn: ttl,
     });
   }
-  tryVerify<T extends TokenType>(
+  tryVerify<T extends TokenCategory>(
     type: T,
     token: string,
   ): VerifySuccessReturn<TokenPayloads[T]> | VerifyFailureReturn {

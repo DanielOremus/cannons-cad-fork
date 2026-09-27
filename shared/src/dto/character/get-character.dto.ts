@@ -8,8 +8,8 @@ export type CharacterDto = {
   lastName: string;
   dob: string;
   age: number;
-  phoneNumber?: string | null;
-  address?: string | null;
+  phoneNumber: string | null;
+  address: string | null;
   hasGunPermit: boolean;
   flags: CharacterFlag[];
   vehiclesCount: number;

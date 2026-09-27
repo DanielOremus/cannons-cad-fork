@@ -2,6 +2,12 @@ import { defineConfig } from '@mikro-orm/postgresql';
 import getConfig from './core/config/config.js';
 import { Migrator } from '@mikro-orm/migrations';
 import { SeedManager } from '@mikro-orm/seeder';
+import path from 'path';
+import { configDotenv } from 'dotenv';
+
+configDotenv({
+  path: path.join(process.cwd(), `${process.env.NODE_ENV === 'production' ? '.env' : '.env.dev'}`),
+});
 
 const config = getConfig();
 

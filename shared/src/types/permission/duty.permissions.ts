@@ -1,4 +1,4 @@
-import { DutyType } from '../duty/duty.type.js';
+import { DutyType } from '../duty.type.js';
 import type { PermissionMeta } from './permission.meta.js';
 import { PermissionType } from './permission.type.js';
 

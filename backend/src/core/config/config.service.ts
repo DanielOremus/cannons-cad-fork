@@ -34,4 +34,9 @@ export class AppConfigService {
     if (this.env !== 'production') turnstile.secret = '1x0000000000000000000000000000000AA';
     return turnstile;
   }
+  get allowedOrigins(): string[] {
+    const allowedOrigins = this.configService.get('allowedOrigins', { infer: true });
+    if (this.env === 'production') return allowedOrigins.split(',');
+    return ['*'];
+  }
 }
