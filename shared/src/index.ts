@@ -37,6 +37,10 @@ export { DutyType, LiveDuty } from './types/duty.type.js';
 
 export { SocketEvents } from './events/socket.events.js';
 
+export { IncidentStatus } from './types/incident/incident.status.js';
+export { IncidentPriority } from './types/incident/incident.priority.js';
+export { IncidentOrigin } from './types/incident/incident.origin.js';
+
 //Dto
 export type { PaginationDto, PaginationRequest, PaginatedList } from './dto/pagination.js';
 

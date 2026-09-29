@@ -11,6 +11,7 @@ export const BaseSchema = defineEntity({
 
 export const BaseSensitiveSchema = defineEntity({
   name: 'BaseSensitiveEntity',
+  abstract: true,
   properties: {
     id: p
       .uuid()
