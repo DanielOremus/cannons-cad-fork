@@ -1,16 +1,24 @@
-import { EntityManager, wrap } from '@mikro-orm/postgresql';
+import { EntityManager } from '@mikro-orm/postgresql';
 import { UnitEntity } from '../entities/unit.entity.js';
-import { UnitPopulate, UnitRepository } from '../unit.repository.js';
+import { UnitFindManyFilters, UnitPopulate, UnitRepository } from '../unit.repository.js';
 import { CreateUnitInput } from '../inputs/create-unit.input.js';
-import { UnitsFilterDto } from '../dto/get-units-filter.dto.js';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class OrmUnitRepository implements UnitRepository {
   private readonly entity = UnitEntity;
   constructor(private readonly em: EntityManager) {}
-  async findMany(query: UnitsFilterDto, populate: UnitPopulate[] = []): Promise<UnitEntity[]> {
-    return await this.em.findAll(this.entity, { where: query, populate });
+  async findMany(
+    filters: UnitFindManyFilters,
+    populate: UnitPopulate[] = [],
+  ): Promise<UnitEntity[]> {
+    return await this.em.findAll(this.entity, {
+      where: {
+        ...(filters.duty && { duty: filters.duty }),
+        ...(filters.ids && filters.ids.length > 0 && { id: { $in: filters.ids } }),
+      },
+      populate,
+    });
   }
   async findById(id: number, populate: UnitPopulate[] = []): Promise<UnitEntity | null> {
     return await this.em.findOne(this.entity, { id }, { populate });
@@ -22,7 +30,7 @@ export class OrmUnitRepository implements UnitRepository {
     return await this.em.create(this.entity, input);
   }
   async update(entity: UnitEntity, input: object): Promise<UnitEntity> {
-    return await wrap(entity).assign(input);
+    return await this.em.assign(entity, input);
   }
   async delete(entity: UnitEntity): Promise<void> {
     await this.em.remove(entity);

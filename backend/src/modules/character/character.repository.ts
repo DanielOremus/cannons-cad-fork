@@ -4,6 +4,7 @@ import { SearchCharacterDto } from './dto/search-character.dto.js';
 import { CreateCharacterInput } from './inputs/create-character.input.js';
 import { UpdateCharacterDto } from './dto/update-character.dto.js';
 import { PaginatedList, PaginationDto } from '@project/shared';
+import { CollectionResult } from '../../shared/types/collection.js';
 
 @Injectable()
 export abstract class CharacterRepository {
@@ -18,7 +19,7 @@ export abstract class CharacterRepository {
   abstract findManyByUser(
     userId: string,
     pagination: PaginationDto,
-  ): Promise<{ total: number; items: CharacterEntity[] }>;
+  ): Promise<CollectionResult<CharacterEntity>>;
   abstract countVehicles(entity: CharacterEntity): Promise<number>;
   abstract countCitations(entity: CharacterEntity): Promise<number>;
 }

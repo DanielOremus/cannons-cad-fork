@@ -30,6 +30,6 @@ export class OrmUnitMemberRepository implements UnitMemberRepository {
     return leader ?? null;
   }
   async update(entity: UnitMemberEntity, input: UpdateUnitMemberInput): Promise<UnitMemberEntity> {
-    return await wrap(entity).assign(input);
+    return await this.em.assign(entity, input);
   }
 }

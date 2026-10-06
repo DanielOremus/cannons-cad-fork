@@ -6,7 +6,7 @@ import { UpdateUnitDto } from './dto/update-unit.dto.js';
 
 @Injectable()
 export abstract class UnitRepository {
-  abstract findMany(query: UnitsFilterDto, populate?: UnitPopulate[]): Promise<UnitEntity[]>;
+  abstract findMany(filters: UnitFindManyFilters, populate?: UnitPopulate[]): Promise<UnitEntity[]>;
   abstract findById(id: number, populate?: UnitPopulate[]): Promise<UnitEntity | null>;
   abstract countMembers(entity: UnitEntity): Promise<number>;
   abstract create(input: CreateUnitInput): Promise<UnitEntity>;
@@ -15,3 +15,4 @@ export abstract class UnitRepository {
 }
 
 export type UnitPopulate = 'members';
+export type UnitFindManyFilters = Partial<UnitsFilterDto & { ids: UnitEntity['id'][] }>;

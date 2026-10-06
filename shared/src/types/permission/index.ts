@@ -6,6 +6,7 @@ import { VehiclePermissions } from './vehicle.permissions.js';
 import { DefinedPermissionResource } from './permission.resource.js';
 import type { PermissionMeta } from './permission.meta.js';
 import { UnitPermissions } from './unit.permissions.js';
+import { IncidentPermissions } from './incident.permissions.js';
 
 export const PermissionsMap = {
   user: UserPermissions,
@@ -14,6 +15,7 @@ export const PermissionsMap = {
   citation: CitationPermissions,
   duty: DutyPermissions,
   unit: UnitPermissions,
+  incident: IncidentPermissions,
 } as const satisfies Record<DefinedPermissionResource, Record<string, PermissionMeta>>;
 
 export type PermissionResource = keyof typeof PermissionsMap;

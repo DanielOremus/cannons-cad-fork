@@ -33,7 +33,7 @@ export class OrmCitationRepository implements CitationRepository {
     return await this.em.create(this.entity, input);
   }
   async update(entity: CitationEntity, input: UpdateCitationDto): Promise<CitationEntity> {
-    return await wrap(entity).assign(input);
+    return await this.em.assign(entity, input);
   }
   async delete(entity: CitationEntity): Promise<void> {
     await this.em.remove(entity);

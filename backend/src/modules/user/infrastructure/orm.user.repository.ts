@@ -32,7 +32,7 @@ export class OrmUserRepository implements UserRepository {
     return await this.em.create(this.entity, input);
   }
   async update(entity: UserEntity, input: UpdateUserInput): Promise<UserEntity> {
-    return await wrap(entity).assign(input);
+    return await this.em.assign(entity, input);
   }
   async delete(id: string): Promise<void> {
     const ref = this.em.getReference(this.entity, id);

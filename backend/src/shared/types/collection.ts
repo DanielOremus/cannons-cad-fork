@@ -1,0 +1,1 @@
+export type CollectionResult<T> = {total: number, items: T[]}

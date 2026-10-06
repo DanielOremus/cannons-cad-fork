@@ -61,7 +61,7 @@ export class UnitJoinRequestService {
     if (leaderId !== userId) throw new ForbiddenError('Must be a unit leader');
 
     const unit = await this.unitRepository.findById(joinUnitId);
-    if (!unit) throw new NotFoundError('Unit not found');
+    if (!unit) throw new NotFoundError('Unit');
 
     return { request: data, unit };
   }

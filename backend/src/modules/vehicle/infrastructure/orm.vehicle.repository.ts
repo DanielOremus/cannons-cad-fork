@@ -37,7 +37,7 @@ export class OrmVehicleRepository implements VehicleRepository {
     return await this.em.create(this.entity, input);
   }
   async update(vehicle: VehicleEntity, input: UpdateVehicleDto): Promise<VehicleEntity> {
-    return await wrap(vehicle).assign(input);
+    return await this.em.assign(vehicle, input);
   }
   async delete(vehicle: VehicleEntity): Promise<void> {
     await this.em.remove(vehicle);

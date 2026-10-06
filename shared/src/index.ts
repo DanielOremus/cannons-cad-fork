@@ -85,46 +85,15 @@ export type { GetUnitsQueryDto } from './dto/unit/get-units.query.js';
 
 export type { StartDutyDto } from './dto/duty/start-duty.dto.js';
 
-//Validation schemas
-export {
-  createCharacterSchema,
-  searchCharacterSchema,
-  updateCharacterSchema,
-} from './validators/character.schema.js';
+export type { IncidentDto, IncidentNoteDto } from './dto/incident/get-incident.dto.js';
+export type {
+  UpdateIncidentDto,
+  UpdateIncidentUnitsDto,
+} from './dto/incident/update-incident.dto.js';
 
-export { createCitationSchema, updateCitationSchema } from './validators/citation.schema.js';
+//Validators
 
-export { paginationSchema } from './validators/pagination.schema.js';
-
-export {
-  getUsersQuerySchema,
-  registerUserSchema,
-  loginUserSchema,
-  updateProfileSchema,
-  updateUserSchema,
-  updateEmailSchema,
-  confirmEmailSchema,
-} from './validators/user.schema.js';
-
-export {
-  createVehicleSchema,
-  licensePlateValidator,
-  updateVehicleSchema,
-  searchVehicleSchema,
-} from './validators/vehicle.schema.js';
-
-export {
-  updateUnitMemberSchema,
-  updateUnitSchema,
-  createUnitSchema,
-  createUnitMemberSchema,
-  getUnitsQuerySchema,
-  joinUnitLobbySchema,
-} from './validators/unit.schema.js';
-
-export { startDutySchema } from './validators/duty.schema.js';
-
-export { idValidator, uuidValidator } from './validators/common.schema.js';
+export * from './validators/index.js';
 
 //Utils
 

@@ -7,6 +7,7 @@ import { CreateCharacterInput } from '../inputs/create-character.input.js';
 import { CharacterPopulate } from '../character.repository.js';
 import { UpdateCharacterDto } from '../dto/update-character.dto.js';
 import { PaginatedList, PaginationDto } from '@project/shared';
+import { CollectionResult } from '../../../shared/types/collection.js';
 
 @Injectable()
 export class OrmCharacterRepository extends CharacterRepository {
@@ -16,7 +17,7 @@ export class OrmCharacterRepository extends CharacterRepository {
   }
   async findByNameAndDob(
     data: SearchCharacterDto,
-    populate?: CharacterPopulate[],
+    populate: CharacterPopulate[] = [],
   ): Promise<CharacterEntity | null> {
     return await this.em.findOne(
       this.entity,
@@ -40,7 +41,7 @@ export class OrmCharacterRepository extends CharacterRepository {
   async findManyByUser(
     userId: string,
     pagination: PaginationDto,
-  ): Promise<{ total: number; items: CharacterEntity[] }> {
+  ): Promise<CollectionResult<CharacterEntity>> {
     const [items, total] = await this.em.findAndCount(
       this.entity,
       {
@@ -57,7 +58,7 @@ export class OrmCharacterRepository extends CharacterRepository {
     return await this.em.create(this.entity, data);
   }
   async update(entity: CharacterEntity, input: UpdateCharacterDto): Promise<CharacterEntity> {
-    return await wrap(entity).assign(input);
+    return await this.em.assign(entity, input);
   }
   async delete(entity: CharacterEntity): Promise<void> {
     await this.em.remove(entity);
